@@ -1,0 +1,29 @@
+name: Verify
+
+# The commit gate is the only deterministic enforcement in the skill's design, so
+# its own test suite runs on every push and pull request. `verify` also covers the
+# repo's static checks (eslint, prettier, tsc, knip).
+on:
+  push:
+  pull_request:
+
+# Least privilege: the checks only read the tree.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
