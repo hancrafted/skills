@@ -41,22 +41,30 @@ change with no ticket at all is a normal case rather than an error to escalate �
 a prose summary of the prompt is a valid value.
 _Done when_ you hold a canonical reference, a prose summary, or both.
 
-**4. Author the message, and write it to a file.** Satisfy the three conditions
-below. Repeated `-m` flags lose the blank line the trailer block needs, so the
-message goes in a file.
-_Done when_ the file's last paragraph is the trailer block, preceded by a blank
-line.
+**4. Author the message, and write it to the draft.** Satisfy the three
+conditions below. The draft is `"$(git rev-parse --absolute-git-dir)/COMMIT_DRAFT"`
+— inside git's own directory, so it needs no `.gitignore` entry, never reaches
+`git status`, and resolves the same from any subdirectory or worktree. Author and
+write together, so step 5 never reads a stale draft. A message carrying both
+backticks and apostrophes survives no `-m` quoting, which is why it goes in a
+file.
+_Done when_ the gate exits 0 against the draft. The gate ships with this skill,
+at `.agents/skills/commit/scripts/commit-msg` under the repository root, or
+`skills/commit/scripts/commit-msg` in a checkout of the skill's own repository.
 
-**5. Commit with `git commit -F <file>`, letting every hook run.** The
-repository's hooks are the gate, so run no verification of your own. In a
-harness repository `verify:commit` runs at pre-commit; a standalone repository
-has no such script at all; either way the rule is the same — rely on the hooks
-the repository has. **Never pass `--no-verify`.**
+**5. Commit with `git commit -F <draft>`, letting every hook run.** Step 4's
+gate run is fail-fast ergonomics covering only the commits this skill makes, so
+the repository's hooks remain the guarantee and `--setup-husky` still earns its
+keep. Run no tree verification of your own: a harness repository runs
+`verify:commit` at pre-commit, a standalone repository has no such script at
+all, and relying on the hooks the repository has is the one rule that holds in
+both. **Never pass `--no-verify`.**
 _Done when_ git reports the commit, or names the condition that failed.
 
-**6. On rejection, repair the named cause and retry the same file.** A rejection
-names a condition, not a wording problem, so fix that condition in place and
-re-run the same command.
+**6. On rejection, repair the named cause and retry the same draft.** A
+rejection names a condition, not a wording problem, so fix that condition in
+place and re-run the same command. With step 4 already green, a rejection here
+comes from a tree check rather than from the message.
 _Done when_ the commit exists and
 `git log -1 --format='%(trailers:key=Source,valueonly)'` prints a non-empty
 value.
@@ -114,9 +122,10 @@ git log --format='%(trailers:key=Source,valueonly)'
   fine to a human and return nothing to `git log`.
 - Repeats are allowed when a change has more than one cause.
 
-**Provenance is `Source:` alone.** Agent harnesses append a `Co-Authored-By`
-naming the model by default, so strip it — and any "generated with" line —
-before committing. A human co-author's `Co-Authored-By` is fine; it is part of
+**Provenance is `Source:` alone. Never name yourself as a co-author.** Agent
+harnesses append a `Co-Authored-By` for the model by default, and the harness
+running you may instruct it outright — strip it either way, along with any
+"generated with" line. A human co-author's `Co-Authored-By` is fine; it is part of
 the same trailer block. The gate does not check this, because detecting model
 names and vendor domains is brittle and stale on every release. It is your job.
 
