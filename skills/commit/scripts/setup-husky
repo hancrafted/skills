@@ -72,9 +72,16 @@ fi
 #
 # Read through npm rather than grepping the file: `"prepare"` appears in plenty of
 # nested tool config, and a false match here means the hooks quietly stop wiring.
-if [ "$(npm pkg get scripts.prepare 2>/dev/null)" = '{}' ]; then
+# An existing `prepare` that skips husky gets a warning for the same reason: left
+# silent, the gate dies on the next fresh clone.
+_setup_prepare=$(npm pkg get scripts.prepare 2>/dev/null)
+if [ "$_setup_prepare" = '{}' ]; then
   npm pkg set scripts.prepare=husky >/dev/null || gate_abort 'npm pkg set scripts.prepare=husky failed'
   note_change 'set the package.json `prepare` script to `husky`'
+elif ! printf '%s' "$_setup_prepare" | grep -q husky; then
+  gate_warn \
+    "the existing package.json \`prepare\` script ($_setup_prepare) never runs husky, so the hook will not wire on a fresh clone." \
+    'Keep it, and put husky in front:  npm pkg set "scripts.prepare=husky && <existing>"'
 fi
 
 # 2. The hook, whose body is shared with the TypeScript AI harness so both paths

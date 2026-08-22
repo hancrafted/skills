@@ -82,6 +82,19 @@ describe('wiring the hook', () => {
     expect(result.output).toContain('core.commentChar');
   });
 
+  it('warns when an existing prepare script never runs husky, and leaves it alone', () => {
+    const dir = repoWithSkill();
+    writeFileSync(
+      join(dir, 'package.json'),
+      '{\n  "name": "fixture",\n  "private": true,\n  "scripts": { "prepare": "npm run build" }\n}\n',
+    );
+    const result = setup(dir);
+    expect(result.code).toBe(0);
+    expect(result.output).toContain('never runs husky');
+    const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as { scripts: { prepare: string } };
+    expect(pkg.scripts.prepare).toBe('npm run build');
+  });
+
   it('leaves an already-safe core.commentChar alone', () => {
     const dir = repoWithSkill({ 'core.commentChar': '%' });
     setup(dir);

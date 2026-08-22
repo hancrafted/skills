@@ -28,10 +28,11 @@ what you left out.
 **3. Resolve `Source:`.** Search the prompt, then the conversation context, then
 the worktree or branch name — in that order.
 
-| Invocation           | Nothing found                                               |
-| -------------------- | ----------------------------------------------------------- |
-| `/commit`            | **Ask.** Nothing in the run says what caused the change.    |
-| `/commit <argument>` | **Never ask.** The prompt itself becomes the prose summary. |
+| Invocation           | Nothing found                                                 |
+| -------------------- | ------------------------------------------------------------- |
+| `/commit`            | **Ask.** Nothing in the run says what caused the change.      |
+| `/commit <argument>` | **Never ask.** The prompt itself becomes the prose summary.   |
+| Agent-initiated      | **Never ask.** The task in flight is the cause; summarise it. |
 
 A hint taken from the worktree or branch name is usable only once **expanded to
 a full canonical reference**: `feature/78-commit-skill` yields `78`, which you
@@ -58,7 +59,8 @@ the repository's hooks remain the guarantee and `--setup-husky` still earns its
 keep. Run no tree verification of your own: a harness repository runs
 `verify:commit` at pre-commit, a standalone repository has no such script at
 all, and relying on the hooks the repository has is the one rule that holds in
-both. **Never pass `--no-verify`.**
+both. That is the entire command — `git commit -F <draft>` and nothing else — so
+every hook fires exactly as it would for a human. **Never pass `--no-verify`.**
 _Done when_ git reports the commit, or names the condition that failed.
 
 **6. On rejection, repair the named cause and retry the same draft.** A
@@ -81,6 +83,25 @@ and the human reviews a real commit with `git show` rather than a proposal.
 ## The contract — three blocking conditions
 
 The gate is `scripts/commit-msg`. It reads the proposed message and exits 0 or 1.
+One message that satisfies all three, end to end:
+
+```text
+fix(parser): keep the final trailer block intact
+
+Reading paragraphs eagerly treated the last one as prose, so git returned
+nothing for the trailer. The prose explains the why — the diff already
+carries the what.
+
+### Fixed
+
+1. The last paragraph is parsed as the trailer block.
+
+### Added
+
+1. A regression test for a message that ends on a trailer.
+
+Source: https://github.com/hancrafted/skills/issues/7 | fix trailer parsing
+```
 
 **1. Header.** `type(scope)!?: subject` on line 1, then a blank line 2.
 
@@ -109,13 +130,16 @@ every commit's cause is retrievable with one command:
 git log --format='%(trailers:key=Source,valueonly)'
 ```
 
-- Value is `<canonical ref> | <prompt summary>`. Either part alone is valid.
+- Value is `<canonical ref> | <prompt summary>`. Either part alone is valid;
+  carry both when you hold both — links rot, and the summary keeps the cause
+  readable after the tracker is gone.
 - The canonical reference resolves without context — a full URL for a hosted
   tracker (`https://github.com/hancrafted/skills/issues/2`), a
   repository-relative path for a local one (`docs/specs/0001-commit-gate.md`).
   Where this repository's own tracker documentation states a citation form,
   follow it. A reference that needs the reader to already know the repository —
-  `#123`, `78`, `GH-78` — is not canonical, and the gate catches only `#123`.
+  `#123`, `78`, `GH-78` — is not canonical; the gate rejects the numeric forms,
+  and tracker shorthands like `GH-78` are yours to expand.
 - It must be a real trailer, which means the **last paragraph**, preceded by a
   blank line. A `Source:` line placed directly under a numbered item is not a
   trailer, and neither is one followed by another prose paragraph — both look

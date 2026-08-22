@@ -102,6 +102,20 @@ describe('body shape', () => {
     ].join('\n');
     expect(gate(message('feat: do a thing', body)).code).toBe(0);
   });
+
+  // A fence is quotation, not shape: what it holds is neither judged against the
+  // six categories nor counted as satisfying them.
+  it.each(['```', '~~~'])('accepts a quoted heading inside a %s fence', (fence) => {
+    const body = ['### Changed', '1. Quote the doc heading:', '', fence, '### Warnings', fence].join('\n');
+    expect(gate(message('docs: quote a heading', body)).code).toBe(0);
+  });
+
+  it('rejects when the only category heading is quoted inside a fence', () => {
+    const body = ['Prose only.', '', '```', '### Added', '1. quoted, not real', '```'].join('\n');
+    const result = gate(message('docs: sneak a heading', body));
+    expect(result.code).toBe(1);
+    expect(result.output).toContain('no `### <category>` heading');
+  });
 });
 
 describe('Source trailer', () => {
@@ -138,6 +152,17 @@ describe('Source trailer', () => {
   // case is checkable without knowing anything about the tracker.
   it.each(['Source: #123', 'Source: #123 | wire up the gate', 'Source:  #7  '])(
     'rejects the bare issue number in %o',
+    (trailer) => {
+      const result = gate(message('feat: do a thing', '### Added\n1. Thing.', trailer));
+      expect(result.code).toBe(1);
+      expect(result.output).toContain('bare issue number');
+    },
+  );
+
+  // The hashless spelling is the same hole: it is exactly what a branch name
+  // like feature/78-commit-skill yields before expansion.
+  it.each(['Source: 78', 'Source: 78 | wire up the gate', 'Source:  42  '])(
+    'rejects the hashless bare issue number in %o',
     (trailer) => {
       const result = gate(message('feat: do a thing', '### Added\n1. Thing.', trailer));
       expect(result.code).toBe(1);

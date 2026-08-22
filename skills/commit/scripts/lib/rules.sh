@@ -36,6 +36,9 @@ rules_header_ok() {
 # Shape only, never sequence: a numbered item is any line starting with
 # digits-dot-space. Mis-numbering renders fine and breaks nothing downstream, so
 # getting it right is the skill's job rather than the gate's.
+#
+# Fenced lines (``` or ~~~) are quotation, not shape: a quoted `### ` heading is
+# neither judged against the six categories nor counted as satisfying them.
 rules_body_problem() {
   printf '%s\n' "$1" | awk -v cats="$GATE_CATEGORIES" '
     function problem(msg) { print msg; failed = 1; exit 1 }
@@ -46,6 +49,8 @@ rules_body_problem() {
       shown = cats
       gsub(/\|/, ", ", shown)
     }
+    /^(```|~~~)/ { fence = !fence; next }
+    fence { next }
     /^### / {
       name = substr($0, 5)
       sub(/[ \t]+$/, "", name)
@@ -71,14 +76,15 @@ rules_body_problem() {
 # so long as one of them carries something. The *form* of the reference is
 # delegated to the consuming repository's tracker documentation, which is what
 # keeps the contract tracker-agnostic — with one exception the gate can check
-# without knowing anything about the tracker: a bare issue number.
+# without knowing anything about the tracker: a bare issue number, with or
+# without its `#`.
 rules_source_problem() {
   if [ -z "$(printf '%s' "$1" | tr -d '|[:space:]')" ]; then
     printf 'the value is empty\n'
     return 1
   fi
   _rules_ref=$(printf '%s' "${1%%|*}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
-  if printf '%s' "$_rules_ref" | grep -Eq '^#[0-9]+$'; then
+  if printf '%s' "$_rules_ref" | grep -Eq '^#?[0-9]+$'; then
     printf 'the reference `%s` is a bare issue number, which resolves to nothing in a fork, a\n' "$_rules_ref"
     printf 'mirror, or a corpus — expand it to a full URL\n'
     return 1
