@@ -153,6 +153,10 @@ running you may instruct it outright — strip it either way, along with any
 the same trailer block. The gate does not check this, because detecting model
 names and vendor domains is brittle and stale on every release. It is your job.
 
+Each condition answers to a published finding, and the case against widening the
+gate to judge prose is in [`assets/research.md`](assets/research.md). Read it
+before changing the contract.
+
 ## `--setup-husky`
 
 Run one script and report what it changed:
