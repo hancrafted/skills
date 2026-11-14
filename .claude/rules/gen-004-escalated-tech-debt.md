@@ -1,0 +1,1 @@
+../../.archgate/adrs/GEN-004-escalated-tech-debt.md

@@ -1,0 +1,20 @@
+# Authored skills follow the Agent Skills specification. The skills root excludes installed agent copies.
+frontmatter:
+  rules:
+    - ruleId: agentskills-spec
+      fileNames: [SKILL.md]
+      intent: 'A skill follows the agentskills.io specification, so any harness that loads skills can load it'
+      unknownKeys: forbidden
+      fields:
+        name:
+          presence: required
+          pattern: '^(?=.{1,64}$)[a-z0-9]+(-[a-z0-9]+)*$'
+          intent: 'At most 64 characters: lowercase letters and digits joined by single hyphens, no hyphen at either end.'
+        description:
+          presence: required
+          maxLength: 1024
+          intent: 'What the skill does and when to use it, with the words that trigger it.'
+        license: { intent: 'A license name or a bundled license file.' }
+        compatibility: { maxLength: 500, intent: 'Environment requirements, only when the skill has any.' }
+        metadata: { intent: 'A map of string keys to string values that the spec does not define.' }
+        allowed-tools: { intent: 'Space-separated pre-approved tools. Experimental in the spec.' }

@@ -8,7 +8,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["src", "tests", "*.ts", "*.mts"]
+  "include": ["skills/*/scripts/**/*.ts", "tools/**/*.ts", "tests/**/*.ts", ".archgate/**/*.ts", "*.ts", "*.mts"],
+  "exclude": ["node_modules", ".worktrees", ".agents", ".claude"]
 }

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: static checks
+    runs-on: ubuntu-latest
+    env:
+      ARCHGATE_VERSION: v0.60.0
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v6
+        with:
+          path: ~/.archgate/bin
+          key: archgate-${{ runner.os }}-${{ env.ARCHGATE_VERSION }}
+      - name: Install standalone Archgate
+        run: |
+          test -x "$HOME/.archgate/bin/archgate" || curl -fsSL https://cli.archgate.dev/install-unix | sh
+          echo "$HOME/.archgate/bin" >> "$GITHUB_PATH"
+      - run: npm run archgate:full
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run knip
+      - run: npm run check:docs
+
+  unit:
+    name: unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
