@@ -1,0 +1,10 @@
+{
+  "base": "valid-explain.html",
+  "defect": "Item message asks the reader to pick yes or no on a settled decision.",
+  "replace": [
+    {
+      "find": "<h2>2. A locked-out user sees when they can try again</h2>",
+      "with": "<h2>2. A locked-out user sees when they can try again</h2><fieldset><legend>Keep this message?</legend><label><input type=\"radio\" name=\"keep\" value=\"yes\" /> Yes</label><label><input type=\"radio\" name=\"keep\" value=\"no\" /> No</label></fieldset>"
+    }
+  ]
+}

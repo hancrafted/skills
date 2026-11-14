@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The Mermaid source is written with HTML entities, which a <script> keeps literally.",
+  "replace": [
+    {
+      "find": "Client --> Cache --> Service",
+      "with": "Client --&gt; Cache --&gt; Service"
+    }
+  ]
+}

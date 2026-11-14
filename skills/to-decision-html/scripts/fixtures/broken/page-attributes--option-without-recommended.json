@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Option redis carries no data-recommended.",
+  "replace": [{ "find": "data-option=\"redis\" data-recommended=\"false\"", "with": "data-option=\"redis\"" }]
+}

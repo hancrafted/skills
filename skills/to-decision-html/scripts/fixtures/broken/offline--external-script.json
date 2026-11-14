@@ -1,0 +1,7 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The page loads a script from a CDN.",
+  "replace": [
+    { "find": "</head>", "with": "<script src=\"https://cdn.example.com/widgets@1.0.0/widgets.js\"></script></head>" }
+  ]
+}

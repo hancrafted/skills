@@ -6,7 +6,7 @@ const TRIGGERS = ['package-lock.json', 'skills/**', 'vitest.slow.config.mts'];
 
 export default defineConfig({
   test: {
-    passWithNoTests: true,
+    passWithNoTests: false,
     include: ['**/*.slow.test.ts'],
     exclude: [...configDefaults.exclude, '.worktrees/**', '.agents/**', '.claude/**'],
     testTimeout: 60_000,

@@ -1,0 +1,8 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The title and purpose sit in a plain <div>, so the page has no banner header.",
+  "replace": [
+    { "find": "    <header>\n", "with": "    <div class=\"top\">\n" },
+    { "find": "    </header>\n", "with": "    </div>\n" }
+  ]
+}

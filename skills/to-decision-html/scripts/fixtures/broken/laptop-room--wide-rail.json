@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The Option rail is 460 px wide, so the content column keeps under 1000 px on a laptop.",
+  "replace": [
+    {
+      "find": "grid-template-columns: minmax(0, 1fr) 300px;",
+      "with": "grid-template-columns: minmax(0, 1fr) 460px;"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Save downloads under a generic name instead of <page-id>-r<N>-feedback.md.",
+  "replace": [
+    { "find": "const filename = `${pageId}-r${revision}-feedback.md`;", "with": "const filename = 'feedback.md';" }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The handoff collapses each comment's line breaks and indentation into single spaces.",
+  "replace": [
+    {
+      "find": "const text = (field) => field.value;",
+      "with": "const text = (field) => field.value.replace(/\\s+/g, ' ');"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The page loads pinned Mermaid from jsDelivr without being marked data-offline=\"partial\".",
+  "replace": [
+    {
+      "find": "</head>",
+      "with": "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js\"></script></head>"
+    }
+  ]
+}

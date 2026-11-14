@@ -1,0 +1,11 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A page marked partial loads Mermaid from jsDelivr without an exact version.",
+  "replace": [
+    { "find": "data-mode=\"decide\"", "with": "data-mode=\"decide\" data-offline=\"partial\"" },
+    {
+      "find": "</head>",
+      "with": "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js\"></script></head>"
+    }
+  ]
+}

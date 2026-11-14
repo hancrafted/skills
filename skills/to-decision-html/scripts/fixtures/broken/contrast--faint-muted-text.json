@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The light theme's muted text colour is too faint to read against its background.",
+  "replace": [{ "find": "--muted: #55524c;", "with": "--muted: #aaa69e;" }]
+}

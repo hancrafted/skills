@@ -1,0 +1,36 @@
+{
+  "about": "Case items for the architecture-round page, judged yes or no on top of the confidence bar. They come from Han's review of the first page this round produced: picks hidden in text, too much text, and decisions left at code level. Each quote comes from calibration.md.",
+  "items": [
+    {
+      "id": "principle-altitude",
+      "question": "Does each Option name the software engineering principle or design pattern it applies (for example single source of truth, decoupling, cohesion, a SOLID principle, or leaving it as is), with its benefit and its cost, rather than only a symbol, function or file name?",
+      "source": {
+        "file": "calibration.md",
+        "quote": "I judge each decision by its benefit, impact, cost and trade-offs, and by the principle or design pattern it applies, not by symbols and files."
+      }
+    },
+    {
+      "id": "before-after-visual",
+      "question": "Does every item show a before-and-after diagram of the structure it changes (modules and their dependencies drawn as shapes and arrows), rather than code or text alone?",
+      "source": { "file": "calibration.md", "quote": "- **Fidelity:** `diagram` for every item." }
+    },
+    {
+      "id": "pick-at-a-glance",
+      "question": "On first sight, without reading an Option's text, can a reader tell how to pick each Option: one large, labelled pick control per Option, and after picking an unmistakable picked state?",
+      "source": { "file": "calibration.md", "quote": "I approve, change or reject each decision." }
+    },
+    {
+      "id": "scannable",
+      "question": "With every detail toggle closed, can each item be judged from a one-sentence decision, its diagram and a few short lines per Option, with the evidence, longer explanation and file detail behind the toggle?",
+      "source": { "file": "calibration.md", "quote": "- **Depth:** `both` on every item." }
+    },
+    {
+      "id": "teaches-principle",
+      "question": "Does the detail of each item explain the principle it applies, what it means, where it comes from (its author, book or tradition) and why it helps here, before the code detail?",
+      "source": {
+        "file": "calibration.md",
+        "quote": "In the detail, teach the principle as a software engineering teacher would: what it means, where it comes from, and why it helps here. Then give the code detail."
+      }
+    }
+  ]
+}

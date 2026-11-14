@@ -1,0 +1,367 @@
+<!--
+  The toolbar of a decision page: copy these three blocks into the page as they are.
+    1. toolbar:head, inside <head>: the numbers, the styles and the script that sets theme and navigation before first paint.
+    2. toolbar:markup, first in <body>: the bar and its presets.
+    3. toolbar:script, last in <body>: the behaviour.
+  Supply the presets as JSON in the markup block. The page gives its navigation `data-page-nav` and the id the Outline
+  button names in `aria-controls`. The readout reports the width of the first shown element matching `data-measure`
+  (default `[data-visual]`): name the box the presets resize. Add a tool inside `[data-toolbar-end]`.
+  The bar is one row; below 1024 px it scrolls inside itself. A preset with a width and a height has a fixed design
+  size: SKILL.md step 4 says how the page scales it. The numbers the bar works with are the JSON `data-toolbar-config`
+  in the head block; a page builder that leaves the bar out reads them there.
+-->
+
+<!-- toolbar:head -->
+<!-- navOpenWidth: the window width from which the navigation opens beside the page; toolbarHeight: the bar's height in px
+     before the script measures it; fitMargin: the px kept above and below a fixed design size; fitRoomMin: the least room
+     in px a fixed design size is scaled into. The dropdown rule below (max-width) is navOpenWidth less 1 px, in rem. -->
+<script type="application/json" data-toolbar-config>
+  { "navOpenWidth": 1800, "toolbarHeight": 61, "fitMargin": 16, "fitRoomMin": 240 }
+</script>
+<style data-toolbar-style>
+  .dh-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+    padding: 0.5rem var(--gutter, 2rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    background: color-mix(in oklch, var(--card, Canvas) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+  }
+  .dh-toolbar > * {
+    flex: none;
+  }
+  /* A tool is a quiet outline; hover and pressed tint it, and an open one is filled. */
+  .dh-tool {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-height: 2.75rem;
+    padding: 0.3rem 1rem;
+    border-radius: 0.625rem;
+    border: 1px solid color-mix(in oklch, var(--border, GrayText) 70%, transparent);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .dh-tool:hover {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 6%, transparent);
+  }
+  .dh-tool:active {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 12%, transparent);
+  }
+  .dh-tool[aria-expanded='true'] {
+    background: var(--foreground, CanvasText);
+    color: var(--background, Canvas);
+    border-color: transparent;
+  }
+  /* One segmented bar, one selection: a track with a raised, filled thumb under the selected segment. */
+  .dh-seg {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 0.75rem;
+    background: color-mix(in oklch, var(--muted, GrayText) 80%, var(--background, Canvas));
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--border, GrayText) 50%, transparent);
+  }
+  .dh-seg button {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-height: 2.5rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 0.5rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .dh-seg button:hover {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 7%, transparent);
+  }
+  .dh-seg button:active {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 13%, transparent);
+  }
+  .dh-seg button[aria-checked='true'] {
+    background: var(--foreground, CanvasText);
+    color: var(--background, Canvas);
+    font-weight: 600;
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground, CanvasText) 25%, transparent);
+  }
+  .dh-size {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground, GrayText);
+    white-space: nowrap;
+  }
+  .dh-size[hidden] {
+    display: none;
+  }
+  /* The slot for more tools, and the theme switch, sit at the end of the row. */
+  .dh-toolbar-end {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .dh-toolbar button:focus-visible {
+    outline: 2px solid var(--ring, Highlight);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .dh-tool,
+    .dh-seg button {
+      transition:
+        background-color 120ms ease,
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+    }
+  }
+  /* The navigation is a dropdown: hidden when closed, floating under the toolbar below navOpenWidth when open. */
+  html[data-nav='closed'] [data-page-nav] {
+    display: none;
+  }
+  @media (max-width: 112.49rem) {
+    html[data-nav='open'] [data-page-nav] {
+      display: block;
+      position: fixed;
+      z-index: 15;
+      top: var(--toolbar-h);
+      bottom: 0;
+      left: 0;
+      width: 17rem;
+      max-height: none;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 1rem;
+      background: var(--card, Canvas);
+      border-right: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+      box-shadow: 0 0 2rem color-mix(in oklch, var(--foreground, CanvasText) 18%, transparent);
+    }
+  }
+  @media print {
+    .dh-toolbar {
+      display: none;
+    }
+  }
+</style>
+<script>
+  // The theme and the navigation, applied before first paint. Storage may be blocked: every call is guarded.
+  (() => {
+    const root = document.documentElement;
+    const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+    root.style.setProperty('--toolbar-h', config.toolbarHeight + 'px');
+    const read = (key) => {
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    };
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => {
+      const choice = read('decision-page-theme') || 'auto';
+      root.classList.toggle('dark', choice === 'dark' || (choice === 'auto' && media.matches));
+      root.dataset.theme = choice;
+    };
+    apply();
+    media.addEventListener('change', apply);
+    // Open on a wide screen, collapsed below navOpenWidth, where the content wants every pixel.
+    root.dataset.nav = innerWidth >= config.navOpenWidth ? 'open' : 'closed';
+  })();
+</script>
+
+<!-- toolbar:markup -->
+<div class="dh-toolbar" role="toolbar" aria-label="Page tools" data-toolbar>
+  <button type="button" class="dh-tool" data-nav-toggle aria-controls="page-nav" aria-expanded="false">Outline</button>
+  <div class="dh-seg" role="radiogroup" aria-label="Preview size" data-presets></div>
+  <output class="dh-size" data-preview-size data-measure="[data-visual]" aria-live="polite"></output>
+  <div class="dh-toolbar-end" data-toolbar-end></div>
+  <button type="button" class="dh-tool" data-theme-toggle>Theme: Auto</button>
+</div>
+<!-- A preset is a label, a width in px and, for a vertical one, a height; one without a width is the full column. -->
+<script type="application/json" data-toolbar-presets>
+  [
+    { "id": "fit", "label": "Fit", "title": "Fit, the full column" },
+    { "id": "desktop", "label": "Desktop", "width": 1920 },
+    { "id": "laptop", "label": "Laptop", "width": 1440 },
+    { "id": "tablet", "label": "Tablet", "width": 1024 },
+    { "id": "mobile", "label": "Mobile", "width": 390 },
+    { "id": "shorts", "label": "Shorts", "width": 1080, "height": 1920 }
+  ]
+</script>
+
+<!-- toolbar:script -->
+<script>
+  (() => {
+    const root = document.documentElement;
+    const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+    const bar = document.querySelector('[data-toolbar]');
+    const write = (key, value) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // Without storage the choice lasts until the page closes.
+      }
+    };
+    const size = bar.querySelector('[data-preview-size]');
+    const presets = JSON.parse(document.querySelector('script[data-toolbar-presets]')?.textContent || '[]');
+    const sizeOf = ({ width, height }) => (height ? width + ' × ' + height + ' px' : width + ' px');
+    // A preset with a width and a height has a fixed design size.
+    const isFixed = (preset) => Boolean(preset?.width && preset.height);
+    const current = () => presets.find((preset) => preset.id === root.dataset.preset);
+
+    // The size the previews take now, shown only while it fits on the row.
+    const fit = () => {
+      size.hidden = false;
+      if (bar.scrollWidth > bar.clientWidth) size.hidden = true;
+    };
+    const report = () => {
+      const target = [...document.querySelectorAll(size.dataset.measure || '[data-visual]')].find(
+        (candidate) => candidate.offsetParent !== null,
+      );
+      const preset = current();
+      const shown = target ? Math.round(target.getBoundingClientRect().width) : 0;
+      size.value = !target
+        ? ''
+        : isFixed(preset)
+          ? 'Showing ' + sizeOf(preset) + ' at ' + Math.round((shown / preset.width) * 100) + '%'
+          : 'Showing ' + shown + ' px wide';
+      fit();
+    };
+
+    // A fixed design size scales down uniformly so the whole frame fits the viewport below the toolbar, between a
+    // margin above and below; the page applies --preview-scale (SKILL.md step 4).
+    const scale = () => {
+      const preset = current();
+      if (!isFixed(preset)) {
+        root.style.removeProperty('--preview-scale');
+        return;
+      }
+      const room = Math.max(innerHeight - bar.offsetHeight - 2 * config.fitMargin, config.fitRoomMin);
+      root.style.setProperty('--preview-scale', Math.min(1, room / preset.height).toFixed(4));
+    };
+
+    // The sticky parts of the page sit below the toolbar, whose height is --toolbar-h.
+    const measure = () => {
+      root.style.setProperty('--toolbar-h', bar.offsetHeight + 'px');
+      scale();
+    };
+    if (typeof ResizeObserver === 'function') new ResizeObserver(measure).observe(bar);
+    measure();
+    addEventListener('resize', () => {
+      scale();
+      report();
+    });
+
+    // The presets: one segmented bar, one selection. A preset with a width sets --preview-width and data-preset on <html>.
+    const group = bar.querySelector('[data-presets]');
+    const segments = presets.map((preset) => {
+      const name = preset.title || preset.label + ', ' + sizeOf(preset);
+      const segment = document.createElement('button');
+      segment.type = 'button';
+      segment.dataset.preset = preset.id;
+      segment.setAttribute('role', 'radio');
+      segment.setAttribute('aria-label', name);
+      segment.title = name;
+      segment.textContent = preset.label;
+      group.append(segment);
+      return segment;
+    });
+    const choose = (at, focus) => {
+      const preset = presets[at];
+      if (preset.width) {
+        root.style.setProperty('--preview-width', preset.width + 'px');
+        root.dataset.preset = preset.id;
+      } else {
+        root.style.removeProperty('--preview-width');
+        delete root.dataset.preset;
+      }
+      if (isFixed(preset)) {
+        root.style.setProperty('--preview-height', preset.height + 'px');
+        root.dataset.previewFixed = '';
+      } else {
+        root.style.removeProperty('--preview-height');
+        delete root.dataset.previewFixed;
+      }
+      scale();
+      segments.forEach((segment, other) => {
+        segment.setAttribute('aria-checked', String(other === at));
+        segment.tabIndex = other === at ? 0 : -1;
+      });
+      if (focus) segments[at].focus();
+      report();
+    };
+    segments.forEach((segment, at) => {
+      segment.addEventListener('click', () => choose(at, false));
+      segment.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+        const to = event.key === 'Home' ? 0 : event.key === 'End' ? segments.length - 1 : undefined;
+        if (step === undefined && to === undefined) return;
+        event.preventDefault();
+        choose(to ?? (at + step + segments.length) % segments.length, true);
+      });
+    });
+    const start = Math.max(
+      0,
+      presets.findIndex((preset) => !preset.width),
+    );
+    segments.forEach((segment, at) => {
+      segment.setAttribute('aria-checked', String(at === start));
+      segment.tabIndex = at === start ? 0 : -1;
+    });
+
+    // The navigation: open in the page's grid on a wide screen, a dropdown under the toolbar below navOpenWidth.
+    const toggle = bar.querySelector('[data-nav-toggle]');
+    const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+    const sync = () => toggle.setAttribute('aria-expanded', String(root.dataset.nav === 'open'));
+    const close = () => {
+      root.dataset.nav = 'closed';
+      sync();
+      report();
+    };
+    toggle.addEventListener('click', () => {
+      root.dataset.nav = root.dataset.nav === 'open' ? 'closed' : 'open';
+      sync();
+      report();
+    });
+    panel?.addEventListener('click', (event) => {
+      if (event.target.closest('a') && innerWidth < config.navOpenWidth) close();
+    });
+    addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || root.dataset.nav !== 'open' || innerWidth >= config.navOpenWidth) return;
+      close();
+      toggle.focus();
+    });
+    sync();
+
+    // The theme: follow the system, or force light or dark.
+    const theme = bar.querySelector('[data-theme-toggle]');
+    const choices = ['auto', 'light', 'dark'];
+    const label = () =>
+      (theme.textContent = 'Theme: ' + (root.dataset.theme[0].toUpperCase() + root.dataset.theme.slice(1)));
+    theme.addEventListener('click', () => {
+      const next = choices[(choices.indexOf(root.dataset.theme) + 1) % choices.length];
+      write('decision-page-theme', next);
+      root.dataset.theme = next;
+      root.classList.toggle(
+        'dark',
+        next === 'dark' || (next === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches),
+      );
+      label();
+    });
+    label();
+
+    addEventListener('DOMContentLoaded', report);
+    addEventListener('load', report);
+  })();
+</script>

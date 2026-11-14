@@ -11,6 +11,14 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["skills/*/scripts/**/*.ts", "tools/**/*.ts", "tests/**/*.ts", ".archgate/**/*.ts", "*.ts", "*.mts"],
+  "include": [
+    "skills/*/scripts/**/*.ts",
+    "skills/*/evals/**/*.ts",
+    "tools/**/*.ts",
+    "tests/**/*.ts",
+    ".archgate/**/*.ts",
+    "*.ts",
+    "*.mts"
+  ],
   "exclude": ["node_modules", ".worktrees", ".agents", ".claude"]
 }

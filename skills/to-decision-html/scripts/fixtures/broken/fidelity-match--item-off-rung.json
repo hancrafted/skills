@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Item expiry is built at wireframe, while its calibration asked for diagram.",
+  "replace": [
+    {
+      "find": "data-item=\"expiry\" data-fidelity=\"diagram\"",
+      "with": "data-item=\"expiry\" data-fidelity=\"wireframe\""
+    }
+  ]
+}

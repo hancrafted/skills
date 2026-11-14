@@ -1,0 +1,344 @@
+<!doctype html>
+<!-- Grader fixture: a correct explain page. Every broken fixture in broken/ whose base is this page adds one defect. -->
+<html lang="en" data-page-id="login-rate-limit" data-revision="1" data-mode="explain">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login rate limit: decision page</title>
+    <style>
+      :root {
+        --bg: #fbfaf7;
+        --surface: #ffffff;
+        --text: #1d1c1a;
+        --muted: #55524c;
+        --line: #d9d5cc;
+        --accent: #1f5fae;
+        --focus: #b3470e;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #161513;
+          --surface: #201f1c;
+          --text: #f1eee8;
+          --muted: #b9b4aa;
+          --line: #3a3833;
+          --accent: #8db8ef;
+          --focus: #f0a46c;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #161513;
+        --surface: #201f1c;
+        --text: #f1eee8;
+        --muted: #b9b4aa;
+        --line: #3a3833;
+        --accent: #8db8ef;
+        --focus: #f0a46c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+      }
+      a {
+        color: var(--accent);
+      }
+      header {
+        padding: 24px 32px;
+        border-bottom: 1px solid var(--line);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: 32px;
+        padding: 24px 32px;
+      }
+      nav {
+        position: sticky;
+        top: 16px;
+        align-self: start;
+      }
+      section[data-item],
+      section.panel {
+        margin-bottom: 40px;
+        padding: 24px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+      .compare figure {
+        margin: 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      .mock {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg);
+      }
+      .label {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 96px;
+        font: inherit;
+        color: inherit;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      select {
+        font: inherit;
+        color: inherit;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 6px 12px;
+      }
+      :focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 2px;
+      }
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+      svg text {
+        fill: var(--text);
+      }
+      svg rect,
+      svg line {
+        stroke: var(--text);
+        fill: none;
+      }
+      [hidden] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Login rate limit</h1>
+      <p>
+        What ticket #42 already decided, for engineers and product managers who did not write it. Mode: explain.
+        Revision 1.
+      </p>
+      <label for="theme">Theme</label>
+      <select id="theme">
+        <option value="">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </header>
+    <div class="layout">
+      <nav aria-label="Items">
+        <ol>
+          <li><a href="#item-limit">1. The limit</a></li>
+          <li><a href="#item-message">2. The lockout message</a></li>
+          <li><a href="#reflect">Think it through</a></li>
+          <li><a href="#questions">Questions?</a></li>
+        </ol>
+      </nav>
+      <main>
+        <section id="item-limit" data-item="limit" data-fidelity="diagram" data-depth="simple">
+          <h2>1. Five failed logins lock an account for fifteen minutes</h2>
+          <p>
+            What changes for you: a sixth attempt inside the window is refused before the password is checked. Rung:
+            diagram, enough because the decision is about the order of checks, not the screen.
+          </p>
+          <div class="compare" data-visual>
+            <figure>
+              <figcaption>Before</figcaption>
+              <svg viewBox="0 0 240 60" role="img" aria-label="Login goes straight to the password check">
+                <rect x="2" y="15" width="90" height="30" />
+                <text x="22" y="35">Login</text>
+                <line x1="92" y1="30" x2="146" y2="30" />
+                <rect x="146" y="15" width="90" height="30" />
+                <text x="158" y="35">Password</text>
+              </svg>
+            </figure>
+            <figure>
+              <figcaption>After</figcaption>
+              <svg viewBox="0 0 360 60" role="img" aria-label="Login passes the limit check before the password check">
+                <rect x="2" y="15" width="90" height="30" />
+                <text x="22" y="35">Login</text>
+                <line x1="92" y1="30" x2="135" y2="30" />
+                <rect x="135" y="15" width="90" height="30" />
+                <text x="160" y="35">Limit</text>
+                <line x1="225" y1="30" x2="268" y2="30" />
+                <rect x="268" y="15" width="90" height="30" />
+                <text x="280" y="35">Password</text>
+              </svg>
+            </figure>
+          </div>
+          <p class="label">Evidence: 1,800 failed logins from one address in an hour (incident report, 2026-09-14).</p>
+          <p>
+            Example: Ana mistypes her password five times at 09:00. At 09:05 her sixth try is refused; at 09:15 she can
+            try again.
+          </p>
+          <label><input type="checkbox" id="limit-analogy-toggle" aria-controls="limit-analogy" /> Show analogy</label>
+          <p id="limit-analogy" class="label" hidden>
+            Analogy: a cash machine that keeps the card after three wrong PINs. It breaks down here: the lock lifts by
+            itself after fifteen minutes.
+          </p>
+        </section>
+        <section id="item-message" data-item="message" data-fidelity="diagram" data-depth="simple">
+          <h2>2. A locked-out user sees when they can try again</h2>
+          <p>
+            What changes for you: the generic error gains a retry time. Rung: diagram, enough because the wording, not
+            the screen around it, is the decision.
+          </p>
+          <div class="compare" data-visual>
+            <figure>
+              <figcaption>Before</figcaption>
+              <p class="mock">Wrong email or password.</p>
+            </figure>
+            <figure>
+              <figcaption>After</figcaption>
+              <p class="mock">Too many attempts. Try again at 09:15.</p>
+            </figure>
+          </div>
+          <p class="label">
+            Agent proposal: the message names the time, not a countdown. Unknown: screen-reader wording.
+          </p>
+        </section>
+        <section id="reflect" class="panel" aria-labelledby="reflect-title">
+          <div data-reflection>
+            <h2 id="reflect-title">Think it through</h2>
+            <p class="label">Open questions for you; this page gives no answers to them.</p>
+            <h3>Systems and critical thinking</h3>
+            <ul>
+              <li>What does an attacker gain by locking out someone else's account on purpose?</li>
+            </ul>
+            <h3>Information architecture</h3>
+            <ul>
+              <li>Where would a support agent look up why an account is locked?</li>
+            </ul>
+            <h3>Security</h3>
+            <ul>
+              <li>Does the retry time tell an attacker that the email exists?</li>
+            </ul>
+            <h3>UX</h3>
+            <ul>
+              <li>What does a user with a password manager experience after a server-side typo?</li>
+            </ul>
+          </div>
+          <p>
+            Files explored: <code>issues/42.md</code>, <code>auth/login.ts</code>,
+            <code>docs/incidents/2026-09-14.md</code>.
+          </p>
+        </section>
+        <section id="questions" class="panel" aria-labelledby="questions-title">
+          <div data-questions>
+            <h2 id="questions-title">Questions?</h2>
+            <label for="q-text">Your questions for the agent or the ticket's author</label>
+            <textarea id="q-text"></textarea>
+            <p>
+              Copy prompt puts your questions on the clipboard to paste into an agent session. Save downloads them as
+              <code>login-rate-limit-r1-feedback.md</code>; then tell the agent "saved feedback".
+            </p>
+            <button type="button" id="copy" data-copy-prompt>Copy prompt</button>
+            <button type="button" id="save" data-save>Save</button>
+            <p id="status" role="status"></p>
+            <label for="fallback" hidden id="fallback-label">Copy this prompt by hand</label>
+            <textarea id="fallback" readonly hidden></textarea>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      const root = document.documentElement;
+      const pageId = root.dataset.pageId;
+      const revision = root.dataset.revision;
+      const field = document.getElementById('q-text');
+      const status = document.getElementById('status');
+      const filename = `${pageId}-r${revision}-feedback.md`;
+      const draftKey = `decision-page:${pageId}:questions`;
+
+      // Reviewer tools: they change the view and answer nothing, so they stay out of the handoff.
+      document.getElementById('theme').addEventListener('change', (event) => {
+        root.dataset.theme = event.target.value;
+      });
+      document.getElementById('limit-analogy-toggle').addEventListener('change', (event) => {
+        document.getElementById('limit-analogy').hidden = !event.target.checked;
+      });
+
+      try {
+        field.value = localStorage.getItem(draftKey) ?? '';
+      } catch {
+        status.textContent = 'Draft recovery is unavailable in this browser.';
+      }
+      field.addEventListener('input', () => {
+        try {
+          localStorage.setItem(draftKey, field.value);
+        } catch {
+          status.textContent = 'Draft recovery is unavailable in this browser.';
+        }
+      });
+
+      function handoff() {
+        const payload = JSON.stringify({ page: pageId, revision: Number(revision), questions: field.value }, null, 2);
+        return [
+          `Feedback on decision page ${pageId}, revision ${revision} (mode explain).`,
+          `Save this text verbatim as ${filename} beside the page, then answer the reader's questions.`,
+          '```json',
+          payload,
+          '```',
+          '',
+        ].join('\n');
+      }
+
+      function showFallback(text) {
+        const fallback = document.getElementById('fallback');
+        fallback.value = text;
+        fallback.hidden = false;
+        document.getElementById('fallback-label').hidden = false;
+      }
+
+      document.getElementById('copy').addEventListener('click', async () => {
+        const text = handoff();
+        try {
+          await navigator.clipboard.writeText(text);
+          status.textContent = 'Copied to the clipboard.';
+        } catch {
+          status.textContent = 'Clipboard unavailable; copy the prompt below by hand.';
+          showFallback(text);
+        }
+      });
+
+      document.getElementById('save').addEventListener('click', () => {
+        const text = handoff();
+        try {
+          const url = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }));
+          const link = Object.assign(document.createElement('a'), { href: url, download: filename });
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          status.textContent = `Download of ${filename} started; check your Downloads folder.`;
+        } catch {
+          status.textContent = 'Download failed; copy the prompt below by hand.';
+          showFallback(text);
+        }
+      });
+    </script>
+  </body>
+</html>

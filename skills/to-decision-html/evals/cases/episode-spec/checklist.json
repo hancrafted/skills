@@ -1,0 +1,113 @@
+{
+  "about": "Case items for the Episode Spec page, judged yes or no on top of the confidence bar. Each is a rule Han set in his four feedback rounds on the page, which he approved on 2026-11-14. The calibration states none of them, so a run must produce them itself. Each source cites the round and quotes rounds.md.",
+  "items": [
+    {
+      "id": "context-cards-row",
+      "question": "Ruling: the Brief, Style, Visual language and Episode page sit in one row of collapsible cards, closed by default. Do they appear that way on load, ahead of the first item, so the first decision starts high on the page?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 1,
+        "quote": "Brief, Style, Visual language and Episode page sit in one row, each a collapsible (`<details>`) closed by default, opening in place."
+      }
+    },
+    {
+      "id": "toolbar-one-row",
+      "question": "Ruling: the toolbar is always one row, with the render presets as one segmented toggle bar whose labels are names only and whose sizes show in tooltips. Is the toolbar sticky and on a single row, with the presets as one segmented bar (for example a tooltip \"Laptop, 1440 px\")?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 2,
+        "quote": "make sure the header is always one row. hide the px of each button via a tooltip and implement a toggle bar instead of individual buttons"
+      }
+    },
+    {
+      "id": "outline-dropdown",
+      "question": "Ruling: the outline is a dropdown. Is the outline a dropdown on the toolbar rather than a list that takes page width?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 2,
+        "quote": "I like that the navigation/outline is a dropdown and that we have a sticky header/toolbar"
+      }
+    },
+    {
+      "id": "pick-bar",
+      "question": "Ruling: each item's pick bar has one segment per Option with a star on the recommended one, a last Redesign segment, a Show details toggle and Reset. Does each item show that bar, with its segments, star, Redesign segment, Show details toggle and Reset?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 2,
+        "quote": "row 1: (0a [star icon = recommendation] | 0b | 0c) [show details toggle button] [reset]"
+      }
+    },
+    {
+      "id": "recommendation-preselected",
+      "question": "Ruling: the recommendation is preselected, so a Slide with no touch goes with it. On first load, is the recommended Option selected in every item that has one?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 4,
+        "quote": "if non is picked, it means we go with recommendation (could be solve that the recommendation is preselected)"
+      }
+    },
+    {
+      "id": "comment-four-rows",
+      "question": "Ruling: each item has one comment field, optional, 4 rows by default. Does each item have a single comment field about four rows tall that is marked optional?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 2,
+        "quote": "row 2: [Comment text area, 4 rows default]"
+      }
+    },
+    {
+      "id": "words-in-rail",
+      "question": "Ruling: a Slide's words sit in the rail beside the visual as collapsibles closed by default. Do the Visual idea, Voice script and Speaker notes sit in the rail as collapsibles that start closed, so the mock leads the main column?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 2,
+        "quote": "move to side as well as collapsibles, closed by default"
+      }
+    },
+    {
+      "id": "review-panel-bottom",
+      "question": "Ruling: the review panel is at the bottom, full width. Is the review panel (general comment, Next action, Before you approve, Save) at the bottom of the page and as wide as the content, with nothing empty beside it?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 3,
+        "quote": "review pannel at bottom full width"
+      }
+    },
+    {
+      "id": "scroll-circle",
+      "question": "Ruling: the scroll control is a small circle with only a caret up and a caret down. Is there one small circle at the bottom right, split into a to-top half and a to-bottom half that each show only a caret and no text?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 3,
+        "quote": "smaller Fab (radius 50% of now), just a carret up and down"
+      }
+    },
+    {
+      "id": "shorts-fits",
+      "question": "Ruling: the shorts preset is to scale as a 9:16 YouTube Short and visible within the viewport height below the toolbar. With the shorts preset selected, is each mock a 9:16 frame scaled down so that all of it is visible below the toolbar without scrolling?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 3,
+        "quote": "shorts should be a to scale to youtube short format, but be visible in 100vh (exclude header and a bit of margin top/bottom)"
+      }
+    },
+    {
+      "id": "copy-as-prompt",
+      "question": "Ruling: a Copy as prompt button is always present. Is a Copy as prompt button present in the review panel next to Save?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 4,
+        "quote": "it must always have a copy as prompt button"
+      }
+    },
+    {
+      "id": "minimalist-look",
+      "question": "Ruling: a minimalist, modern look, applied a bit as polish. Does the page look minimalist and modern, with quiet borders and shadows, consistent radii and a restrained accent, rather than dense or heavy?",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "round": 3,
+        "quote": "improve visual appeal a bit with a minimalistic modern design"
+      }
+    }
+  ]
+}

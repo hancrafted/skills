@@ -1,0 +1,14 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Collapsing the navigation hides it but keeps a 120 px column where it was, so the content starts 152 px from the edge.",
+  "replace": [
+    {
+      "find": ".layout[data-nav='collapsed'] {\n        grid-template-columns: minmax(0, 1fr);",
+      "with": ".layout[data-nav='collapsed'] {\n        grid-template-columns: 120px minmax(0, 1fr);"
+    },
+    {
+      "find": ".layout[data-nav='collapsed'] nav {\n        display: none;",
+      "with": ".layout[data-nav='collapsed'] nav {\n        visibility: hidden;"
+    }
+  ]
+}

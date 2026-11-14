@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Item expiry names a fidelity rung that is not on the ladder.",
+  "replace": [
+    {
+      "find": "data-item=\"expiry\" data-fidelity=\"diagram\"",
+      "with": "data-item=\"expiry\" data-fidelity=\"sketchy\""
+    }
+  ]
+}

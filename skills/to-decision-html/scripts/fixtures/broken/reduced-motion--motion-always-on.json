@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The smooth scrolling and card transition apply to every reader, including those who asked for reduced motion.",
+  "replace": [{ "find": "@media (prefers-reduced-motion: no-preference) {", "with": "@media all {" }]
+}
