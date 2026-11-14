@@ -1,0 +1,65 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  slow:
+    name: slow lane
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Playwright version
+        id: playwright
+        run: node -p '"version=" + require("@playwright/test/package.json").version' >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:slow
+      - name: File the failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: 'The slow lane failed on `${{ github.sha }}`: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        run: tools/test-budget/file-issue.sh 'Nightly slow tests failed' "$BODY"
+
+  budget:
+    name: fast-suite budget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      # A test failure belongs to the unit job; the JSON report supplies durations here.
+      - run: npx vitest run --reporter=json --outputFile=fast-suite.json || true
+      - name: File the tests over 2 s
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          over=$(node tools/test-budget/over-budget.ts fast-suite.json 2000) || exit 1
+          [ -z "$over" ] && exit 0
+          body=$(printf 'Move these tests to the slow lane (*.slow.test.ts) or make them faster. Run: %s\n\n%s' "$RUN_URL" "$over")
+          tools/test-budget/file-issue.sh 'Fast-suite tests over 2 s' "$body"

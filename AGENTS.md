@@ -11,7 +11,15 @@ This repository contains agent skills.
    2. Provide Recommendation at the end and the reason why
    3. Generally use simple wordings and an inverted pyramid style to convey information, but always use technically precise words, DONT invent words. The user will ask follow-up questions if technical depth is needed.
 
-## Agent skills
+## Development
+
+- Read applicable `.archgate/adrs/` before coding; ADR violations block completion.
+- Use TDD at agreed public seams: prove red, implement, prove green.
+- Run `npm run verify` frequently and before completing work.
+- Browser graders and tests taking seconds belong in `*.slow.test.ts`; await page conditions, not sleeps.
+- Run `npm run test:slow` before pushing; list disk-read inputs in the slow config's rerun triggers.
+
+## Agent context
 
 ### Issue tracker
 

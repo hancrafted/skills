@@ -1,1 +1,13 @@
-npm run verify
+# Git supplies refs on stdin; Archgate must receive its own closed input stream.
+refs=$(cat)
+: "$refs"
+
+npm run verify </dev/null || exit 1
+
+# Changed slow tests run before a push; without a merge base the whole lane runs.
+if base=$(git merge-base HEAD origin/main 2>/dev/null); then
+  npm run -s test:slow -- --changed "$base" --passWithNoTests </dev/null || exit 1
+else
+  echo "no merge-base with origin/main: running the whole slow lane"
+  npm run -s test:slow </dev/null || exit 1
+fi
