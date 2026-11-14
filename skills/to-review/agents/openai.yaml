@@ -1,0 +1,3 @@
+interface:
+  display_name: 'To Review'
+  short_description: 'Create material for human review and collect feedback'

@@ -8,13 +8,13 @@ Re-run both cases against the references; paid runs need Han's go-ahead.
 
 ## Local validation
 
-`npm test` runs pure judges and runner logic. `npm run test:slow` runs the offline browser grader, eval view capture and frozen-case checks. `npm run decision-html:prove` proves every valid and single-defect fixture using Chromium. These three lanes call no model and need no provider credentials; they write temporary browser artifacts outside the skill tree and clean them up.
+`npm test` runs pure judges and runner logic. `npm run test:slow` runs the offline browser grader, eval view capture and frozen-case checks. `npm run review:prove` proves every valid and single-defect fixture using Chromium. These three lanes call no model and need no provider credentials; they write temporary browser artifacts outside the skill tree and clean them up.
 
 The commands below generate or model-grade runs and require Han's approval. `EVAL_JUDGE=off` disables model grading, not agent generation.
 
 ## Run
 
-First prove the grader: `npm run decision-html:prove` from the repository root grades every fixture and fails when one does not prove its check. Run it before each iteration and after any grader change; this browser lane stays out of `npm run verify`.
+First prove the grader: `npm run review:prove` from the repository root grades every fixture and fails when one does not prove its check. Run it before each iteration and after any grader change; this browser lane stays out of `npm run verify`.
 
 ```sh
 node evals/run.ts --case architecture-round --runs 1
