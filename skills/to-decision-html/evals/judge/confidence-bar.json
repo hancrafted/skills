@@ -1,0 +1,55 @@
+{
+  "about": "SKILL.md's confidence bar (step 3) as yes/no questions about the whole page, plus the fidelity ladder's rule that each item names its rung and step 5's rule that reflection prompts carry no answers. `modes` names the modes a question applies to; keep both in step with SKILL.md.",
+  "items": [
+    {
+      "id": "decision",
+      "modes": ["decide", "explain"],
+      "question": "Does every item state its decision in one sentence before its visuals and detail?"
+    },
+    {
+      "id": "consequence",
+      "modes": ["decide"],
+      "question": "Does every item show what changes for the reader under each of its Options?"
+    },
+    {
+      "id": "consequence",
+      "modes": ["explain"],
+      "question": "Does every item say what changes for the reader overall?"
+    },
+    {
+      "id": "labels",
+      "modes": ["decide", "explain"],
+      "question": "Are the page's statements visibly labelled as evidence (with its source), agent proposal or unknown?"
+    },
+    {
+      "id": "recommendation",
+      "modes": ["decide"],
+      "question": "Does every item with Options mark exactly one Option as recommended and give the reason?"
+    },
+    {
+      "id": "fidelity",
+      "modes": ["decide", "explain"],
+      "question": "Are every item's visuals detailed enough to judge its decision from?"
+    },
+    {
+      "id": "fidelity-named",
+      "modes": ["decide", "explain"],
+      "question": "Does every item name its fidelity rung and say why that rung is enough?"
+    },
+    {
+      "id": "door-effort",
+      "modes": ["decide"],
+      "question": "Does every item show whether it is a one-way or two-way door, and how much effort it takes?"
+    },
+    {
+      "id": "open-reflection",
+      "modes": ["decide"],
+      "question": "Does the \"Before you approve\" block ask only open questions, with no agent-written answer, hint or answer key beside any of them?"
+    },
+    {
+      "id": "open-reflection",
+      "modes": ["explain"],
+      "question": "Does the reflection block ask only open questions, with no agent-written answer, hint or answer key beside any of them?"
+    }
+  ]
+}

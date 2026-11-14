@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The page has no \"Before you approve\" reflection block.",
+  "replace": [{ "find": "<div data-reflection>", "with": "<div>" }]
+}

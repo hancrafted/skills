@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Reset all clears everything without asking for confirmation.",
+  "replace": [{ "find": "if (!confirm(RESET_QUESTION)) {", "with": "if (!RESET_QUESTION) {" }]
+}

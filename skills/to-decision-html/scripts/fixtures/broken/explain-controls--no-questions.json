@@ -1,0 +1,5 @@
+{
+  "base": "valid-explain.html",
+  "defect": "The page has no \"Questions?\" comment field.",
+  "replace": [{ "find": "<textarea id=\"q-text\"></textarea>", "with": "" }]
+}

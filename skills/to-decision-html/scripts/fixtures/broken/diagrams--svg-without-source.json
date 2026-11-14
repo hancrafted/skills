@@ -1,0 +1,14 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A Mermaid-rendered SVG sits on the page without its source.",
+  "replace": [
+    {
+      "find": "<script type=\"text/x-mermaid\" data-diagram=\"store-flow\">\n              flowchart LR\n                Client --> Cache --> Service\n            </script>",
+      "with": ""
+    },
+    {
+      "find": "role=\"img\" aria-label=\"Client to cache to service\"",
+      "with": "role=\"img\" aria-roledescription=\"flowchart-v2\" aria-label=\"Client to cache to service\""
+    }
+  ]
+}

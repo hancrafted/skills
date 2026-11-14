@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A page script overwrites the Mermaid source after load.",
+  "replace": [
+    {
+      "find": "</body>",
+      "with": "<script>document.querySelector(\"script[data-diagram]\").textContent = \"flowchart LR\";</script></body>"
+    }
+  ]
+}

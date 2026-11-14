@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The header has a fixed height with overflow hidden, so it cuts off its own purpose text.",
+  "replace": [
+    {
+      "find": "header {\n        padding: 24px 32px;",
+      "with": "header {\n        height: 60px;\n        overflow: hidden;\n        padding: 24px 32px;"
+    }
+  ]
+}

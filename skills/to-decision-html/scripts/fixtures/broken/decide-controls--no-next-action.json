@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The page has no Next action.",
+  "replace": [{ "find": "<div data-next-action>", "with": "<div>" }]
+}

@@ -1,0 +1,5 @@
+{
+  "base": "valid-explain.html",
+  "defect": "The page has no reflection prompts.",
+  "replace": [{ "find": "<div data-reflection>", "with": "<div>" }]
+}

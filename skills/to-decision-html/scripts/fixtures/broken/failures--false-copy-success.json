@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A denied copy reports the same message as a successful one.",
+  "replace": [
+    {
+      "find": "say('Copy failed. The prompt below is selected: copy it with your keyboard.');",
+      "with": "say('Copied the prompt. Paste it into the agent session.');"
+    }
+  ]
+}

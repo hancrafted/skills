@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "entry": [".archgate/adrs/*.rules.ts", "skills/*/scripts/*.ts", "skills/*/scripts/*.pure.ts"],
+  "entry": [".archgate/adrs/*.rules.ts", "skills/*/scripts/*.ts", "skills/*/evals/*.ts"],
   "project": [
     "*.ts",
     "*.mts",
@@ -8,9 +8,9 @@
     "tests/**/*.ts",
     "tools/**/*.ts",
     "skills/*/scripts/**/*.ts",
+    "skills/*/evals/**/*.ts",
     ".archgate/**/*.ts"
   ],
-  "ignoreDependencies": ["cheerio"],
   "ignoreBinaries": ["archgate"],
   "ignoreExportsUsedInFile": true
 }

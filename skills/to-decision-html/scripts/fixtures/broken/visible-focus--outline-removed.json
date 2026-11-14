@@ -1,0 +1,7 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The focus outline is removed with no replacement, so a keyboard user cannot see where focus is.",
+  "replace": [
+    { "find": ":focus-visible {\n        outline: 3px solid var(--focus);", "with": ":focus {\n        outline: none;" }
+  ]
+}

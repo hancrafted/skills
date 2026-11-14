@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A long unbroken path in the explored files runs past its paragraph and makes the page scroll sideways.",
+  "replace": [
+    {
+      "find": "<code>docs/load-test.md</code>",
+      "with": "<code>docs/load_tests/2026_10_02/service_handler_cache_layer_response_times_by_region_service_handler_cache_layer_response_times_by_region_service_handler_cache_layer_response_times_by_region_service_handler_cache_layer_response_times_by_region.md</code>"
+    }
+  ]
+}

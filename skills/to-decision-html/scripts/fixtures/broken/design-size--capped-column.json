@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The page is capped at 1800 px and centred, so a visual with a 1920 px design width cannot reach it on a wide screen.",
+  "replace": [
+    {
+      "find": ".layout {\n        display: grid;",
+      "with": ".layout {\n        max-width: 1800px;\n        margin: 0 auto;\n        display: grid;"
+    }
+  ]
+}

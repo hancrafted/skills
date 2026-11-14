@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The Pick labels are only one line high, so each pick target is far under 44 px.",
+  "replace": [{ "find": "min-height: 44px;", "with": "min-height: 0;" }]
+}

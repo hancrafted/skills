@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The expiry item has depth \"both\" but no toggle, so its detail can never be shown.",
+  "replace": [
+    {
+      "find": "<button type=\"button\" data-depth-toggle aria-expanded=\"false\" aria-controls=\"expiry-detail\">\n              Show detail\n            </button>\n",
+      "with": ""
+    }
+  ]
+}

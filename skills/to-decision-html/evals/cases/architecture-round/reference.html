@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="en" data-page-id="ecology-worth-exploring-b" data-revision="2" data-mode="decide">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Ecology refactors by principle</title>
+    <style>:root {
+  color-scheme: light dark;
+  --bg: #f5f4ef;
+  --surface: #ffffff;
+  --text: #1b1a17;
+  --muted: #55524c;
+  --line: #d8d4ca;
+  --line-strong: #8a857a;
+  --accent: #1b5fb4;
+  --accent-ink: #ffffff;
+  --accent-bg: #e6eefa;
+  --green: #17683a;
+  --green-bg: #dff1e5;
+  --red: #a42a1d;
+  --red-bg: #fbe5e1;
+  --amber: #7a4a00;
+  --amber-bg: #fbefd2;
+  --focus: #b3470e;
+  --nav-h: 64px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131210;
+    --surface: #1e1d1a;
+    --text: #f0ede6;
+    --muted: #b8b3a8;
+    --line: #38362f;
+    --line-strong: #8f8a7e;
+    --accent: #8fbaf0;
+    --accent-ink: #0d1a2b;
+    --accent-bg: #1c2b40;
+    --green: #7bd09c;
+    --green-bg: #1b3526;
+    --red: #f39a8e;
+    --red-bg: #40201b;
+    --amber: #f0c36a;
+    --amber-bg: #3b2e12;
+    --focus: #f0a46c;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--nav-h) + 8px); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+a { color: var(--accent); }
+code { font: 0.88em ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+h1, h2, h3, h4, p, ul, ol { margin: 0; }
+
+/* Header: the four ideas first */
+.top { padding: 20px 24px 14px; max-width: 1440px; margin: 0 auto; }
+.top h1 { font-size: 24px; line-height: 1.25; }
+.top > p { color: var(--muted); margin-top: 4px; max-width: 70ch; }
+.ideas { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.idea { display: grid; gap: 2px; height: 100%; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; color: var(--text); text-decoration: none; }
+.idea strong { font-size: 16px; }
+.idea span:last-child { color: var(--muted); font-size: 14px; line-height: 1.35; }
+.idea .in { color: var(--accent); font-weight: 700; font-size: 13px; }
+.idea:hover { border-color: var(--accent); }
+.legend { font-size: 14px; margin-top: 10px; }
+.lg { font-weight: 700; }
+.lg.r { color: var(--red); }
+.lg.g { color: var(--green); }
+
+/* Sticky navigation by principle */
+.bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; padding: 8px 24px; background: var(--surface); border-block: 1px solid var(--line); min-height: var(--nav-h); }
+.ng { display: flex; align-items: center; gap: 6px; }
+.gn { font-size: 13px; font-weight: 700; color: var(--muted); margin-right: 2px; }
+.bar a { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border: 1px solid var(--line-strong); border-radius: 16px; color: var(--text); text-decoration: none; font-weight: 600; font-size: 14px; background: var(--bg); }
+.bar a[aria-current='true'] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.bar a.done { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.bar .ng-end { margin-left: auto; border-radius: 8px; }
+
+/* One decision fills the screen: visual left, options right */
+main { max-width: 1440px; margin: 0 auto; padding: 0 24px 48px; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 24px; align-items: start; min-height: calc(100vh - var(--nav-h) - 16px); padding: 20px 0 28px; border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--nav-h) + 4px); }
+.stage { align-self: stretch; min-width: 0; }
+.hero { position: sticky; top: calc(var(--nav-h) + 8px); z-index: 2; background: var(--bg); padding-bottom: 8px; }
+.item:has([data-depth-toggle][aria-expanded='true']) .hero { position: static; }
+.kicker { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
+.item h2 { font-size: 24px; line-height: 1.25; margin: 2px 0 14px; display: flex; gap: 10px; align-items: baseline; }
+.num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--text); color: var(--bg); font-size: 17px; font-weight: 700; }
+.visual { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.panel { position: relative; padding: 30px 8px 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.panel.after { border: 2px solid var(--green); padding: 29px 7px 7px; }
+.tag { position: absolute; top: 7px; left: 12px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.after .tag { color: var(--green); }
+.panel svg { display: block; width: 100%; height: auto; }
+.verdict { margin: -6px 0 12px 44px; font-size: 18px; }
+.verdict strong { color: var(--green); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { font-size: 13px; padding: 2px 10px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); color: var(--text); }
+.chip.ev { border-color: var(--green); }
+.chip.un { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+.toggle { margin-top: 14px; min-height: 44px; padding: 8px 16px; font-weight: 600; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; }
+.toggle::after { content: ' ▾'; }
+.toggle[aria-expanded='true']::after { content: ' ▴'; }
+.detail { margin-top: 12px; padding: 4px 18px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; max-width: 78ch; }
+.detail h4 { margin-top: 14px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.detail p, .detail li { margin-top: 4px; }
+.detail ul { padding-left: 20px; }
+.k { font-size: 12px; font-weight: 700; padding: 0 6px; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap; }
+.k.ev { color: var(--green); }
+.k.pr { color: var(--accent); }
+.k.un { color: var(--amber); }
+
+/* The rail: pick buttons, options, comments */
+.rail { position: sticky; top: calc(var(--nav-h) + 10px); max-height: calc(100vh - var(--nav-h) - 24px); overflow: auto; display: grid; gap: 10px; padding: 2px; }
+.opts { display: grid; gap: 10px; }
+.opt { padding: 10px 12px; background: var(--surface); border: 2px solid var(--line); border-radius: 0; }
+.opt.picked { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 2px var(--accent); }
+.opts.has-pick .opt:not(.picked) { opacity: 0.8; }
+.opt-head { display: flex; align-items: center; gap: 12px; }
+.opt h3 { font-size: 15px; line-height: 1.25; }
+.rec { display: inline-block; margin-left: 4px; padding: 0 7px; font-size: 12px; font-weight: 700; color: var(--green); background: var(--green-bg); border: 1px solid var(--green); border-radius: 10px; vertical-align: 1px; white-space: nowrap; }
+.pick { flex: none; min-width: 112px; min-height: 52px; padding: 0 14px; font-size: 18px; font-weight: 800; color: var(--accent); background: var(--surface); border: 2px solid var(--accent); border-radius: 10px; }
+.pick:hover { background: var(--accent-bg); }
+.pick[aria-pressed='true'] { color: var(--accent-ink); background: var(--accent); }
+.pick[aria-pressed='true'] .pk::before { content: '✓ '; }
+.lines { list-style: none; padding: 0; margin-top: 8px; display: grid; gap: 2px; font-size: 14px; line-height: 1.35; }
+.lines li { display: grid; grid-template-columns: 18px 1fr; gap: 4px; }
+.lines li::before { font-weight: 800; text-align: center; color: var(--muted); }
+.does::before { content: '→' / 'What changes:'; }
+.gain::before { content: '+' / 'Gain:'; color: var(--green); }
+.cost::before { content: '−' / 'Cost:'; color: var(--red); }
+textarea, select { width: 100%; font: inherit; font-size: 14px; color: var(--text); background: var(--bg); border: 1px solid var(--line-strong); border-radius: 6px; padding: 6px 8px; }
+.opt textarea { margin-top: 8px; min-height: 40px; resize: vertical; }
+textarea::placeholder { color: var(--muted); }
+.item-comment { min-height: 48px; resize: vertical; }
+.rail-foot { display: flex; justify-content: space-between; gap: 8px; }
+.ghost { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 12px; font-size: 14px; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; text-decoration: none; }
+.primary { min-height: 48px; padding: 8px 20px; font-size: 16px; font-weight: 700; color: var(--accent-ink); background: var(--accent); border: 2px solid var(--accent); border-radius: 10px; }
+
+/* SVG parts */
+.bx { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+.bx.g { fill: var(--green-bg); stroke: var(--green); stroke-width: 2; }
+.bx.r { fill: var(--red-bg); stroke: var(--red); stroke-width: 2; }
+.bx.f { fill: none; stroke: var(--muted); stroke-dasharray: 4 3; }
+.bx.frame { fill: none; stroke: var(--line-strong); stroke-dasharray: 3 3; }
+svg text { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+svg text.t { fill: var(--text); font-size: 12px; font-weight: 600; }
+svg text.t.s { font-weight: 700; }
+svg text.m { fill: var(--muted); font-size: 11.5px; }
+svg text.m.g { fill: var(--green); font-weight: 700; font-size: 12.5px; }
+svg text.m.r { fill: var(--red); font-weight: 700; font-size: 12.5px; }
+.ln { stroke: var(--line-strong); stroke-width: 1.8; fill: none; }
+.ln.g { stroke: var(--green); }
+.ln.r { stroke: var(--red); }
+.ln.d { stroke-dasharray: 5 4; }
+.mkp.n { fill: var(--line-strong); }
+.mkp.g { fill: var(--green); }
+.mkp.r { fill: var(--red); }
+
+/* Approval */
+.approve { padding: 28px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 32px; align-items: start; scroll-margin-top: calc(var(--nav-h) + 4px); }
+.approve h2 { font-size: 20px; }
+[data-reflection] ul { margin-top: 8px; padding-left: 20px; display: grid; gap: 6px; }
+.next { display: grid; gap: 6px; }
+.next label { font-weight: 600; font-size: 14px; }
+.feedback { grid-column: 1 / -1; display: grid; gap: 10px; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+#status { min-height: 1.5em; font-weight: 600; }
+.handoff { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px; font-size: 13px; max-height: 360px; overflow: auto; }
+summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.rests ul { padding-left: 20px; margin-top: 6px; font-size: 14px; }
+
+@media (max-width: 1100px) {
+  .item { grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; }
+  .ideas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bar { padding: 6px 16px; gap: 4px 12px; }
+  .top, main { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 820px) {
+  .item { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; max-height: none; overflow: visible; }
+  .hero { position: static; }
+  .visual { grid-template-columns: 1fr; }
+  .approve { grid-template-columns: 1fr; }
+}
+</style>
+  </head>
+  <body>
+    <!-- The reply composer follows html-effectiveness unknowns/03-design-directions.html (Copyright 2026 Anthropic PBC, Apache-2.0). -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="mk-n" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mkp n" d="M0 0L10 5L0 10z"/></marker>
+        <marker id="mk-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mkp g" d="M0 0L10 5L0 10z"/></marker>
+        <marker id="mk-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mkp r" d="M0 0L10 5L0 10z"/></marker>
+      </defs>
+    </svg>
+    <header class="top">
+      <h1>Software ecology: ten refactors, four ideas</h1>
+      <p>Pick an option for each refactor from the two architecture reviews, grouped by principle, then approve.</p>
+      <ol class="ideas"><li><a class="idea" href="#item-beat-plan"><span class="in">1</span><strong>One source of truth</strong><span>A fact lives in one place.</span></a></li><li><a class="idea" href="#item-stills"><span class="in">2</span><strong>Decoupling</strong><span>Parts know less about each other.</span></a></li><li><a class="idea" href="#item-settings-split"><span class="in">3</span><strong>Cohesion</strong><span>One file, one reason to change.</span></a></li><li><a class="idea" href="#item-start-routine"><span class="in">4</span><strong>Keep it simple</strong><span>Add structure only when it pays.</span></a></li></ol>
+      <p class="legend">Recommendations are agent proposals.</p>
+    </header>
+    <nav class="bar" aria-label="Decisions by principle"><div class="ng"><span class="gn">One source of truth</span><a href="#item-beat-plan" data-nav="beat-plan" aria-label="Decision 1: Compute each beat’s steps once, or keep two copies?">1</a><a href="#item-use-case-texts" data-nav="use-case-texts" aria-label="Decision 2: Name use-case files in one place or two?">2</a><a href="#item-sim-words" data-nav="sim-words" aria-label="Decision 3: Should the CLI read words like the page?">3</a></div><div class="ng"><span class="gn">Decoupling</span><a href="#item-stills" data-nav="stills" aria-label="Decision 4: Should the Slide use one entry point, or 13 internals?">4</a><a href="#item-tour-state" data-nav="tour-state" aria-label="Decision 5: Keep the tour’s stop point in the run?">5</a></div><div class="ng"><span class="gn">Cohesion</span><a href="#item-settings-split" data-nav="settings-split" aria-label="Decision 6: Should start settings leave the dials file?">6</a><a href="#item-flow-cells" data-nav="flow-cells" aria-label="Decision 7: Should flow-cell indexing get its own file?">7</a></div><div class="ng"><span class="gn">Keep it simple</span><a href="#item-start-routine" data-nav="start-routine" aria-label="Decision 8: Share the start routine, or test it?">8</a><a href="#item-state-entry" data-nav="state-entry" aria-label="Decision 9: A small helper, or a full entry module?">9</a><a href="#item-ctx-trim" data-nav="ctx-trim" aria-label="Decision 10: Delete two unused fields, or restructure?">10</a></div><a class="ng-end" href="#approve">Approve</a></nav>
+    <main>
+    <section id="item-beat-plan" class="item" data-item="beat-plan" data-fidelity="diagram" data-depth="both" aria-labelledby="h-beat-plan">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">One source of truth</p>
+          <h2 id="h-beat-plan"><span class="num">1</span> Compute each beat’s steps once, or keep two copies?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> the rule becomes structure.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: Two copies of the beat-step calculation, one in the tour and one in the judge, become one shared plan both read." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="15" y="20" width="120" height="34" rx="6"/><text class="t s" x="75.0" y="41.2" text-anchor="middle">Tour (page)</text><rect class="bx n" x="165" y="20" width="120" height="34" rx="6"/><text class="t s" x="225.0" y="41.2" text-anchor="middle">Judge (headless)</text><rect class="bx r" x="15" y="100" width="120" height="44" rx="6"/><text class="t" x="75.0" y="118.7" text-anchor="middle">Work out</text><text class="m" x="75.0" y="133.7" text-anchor="middle">beat steps</text><rect class="bx r" x="165" y="100" width="120" height="44" rx="6"/><text class="t" x="225.0" y="118.7" text-anchor="middle">Work out</text><text class="m" x="225.0" y="133.7" text-anchor="middle">beat steps</text><line class="ln n" x1="75" y1="54" x2="75" y2="100" marker-end="url(#mk-n)"/><line class="ln n" x1="225" y1="54" x2="225" y2="100" marker-end="url(#mk-n)"/><line class="ln r d" x1="135" y1="122" x2="165" y2="122"/><text class="m r" x="150" y="206" text-anchor="middle">2 copies</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: Two copies of the beat-step calculation, one in the tour and one in the judge, become one shared plan both read." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="15" y="20" width="120" height="34" rx="6"/><text class="t s" x="75.0" y="41.2" text-anchor="middle">Tour (page)</text><rect class="bx n" x="165" y="20" width="120" height="34" rx="6"/><text class="t s" x="225.0" y="41.2" text-anchor="middle">Judge (headless)</text><rect class="bx g" x="75" y="110" width="150" height="48" rx="6"/><text class="t" x="150.0" y="130.7" text-anchor="middle">Beat plan</text><text class="m" x="150.0" y="145.7" text-anchor="middle">one copy</text><line class="ln g" x1="75" y1="54" x2="115" y2="110" marker-end="url(#mk-g)"/><line class="ln g" x1="225" y1="54" x2="185" y2="110" marker-end="url(#mk-g)"/><text class="m g" x="150" y="206" text-anchor="middle">1 copy</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: medium</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="beat-plan-detail"><span class="tt">Learn the principle</span></button>
+        <div id="beat-plan-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p>A <strong>single source of truth</strong> (often called DRY, “don’t repeat yourself”) gives every fact or calculation one authoritative home. When two places each work it out, they agree only while someone remembers to edit both. The first missed edit is a silent bug, because both copies still run.</p>
+          <h4>Where it comes from</h4><p>Andy Hunt and Dave Thomas, <em>The Pragmatic Programmer</em> (1999): “Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.” It is about knowledge, not about lines that merely look alike.</p>
+          <h4>Why it helps here</h4><p>The tour on the page and the headless judge must replay the same steps, or the judge proves nothing about what viewers see. Design-ADR 0024 §10 and §12 require this. Today one test enforces it after the fact; one plan makes it true by construction, and the test stays as a guard.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>aimAtStep</code> (<code>factory-tour.pure.ts:44</code>) computes a beat’s end as <code>t0k + stepsTo(st.run)</code> and its sample start from the beat before.</li><li><span class="k ev">Evidence</span> <code>playSteps</code> (<code>factory-scenario.pure.ts:51</code>) and <code>readBeats</code> (<code>:112</code>) compute the same end and sample window for the judge.</li><li><span class="k ev">Evidence</span> Design-ADR 0024 §10/§12 requires the tour and the judge to read the same steps; today only the tour-equals-headless test enforces it.</li><li><span class="k pr">Agent proposal</span> One plan makes that agreement structural; the test stays as the guard.</li></ul>
+          <p>A pure <code>beatsOf(preset, t0k)</code> in new <code>factory-beats.pure.ts</code> returns each beat’s settings, sample start, end step and keys. Files: <code>factory-tour.pure.ts</code>, <code>factory-scenario.pure.ts</code>, the new file with a sibling test (ARCH-003-sibling-tests). Characterisation pins and expect ranges stay unchanged; <code>ecology:sim --seeds 10</code> must pass both scenarios after the commit.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 1">
+        <div class="opts" role="group" aria-label="Options for decision 1">
+        <article class="opt" data-option="one-plan" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="one-plan" data-letter="A" aria-pressed="false" aria-label="Pick option A: Single source of truth"><span class="pk">Pick A</span></button>
+            <h3>Single source of truth <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Tour and judge share one plan</li>
+            <li class="gain">Change a beat once</li>
+            <li class="cost">One new file</li>
+          </ul>
+          <textarea id="c-beat-plan-one-plan" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="keep-two" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="keep-two" data-letter="B" aria-pressed="false" aria-label="Pick option B: Two copies, test as guard"><span class="pk">Pick B</span></button>
+            <h3>Two copies, test as guard</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work now</li>
+            <li class="cost">Copies can drift</li>
+          </ul>
+          <textarea id="c-beat-plan-keep-two" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        </div>
+        <textarea id="c-beat-plan" class="item-comment" rows="2" aria-label="Comment on decision 1" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-use-case-texts" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-use-case-texts" class="item" data-item="use-case-texts" data-fidelity="diagram" data-depth="both" aria-labelledby="h-use-case-texts">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">One source of truth</p>
+          <h2 id="h-use-case-texts"><span class="num">2</span> Name use-case files in one place or two?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> two adapters exist; they can drift.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: The page loader and the CLI loader each write the file names" xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="10" y="20" width="130" height="36" rx="6"/><text class="t s" x="75.0" y="42.2" text-anchor="middle">Page loader</text><rect class="bx n" x="160" y="20" width="130" height="36" rx="6"/><text class="t s" x="225.0" y="42.2" text-anchor="middle">CLI loader</text><rect class="bx r" x="10" y="90" width="130" height="40" rx="6"/><text class="t" x="75.0" y="106.7" text-anchor="middle">File names</text><text class="m" x="75.0" y="121.7" text-anchor="middle">written here</text><rect class="bx r" x="160" y="90" width="130" height="40" rx="6"/><text class="t" x="225.0" y="106.7" text-anchor="middle">File names</text><text class="m" x="225.0" y="121.7" text-anchor="middle">written here</text><line class="ln n" x1="75" y1="56" x2="75" y2="90" marker-end="url(#mk-n)"/><line class="ln n" x1="225" y1="56" x2="225" y2="90" marker-end="url(#mk-n)"/><line class="ln r d" x1="140" y1="110" x2="160" y2="110"/><text class="m r" x="150" y="200" text-anchor="middle">2 naming tables</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, one shape with two adapters and one naming table." xmlns="http://www.w3.org/2000/svg"><rect class="bx g" x="60" y="15" width="180" height="46" rx="6"/><text class="t s" x="150.0" y="42.2" text-anchor="middle">One shape</text><rect class="bx n" x="10" y="110" width="130" height="36" rx="6"/><text class="t s" x="75.0" y="132.2" text-anchor="middle">Page: imports</text><rect class="bx n" x="160" y="110" width="130" height="36" rx="6"/><text class="t s" x="225.0" y="132.2" text-anchor="middle">CLI: reads disk</text><line class="ln g" x1="75" y1="110" x2="125" y2="61" marker-end="url(#mk-g)"/><line class="ln g" x1="225" y1="110" x2="175" y2="61" marker-end="url(#mk-g)"/><text class="m g" x="150" y="200" text-anchor="middle">1 naming table</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: small</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="use-case-texts-detail"><span class="tt">Learn the principle</span></button>
+        <div id="use-case-texts-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>Ports and adapters</strong> (hexagonal architecture): the core defines a <em>port</em>, here the shape of a use case’s texts (data, English, German). Each environment brings an <em>adapter</em> that fills the shape from its own source. The page reads files baked in at build time; the CLI reads them from disk. The shape is the one fact; the adapters are plumbing.</p>
+          <h4>Where it comes from</h4><p>Alistair Cockburn, “Hexagonal architecture” (2005). The single-source-of-truth side of it is Hunt and Thomas, <em>The Pragmatic Programmer</em> (1999).</p>
+          <h4>Why it helps here</h4><p>One adapter behind a shape is a guess at a seam; two adapters are proof of a real one. Today both loaders build the same file names themselves, so a new words file must be added in two places or the CLI quietly misses it.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>use-case-data.ts:21</code> names each use case’s data, <code>en</code> and <code>de</code> files in <code>SOURCES</code>.</li><li><span class="k ev">Evidence</span> <code>loadUseCase</code> (<code>ecology-sim.node.ts:50</code>) builds the same file names itself and reads them from disk.</li><li><span class="k pr">Agent proposal</span> Two adapters behind one shape is a real seam, per the codebase-design rule “two adapters means a real one”.</li></ul>
+          <p>One <code>UseCaseTexts</code> shape; the static-import adapter stays in <code>use-case-data.ts</code>, the file-read adapter in the CLI, and the file suffixes are named once. FE-007 §2.8 (the node entry) is unchanged: the CLI keeps its own <code>.node.ts</code> file.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 2">
+        <div class="opts" role="group" aria-label="Options for decision 2">
+        <article class="opt" data-option="shape" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="shape" data-letter="A" aria-pressed="false" aria-label="Pick option A: Ports and adapters"><span class="pk">Pick A</span></button>
+            <h3>Ports and adapters <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">One shape, two loaders</li>
+            <li class="gain">New file: one edit</li>
+            <li class="cost">Both loaders change</li>
+          </ul>
+          <textarea id="c-use-case-texts-shape" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="B" aria-pressed="false" aria-label="Pick option B: Leave it"><span class="pk">Pick B</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Two lists to sync</li>
+          </ul>
+          <textarea id="c-use-case-texts-leave" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        </div>
+        <textarea id="c-use-case-texts" class="item-comment" rows="2" aria-label="Comment on decision 2" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-sim-words" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-sim-words" class="item" data-item="sim-words" data-fidelity="diagram" data-depth="both" aria-labelledby="h-sim-words">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">One source of truth</p>
+          <h2 id="h-sim-words"><span class="num">3</span> Should the CLI read words like the page?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> page fallbacks then reach the CLI.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: The CLI reads the catalog directly while the page uses the words module with fallbacks" xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="10" y="20" width="120" height="34" rx="6"/><text class="t s" x="70.0" y="41.2" text-anchor="middle">Page</text><rect class="bx n" x="170" y="20" width="120" height="34" rx="6"/><text class="t s" x="230.0" y="41.2" text-anchor="middle">CLI</text><rect class="bx n" x="10" y="110" width="120" height="48" rx="6"/><text class="t" x="70.0" y="130.7" text-anchor="middle">Words module</text><text class="m" x="70.0" y="145.7" text-anchor="middle">with fallbacks</text><rect class="bx r" x="170" y="110" width="120" height="48" rx="6"/><text class="t" x="230.0" y="130.7" text-anchor="middle">Raw lookup</text><text class="m" x="230.0" y="145.7" text-anchor="middle">no fallback</text><line class="ln n" x1="70" y1="54" x2="70" y2="110" marker-end="url(#mk-n)"/><line class="ln r" x1="230" y1="54" x2="230" y2="110" marker-end="url(#mk-r)"/><text class="m r" x="150" y="206" text-anchor="middle">2 lookups</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, both use the words module." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="10" y="20" width="120" height="34" rx="6"/><text class="t s" x="70.0" y="41.2" text-anchor="middle">Page</text><rect class="bx n" x="170" y="20" width="120" height="34" rx="6"/><text class="t s" x="230.0" y="41.2" text-anchor="middle">CLI</text><rect class="bx g" x="90" y="110" width="120" height="48" rx="6"/><text class="t" x="150.0" y="130.7" text-anchor="middle">Words module</text><text class="m" x="150.0" y="145.7" text-anchor="middle">with fallbacks</text><line class="ln g" x1="70" y1="54" x2="120" y2="110" marker-end="url(#mk-g)"/><line class="ln g" x1="230" y1="54" x2="180" y2="110" marker-end="url(#mk-g)"/><text class="m g" x="150" y="206" text-anchor="middle">1 lookup</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: small</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="sim-words-detail"><span class="tt">Learn the principle</span></button>
+        <div id="sim-words-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p>A single source of truth covers <em>behaviour</em> as well as data. The page’s words module decides which name or claim to show and what to fall back to when a translation is missing. A second path that indexes the catalog directly re-implements that decision, minus the fallback.</p>
+          <h4>Where it comes from</h4><p>Hunt and Thomas, <em>The Pragmatic Programmer</em> (1999). Martin Fowler lists “Duplicated Code” as the first code smell in <em>Refactoring</em> (1999).</p>
+          <h4>Why it helps here</h4><p>The CLI prints scenario names and claims into reports that a person compares with the page. If the two lookups diverge, a report can show a claim the page never shows.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>ecology-sim.node.ts:94</code> reads <code>roles.words.yml</code> itself and indexes <code>words.en.scenarios[id].claims</code> directly.</li><li><span class="k ev">Evidence</span> The page goes through <code>presetName</code> and <code>scenarioWords</code> (<code>use-case-words.pure.ts</code>), which apply the catalog fallback.</li></ul>
+          <p><code>simulate</code> builds one <code>WordsIn { B, locale: "en", catalog }</code> and calls <code>presetName</code> and <code>scenarioWords</code>. It builds on the <code>UseCaseTexts</code> item: the CLI gets its words from the same shape. A new case in <code>ecology-sim.node.test.ts</code> covers the fallback.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 3">
+        <div class="opts" role="group" aria-label="Options for decision 3">
+        <article class="opt" data-option="words" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="words" data-letter="A" aria-pressed="false" aria-label="Pick option A: Reuse one lookup"><span class="pk">Pick A</span></button>
+            <h3>Reuse one lookup <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">CLI uses the words module</li>
+            <li class="gain">CLI matches the page</li>
+            <li class="cost">Builds on decision 2</li>
+          </ul>
+          <textarea id="c-sim-words-words" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="B" aria-pressed="false" aria-label="Pick option B: Leave it"><span class="pk">Pick B</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Fallbacks miss the CLI</li>
+          </ul>
+          <textarea id="c-sim-words-leave" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        </div>
+        <textarea id="c-sim-words" class="item-comment" rows="2" aria-label="Comment on decision 3" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-stills" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-stills" class="item" data-item="stills" data-fidelity="diagram" data-depth="both" aria-labelledby="h-stills">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Decoupling</p>
+          <h2 id="h-stills"><span class="num">4</span> Should the Slide use one entry point, or 13 internals?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> it closes the silent-break path; hero can wait.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: The Slide imports thirteen internals of the Explorable" xmlns="http://www.w3.org/2000/svg"><rect class="bx frame" x="95" y="5" width="200" height="190" rx="8"/><text class="m" x="103" y="18">Explorable</text><rect class="bx n" x="10" y="85" width="70" height="40" rx="6"/><text class="t s" x="45.0" y="109.2" text-anchor="middle">Slide</text><rect class="bx n" x="200" y="35" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="53.2" text-anchor="middle">painter</text><line class="ln r" x1="80" y1="105" x2="200" y2="49" marker-end="url(#mk-r)"/><rect class="bx n" x="200" y="75" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="93.2" text-anchor="middle">layout</text><line class="ln r" x1="80" y1="105" x2="200" y2="89" marker-end="url(#mk-r)"/><rect class="bx n" x="200" y="115" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="133.2" text-anchor="middle">stage</text><line class="ln r" x1="80" y1="105" x2="200" y2="129" marker-end="url(#mk-r)"/><rect class="bx n" x="200" y="155" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="173.2" text-anchor="middle">+10 more</text><line class="ln r" x1="80" y1="105" x2="200" y2="169" marker-end="url(#mk-r)"/><text class="m r" x="150" y="207" text-anchor="middle">13 imports</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, it imports one entry point and the internals stay private." xmlns="http://www.w3.org/2000/svg"><rect class="bx frame" x="95" y="5" width="200" height="190" rx="8"/><text class="m" x="103" y="18">Explorable</text><rect class="bx n" x="10" y="85" width="70" height="40" rx="6"/><text class="t s" x="45.0" y="109.2" text-anchor="middle">Slide</text><rect class="bx g" x="105" y="75" width="75" height="60" rx="6"/><text class="t" x="142.5" y="101.7" text-anchor="middle">stillOf</text><text class="m" x="142.5" y="116.7" text-anchor="middle">one entry</text><line class="ln g" x1="80" y1="105" x2="105" y2="105" marker-end="url(#mk-g)"/><rect class="bx n" x="200" y="35" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="53.2" text-anchor="middle">painter</text><line class="ln n" x1="180" y1="105" x2="200" y2="49" marker-end="url(#mk-n)"/><rect class="bx n" x="200" y="75" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="93.2" text-anchor="middle">layout</text><line class="ln n" x1="180" y1="105" x2="200" y2="89" marker-end="url(#mk-n)"/><rect class="bx n" x="200" y="115" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="133.2" text-anchor="middle">stage</text><line class="ln n" x1="180" y1="105" x2="200" y2="129" marker-end="url(#mk-n)"/><rect class="bx n" x="200" y="155" width="85" height="28" rx="6"/><text class="t s" x="242.5" y="173.2" text-anchor="middle">+10 more</text><line class="ln n" x1="180" y1="105" x2="200" y2="169" marker-end="url(#mk-n)"/><text class="m g" x="150" y="207" text-anchor="middle">1 import</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: medium</span><span class="chip un">Unknown: painter copy unchecked</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="stills-detail"><span class="tt">Learn the principle</span></button>
+        <div id="stills-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>Low coupling through a narrow interface.</strong> A module that imports thirteen internals of another depends on every one of them, so any internal change can break it, often with no failing test in the owner’s own suite. A <em>Facade</em> offers one small entry point and keeps the rest private, which is <em>information hiding</em>.</p>
+          <h4>Where it comes from</h4><p>David Parnas, “On the Criteria to Be Used in Decomposing Systems into Modules” (1972) for information hiding; Stevens, Myers and Constantine, “Structured Design” (1974) for coupling; the Facade pattern in Gamma, Helm, Johnson and Vlissides, <em>Design Patterns</em> (1994).</p>
+          <h4>Why it helps here</h4><p>The Why · How · What Slide reaches into painter, layout and stage internals of the Explorable. A painter change can break the Slide while every Explorable test passes. With <code>stillOf</code> the Explorable owns the contract, and its own tests cover it.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>slides/why-how-what/factory-still-state.ts</code> has 13 import lines, most into painter, layout and stage internals of the Explorable.</li><li><span class="k un">Unknown</span> The review found it re-implements the painter’s document merging and rack slots; not re-checked line by line.</li><li><span class="k ev">Evidence</span> FE-007-explorable-pages allows Slides to import from <code>src/explorables</code>; FE-012-explorables §3 keeps routes and Episode metadata out of the Explorable, which <code>stillOf</code> does not touch.</li></ul>
+          <p><code>stills.pure.ts</code> in the Explorable returns <code>FactoryStillState</code> from <code>stillOf(useCase, state, locale)</code>; the Slide imports only that. <code>factory-still-state.test.ts</code> moves next to it; <code>software-ecology.test.ts</code> stays. The hero preview (<code>slides/hero/factory-preview.tsx</code>) keeps its own card and slot geometry.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 4">
+        <div class="opts" role="group" aria-label="Options for decision 4">
+        <article class="opt" data-option="still-of" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="still-of" data-letter="A" aria-pressed="false" aria-label="Pick option A: Facade, hero later"><span class="pk">Pick A</span></button>
+            <h3>Facade, hero later <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Slide imports one entry</li>
+            <li class="gain">Painter changes fail tests</li>
+            <li class="cost">One new file</li>
+          </ul>
+          <textarea id="c-stills-still-of" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="with-hero" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="with-hero" data-letter="B" aria-pressed="false" aria-label="Pick option B: Facade, hero too"><span class="pk">Pick B</span></button>
+            <h3>Facade, hero too</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Hero uses it too</li>
+            <li class="gain">One door for both</li>
+            <li class="cost">No second reader yet</li>
+          </ul>
+          <textarea id="c-stills-with-hero" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="C" aria-pressed="false" aria-label="Pick option C: Leave it"><span class="pk">Pick C</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Silent breaks stay possible</li>
+          </ul>
+          <textarea id="c-stills-leave" rows="2" aria-label="Comment on option C" placeholder="Comment on C"></textarea>
+        </article>
+        </div>
+        <textarea id="c-stills" class="item-comment" rows="2" aria-label="Comment on decision 4" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-tour-state" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-tour-state" class="item" data-item="tour-state" data-fidelity="diagram" data-depth="both" aria-labelledby="h-tour-state">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Decoupling</p>
+          <h2 id="h-tour-state"><span class="num">5</span> Keep the tour’s stop point in the run?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> stopping mid-frame needs the run’s step loop.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: The tour aim stays inside the factory run" xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="15" y="15" width="110" height="34" rx="6"/><text class="t s" x="70.0" y="36.2" text-anchor="middle">Frame loop</text><rect class="bx n" x="15" y="90" width="270" height="100" rx="6"/><text class="t" x="150" y="108" text-anchor="middle">Factory run</text><rect class="bx n" x="40" y="122" width="220" height="48" rx="6"/><text class="t s" x="150.0" y="150.2" text-anchor="middle">Tour aim</text><line class="ln n" x1="70" y1="49" x2="70" y2="90" marker-end="url(#mk-n)"/></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: moving it out would make the frame loop depend on a Tour." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="15" y="15" width="110" height="34" rx="6"/><text class="t s" x="70.0" y="36.2" text-anchor="middle">Frame loop</text><rect class="bx n" x="15" y="90" width="270" height="100" rx="6"/><text class="t" x="150" y="108" text-anchor="middle">Factory run</text><rect class="bx g" x="40" y="122" width="220" height="48" rx="6"/><text class="t s" x="150.0" y="150.2" text-anchor="middle">Tour aim stays inside</text><line class="ln n" x1="70" y1="49" x2="70" y2="90" marker-end="url(#mk-n)"/><rect class="bx f" x="185" y="15" width="100" height="34" rx="6"/><text class="t s" x="235.0" y="36.2" text-anchor="middle">Tour</text><line class="ln r d" x1="125" y1="32" x2="185" y2="32"/><text class="m r" x="215" y="66" text-anchor="middle">B, C add this link</text><text class="m g" x="150" y="207" text-anchor="middle">no change</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: A none, B/C large</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="tour-state-detail"><span class="tt">Learn the principle</span></button>
+        <div id="tour-state-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>Information hiding:</strong> keep a detail inside the one module that has to act on it, and keep everyone else ignorant of it. Moving the tour’s stop point out of the run would not delete it from the system; it would make the frame loop learn about tours, which spreads the knowledge and raises coupling.</p>
+          <h4>Where it comes from</h4><p>David Parnas, “On the Criteria to Be Used in Decomposing Systems into Modules” (1972). This recommendation goes against the architecture review’s proposal, which was made before the Sampler refactor (PR #551).</p>
+          <h4>Why it helps here</h4><p>“Stop at step k and sample on the way” is a primitive of the run’s own step loop; honouring it inside a frame’s step budget needs that loop. Revisit if a second, non-tour client ever needs to stop the run.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> The frame loop (<code>use-factory.ts:141</code>) calls <code>run.advance(dt, speed)</code> and knows nothing about tours; <code>stepDue</code> (<code>factory-run.pure.ts:191</code>) caps each frame’s steps at <code>stopAt</code>.</li><li><span class="k ev">Evidence</span> Only <code>factory-tour.pure.ts</code> and <code>use-tour.ts:98</code> call <code>run.aim</code>; the page reads tour progress from the pure <code>Tour</code> value, not from the run.</li><li><span class="k ev">Evidence</span> The review’s smell (tour state on <code>FactoryRun</code>) was found before PR #551 took <code>got</code> and the cursor off it.</li><li><span class="k pr">Agent proposal</span> Moving the aim out (B or C) would make the frame loop carry tour state, which spreads it rather than concentrating it.</li></ul>
+          <p><code>FactoryRun</code> keeps <code>aim</code>, <code>stopAt</code>, <code>arrived</code>, <code>sampled</code> and <code>sampledMean</code>. Option B would make the frame loop drive a Tour module; option C would keep the aim in a React ref in <code>use-factory.ts</code> and pass it to <code>advance</code>.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 5">
+        <div class="opts" role="group" aria-label="Options for decision 5">
+        <article class="opt" data-option="keep" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="keep" data-letter="A" aria-pressed="false" aria-label="Pick option A: Information hiding"><span class="pk">Pick A</span></button>
+            <h3>Information hiding <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">Loop stays tour-blind</li>
+            <li class="cost">Run keeps tour fields</li>
+          </ul>
+          <textarea id="c-tour-state-keep" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="wrap" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="wrap" data-letter="B" aria-pressed="false" aria-label="Pick option B: Decorator: Tour wraps run"><span class="pk">Pick B</span></button>
+            <h3>Decorator: Tour wraps run</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Tour drives the run</li>
+            <li class="gain">Run loses five members</li>
+            <li class="cost">Loop must know tours</li>
+          </ul>
+          <textarea id="c-tour-state-wrap" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        <article class="opt" data-option="arg" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="arg" data-letter="C" aria-pressed="false" aria-label="Pick option C: Caller owns the aim"><span class="pk">Pick C</span></button>
+            <h3>Caller owns the aim</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Loop passes the aim</li>
+            <li class="gain">Run holds no tour state</li>
+            <li class="cost">Loop gains tour state</li>
+          </ul>
+          <textarea id="c-tour-state-arg" rows="2" aria-label="Comment on option C" placeholder="Comment on C"></textarea>
+        </article>
+        </div>
+        <textarea id="c-tour-state" class="item-comment" rows="2" aria-label="Comment on decision 5" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-settings-split" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-settings-split" class="item" data-item="settings-split" data-fidelity="diagram" data-depth="both" aria-labelledby="h-settings-split">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Cohesion</p>
+          <h2 id="h-settings-split"><span class="num">6</span> Should start settings leave the dials file?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> builders change with presets, dials with the model.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: One dials file doing two jobs splits into a dials file and a start settings file." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="40" y="10" width="220" height="150" rx="6"/><text class="t" x="150" y="30" text-anchor="middle">Dials file, 244 lines</text><rect class="bx n" x="55" y="42" width="190" height="44" rx="6"/><text class="t s" x="150.0" y="68.2" text-anchor="middle">Tunables, dial lookup</text><rect class="bx r" x="55" y="98" width="190" height="48" rx="6"/><text class="t" x="150.0" y="118.7" text-anchor="middle">Start settings</text><text class="m" x="150.0" y="133.7" text-anchor="middle">builders</text><text class="m r" x="150" y="200" text-anchor="middle">6 lines to cap</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: One dials file doing two jobs splits into a dials file and a start settings file." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="40" y="10" width="220" height="68" rx="6"/><text class="t s" x="150.0" y="48.2" text-anchor="middle">Dials, ~170 lines</text><rect class="bx g" x="40" y="92" width="220" height="68" rx="6"/><text class="t s" x="150.0" y="130.2" text-anchor="middle">Start settings, ~80 lines</text><text class="m g" x="150" y="200" text-anchor="middle">room to grow</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: small</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="settings-split-detail"><span class="tt">Learn the principle</span></button>
+        <div id="settings-split-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>Single responsibility:</strong> a module should have one reason to change. Behind it sits <em>cohesion</em>, how strongly a module’s parts belong together. High cohesion means one purpose, so a change touches one place and a reader finds it there.</p>
+          <h4>Where it comes from</h4><p>Robert C. Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em> (2002); the cohesion idea comes from Stevens, Myers and Constantine, “Structured Design” (1974).</p>
+          <h4>Why it helps here</h4><p>The file mixes model tunables and dial lookup, which change when the model does, with Settings builders, which change when a preset or start changes. It also sits six lines under the 250-line lint cap, so the next edit forces a split anyway.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>factory-dials.pure.ts</code> is 244 lines (cap 250) and holds tunables, dial lookup (<code>dials</code>, <code>catches</code>, <code>pressureOf</code>) and the builders (<code>:167–244</code>).</li><li><span class="k pr">Agent proposal</span> The builders change when a preset or start changes; the dials change when the model does. Two reasons, two modules.</li></ul>
+          <p><code>idealSettings</code>, <code>realisticSettings</code>, <code>presetSettings</code>, <code>startSettings</code> and <code>custOf</code> move to <code>start-settings.pure.ts</code>. The new file joins the MODEL and INTERNAL lists in <code>factory-model-seam.test.ts</code>; its sibling test takes the builder cases from <code>factory-dials.pure.test.ts</code>.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 6">
+        <div class="opts" role="group" aria-label="Options for decision 6">
+        <article class="opt" data-option="split" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="split" data-letter="A" aria-pressed="false" aria-label="Pick option A: Single responsibility"><span class="pk">Pick A</span></button>
+            <h3>Single responsibility <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Move builders to a new file</li>
+            <li class="gain">Dials file shrinks a third</li>
+            <li class="cost">Imports change</li>
+          </ul>
+          <textarea id="c-settings-split-split" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="B" aria-pressed="false" aria-label="Pick option B: Leave it"><span class="pk">Pick B</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Six lines from the cap</li>
+          </ul>
+          <textarea id="c-settings-split-leave" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        </div>
+        <textarea id="c-settings-split" class="item-comment" rows="2" aria-label="Comment on decision 6" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-flow-cells" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-flow-cells" class="item" data-item="flow-cells" data-fidelity="diagram" data-depth="both" aria-labelledby="h-flow-cells">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Cohesion</p>
+          <h2 id="h-flow-cells"><span class="num">7</span> Should flow-cell indexing get its own file?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> indexing is its own idea.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: The traffic file holds flow equations and cell indexing" xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="40" y="10" width="220" height="150" rx="6"/><text class="t" x="150" y="30" text-anchor="middle">Traffic file, 249 lines</text><rect class="bx n" x="55" y="42" width="190" height="44" rx="6"/><text class="t s" x="150.0" y="68.2" text-anchor="middle">Flow equations</text><rect class="bx r" x="55" y="98" width="190" height="48" rx="6"/><text class="t s" x="150.0" y="126.2" text-anchor="middle">Cell indexing</text><text class="m r" x="150" y="200" text-anchor="middle">at the cap</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, cell indexing has its own file." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="40" y="10" width="220" height="68" rx="6"/><text class="t s" x="150.0" y="48.2" text-anchor="middle">Traffic, equations only</text><rect class="bx g" x="40" y="92" width="220" height="68" rx="6"/><text class="t s" x="150.0" y="130.2" text-anchor="middle">Flow-cells file</text><line class="ln g" x1="150" y1="92" x2="150" y2="78" marker-end="url(#mk-g)"/><text class="m g" x="150" y="200" text-anchor="middle">room to grow</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: small</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="flow-cells-detail"><span class="tt">Learn the principle</span></button>
+        <div id="flow-cells-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>High cohesion:</strong> things that belong together live together, and things that do not live apart. The cell-indexing code has its own vocabulary (cells, the defect-kind bit) and can be tested alone. The flow equations use it but are not about it.</p>
+          <h4>Where it comes from</h4><p>Stevens, Myers and Constantine, “Structured Design” (1974), who named cohesion and coupling; Robert C. Martin, <em>Agile Software Development</em> (2002), for the “reason to change” test.</p>
+          <h4>Why it helps here</h4><p>The traffic file is 249 of 250 lines. The two lines the Ctx trim frees would be gone with the next change, so the split happens either way; this makes it along a real seam.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>factory-traffic.pure.ts</code> is 249 of 250 lines.</li><li><span class="k pr">Agent proposal</span> The indexing has its own vocabulary (cells, the defect-kind bit) and can be tested alone; the two lines freed by the Ctx trim would be gone with the next change.</li></ul>
+          <p><code>Cell</code>, <code>fi</code>, <code>cells</code> and <code>KIND_CELLS</code> move to <code>flow-cells.pure.ts</code>; the flow equations stay. It joins the model seam test’s lists, and a sibling test covers the indexing.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 7">
+        <div class="opts" role="group" aria-label="Options for decision 7">
+        <article class="opt" data-option="split" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="split" data-letter="A" aria-pressed="false" aria-label="Pick option A: High cohesion"><span class="pk">Pick A</span></button>
+            <h3>High cohesion <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Move cell indexing out</li>
+            <li class="gain">Traffic well under cap</li>
+            <li class="cost">One new file</li>
+          </ul>
+          <textarea id="c-flow-cells-split" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="B" aria-pressed="false" aria-label="Pick option B: Leave it"><span class="pk">Pick B</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Traffic stays at the cap</li>
+          </ul>
+          <textarea id="c-flow-cells-leave" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        </div>
+        <textarea id="c-flow-cells" class="item-comment" rows="2" aria-label="Comment on decision 7" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-start-routine" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-start-routine" class="item" data-item="start-routine" data-fidelity="diagram" data-depth="both" aria-labelledby="h-start-routine">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Keep it simple</p>
+          <h2 id="h-start-routine"><span class="num">8</span> Share the start routine, or test it?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> five lines are too small for a module.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: Two start routines with nothing checking they agree" xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="10" y="50" width="125" height="50" rx="6"/><text class="t" x="72.5" y="71.7" text-anchor="middle">Judge start</text><text class="m" x="72.5" y="86.7" text-anchor="middle">create, warm, pile</text><rect class="bx n" x="165" y="50" width="125" height="50" rx="6"/><text class="t" x="227.5" y="71.7" text-anchor="middle">Page start</text><text class="m" x="227.5" y="86.7" text-anchor="middle">create, warm, pile</text><line class="ln r d" x1="135" y1="75" x2="165" y2="75"/><text class="m r" x="150" y="69" text-anchor="middle">?</text><text class="m r" x="150" y="140" text-anchor="middle">nothing checks</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, the same two plus a test that pins them together." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="10" y="15" width="125" height="50" rx="6"/><text class="t" x="72.5" y="36.7" text-anchor="middle">Judge start</text><text class="m" x="72.5" y="51.7" text-anchor="middle">create, warm, pile</text><rect class="bx n" x="165" y="15" width="125" height="50" rx="6"/><text class="t" x="227.5" y="36.7" text-anchor="middle">Page start</text><text class="m" x="227.5" y="51.7" text-anchor="middle">create, warm, pile</text><rect class="bx g" x="60" y="100" width="180" height="40" rx="6"/><text class="t s" x="150.0" y="124.2" text-anchor="middle">Test: both starts agree</text><line class="ln g" x1="75" y1="65" x2="110" y2="100" marker-end="url(#mk-g)"/><line class="ln g" x1="225" y1="65" x2="190" y2="100" marker-end="url(#mk-g)"/><rect class="bx f" x="60" y="158" width="180" height="30" rx="6"/><text class="t s" x="150.0" y="177.2" text-anchor="middle">B: shared module</text><text class="m g" x="150" y="206" text-anchor="middle">drift caught</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: small</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="start-routine-detail"><span class="tt">Learn the principle</span></button>
+        <div id="start-routine-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>YAGNI and the wrong abstraction.</strong> Removing duplication pays only when the shared piece is deeper than what it replaces. A five-line module costs every reader a hop and gives them nothing back. A test that pins the two copies together buys the safety without the extra layer.</p>
+          <h4>Where it comes from</h4><p>Kent Beck, <em>Extreme Programming Explained</em> (1999) for YAGNI, “you aren’t gonna need it”; Sandi Metz, “The Wrong Abstraction” (2016): “duplication is far cheaper than the wrong abstraction”; John Ousterhout, <em>A Philosophy of Software Design</em> (2018) on shallow modules.</p>
+          <h4>Why it helps here</h4><p>Deletion test: removing a <code>startOf</code> would put back five lines in two callers, so it earns nothing. The risk that matters is drift between the page’s chunked warm-up and the judge’s one-shot warm-up, and an equivalence test catches exactly that.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>scenarioStart</code> (<code>factory-scenario.pure.ts:42</code>) is five lines: create, return if clear, warm <code>WARM_WEEKS</code>, pile the start backlog.</li><li><span class="k ev">Evidence</span> <code>FactoryRun</code> (<code>factory-run.pure.ts:72–84</code>) does the same in chunks, because the page warms up over several frames.</li><li><span class="k ev">Evidence</span> <code>backTour</code> (<code>factory-tour.pure.ts:113</code>) passes <code>s: startSettings(B, p)</code>, which <code>FactoryRun</code> already defaults to.</li><li><span class="k pr">Agent proposal</span> A shared module would be shallow; a test buys the same safety.</li></ul>
+          <p>One equivalence test, and <code>backTour</code> drops its redundant <code>startSettings</code> argument. The test compares model state (weeks and a reading hash) after both starts, for a loaded and a clear preset, on two seeds.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 8">
+        <div class="opts" role="group" aria-label="Options for decision 8">
+        <article class="opt" data-option="test" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="test" data-letter="A" aria-pressed="false" aria-label="Pick option A: Test, no new module"><span class="pk">Pick A</span></button>
+            <h3>Test, no new module <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">One test pins both starts</li>
+            <li class="gain">Drift gets caught</li>
+            <li class="cost">Five lines stay twice</li>
+          </ul>
+          <textarea id="c-start-routine-test" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="start-of" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="start-of" data-letter="B" aria-pressed="false" aria-label="Pick option B: DRY: shared routine"><span class="pk">Pick B</span></button>
+            <h3>DRY: shared routine</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Both call one routine</li>
+            <li class="gain">Written once</li>
+            <li class="cost">Shallow extra layer</li>
+          </ul>
+          <textarea id="c-start-routine-start-of" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="C" aria-pressed="false" aria-label="Pick option C: Leave it"><span class="pk">Pick C</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Drift goes unnoticed</li>
+          </ul>
+          <textarea id="c-start-routine-leave" rows="2" aria-label="Comment on option C" placeholder="Comment on C"></textarea>
+        </article>
+        </div>
+        <textarea id="c-start-routine" class="item-comment" rows="2" aria-label="Comment on decision 8" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-state-entry" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-state-entry" class="item" data-item="state-entry" data-fidelity="diagram" data-depth="both" aria-labelledby="h-state-entry">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Keep it simple</p>
+          <h2 id="h-state-entry"><span class="num">9</span> A small helper, or a full entry module?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> the order is consistent; a module repeats it.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: Four handlers repeat the same steps" xmlns="http://www.w3.org/2000/svg"><rect class="bx r" x="8" y="15" width="134" height="44" rx="6"/><text class="t" x="75.0" y="33.7" text-anchor="middle">Preset</text><text class="m" x="75.0" y="48.7" text-anchor="middle">dismiss, show, apply</text><rect class="bx r" x="158" y="15" width="134" height="44" rx="6"/><text class="t" x="225.0" y="33.7" text-anchor="middle">Tour</text><text class="m" x="225.0" y="48.7" text-anchor="middle">dismiss, show, apply</text><rect class="bx r" x="8" y="71" width="134" height="44" rx="6"/><text class="t" x="75.0" y="89.7" text-anchor="middle">Reset</text><text class="m" x="75.0" y="104.7" text-anchor="middle">dismiss, show, apply</text><rect class="bx r" x="158" y="71" width="134" height="44" rx="6"/><text class="t" x="225.0" y="89.7" text-anchor="middle">Use case</text><text class="m" x="225.0" y="104.7" text-anchor="middle">dismiss, show, apply</text><text class="m r" x="150" y="150" text-anchor="middle">4 copies</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, each calls one small enter helper." xmlns="http://www.w3.org/2000/svg"><rect class="bx g" x="85" y="15" width="130" height="36" rx="6"/><text class="t s" x="150.0" y="37.2" text-anchor="middle">enter()</text><rect class="bx n" x="8" y="90" width="66" height="34" rx="6"/><text class="t s" x="41.0" y="111.2" text-anchor="middle">Preset</text><line class="ln g" x1="41" y1="90" x2="105" y2="51" marker-end="url(#mk-g)"/><rect class="bx n" x="80" y="90" width="66" height="34" rx="6"/><text class="t s" x="113.0" y="111.2" text-anchor="middle">Tour</text><line class="ln g" x1="113" y1="90" x2="135" y2="51" marker-end="url(#mk-g)"/><rect class="bx n" x="152" y="90" width="66" height="34" rx="6"/><text class="t s" x="185.0" y="111.2" text-anchor="middle">Reset</text><line class="ln g" x1="185" y1="90" x2="165" y2="51" marker-end="url(#mk-g)"/><rect class="bx n" x="224" y="90" width="66" height="34" rx="6"/><text class="t s" x="257.0" y="111.2" text-anchor="middle">Use case</text><line class="ln g" x1="257" y1="90" x2="195" y2="51" marker-end="url(#mk-g)"/><rect class="bx f" x="60" y="148" width="180" height="30" rx="6"/><text class="t s" x="150.0" y="167.2" text-anchor="middle">B: new module and hook</text><text class="m g" x="150" y="200" text-anchor="middle">one call</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: small</span><span class="chip un">Unknown: file-load order</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="state-entry-detail"><span class="tt">Learn the principle</span></button>
+        <div id="state-entry-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>Extract Function, and YAGNI.</strong> When four handlers repeat the same two lines, name them once. A bigger module is worth it only when it removes complexity, not when it re-describes code that already runs in one order.</p>
+          <h4>Where it comes from</h4><p>Martin Fowler, <em>Refactoring</em> (1999), for Extract Function (first called Extract Method); Kent Beck, <em>Extreme Programming Explained</em> (1999), for YAGNI.</p>
+          <h4>Why it helps here</h4><p>Option B’s gain, one order for every entry, already holds today. Its cost is a new pure module, a hook and a split of <code>Parts</code>. FE-001 transient state and FE-012 §4.1 (the parent owns state) hold either way.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>onPreset</code>, <code>onTour</code>, <code>onReset</code> and <code>onUseCase</code> (<code>software-ecology.client.tsx:168–186</code>, <code>reset-state.ts:37</code>) each run: dismiss, <code>show(viewOf(B, id))</code>, <code>apply(B, id)</code>, then their own act.</li><li><span class="k ev">Evidence</span> Their own acts differ: <code>setPreset</code>, <code>tour.start</code>, <code>controls.reset(defaults)</code>, <code>setUseCase</code>.</li><li><span class="k un">Unknown</span> Whether file load (<code>loadInto</code>, <code>use-exchange-wiring.ts:58</code>) runs the same order was not checked line by line.</li><li><span class="k pr">Agent proposal</span> A pure <code>enterState</code> would be a second description of what the handlers already do.</li></ul>
+          <p>Option A names the shared pair <code>enter(bundle, id)</code> inside <code>useHandlers</code>; each handler loses two repeated lines, and <code>Parts</code> and the hooks stay. Option B adds a pure <code>enterState(B, id)</code> returning view, compare, display and settings, plus a <code>useEnterState</code> hook.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 9">
+        <div class="opts" role="group" aria-label="Options for decision 9">
+        <article class="opt" data-option="helper" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="helper" data-letter="A" aria-pressed="false" aria-label="Pick option A: Extract a small function"><span class="pk">Pick A</span></button>
+            <h3>Extract a small function <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Handlers call one enter()</li>
+            <li class="gain">Repeated lines vanish</li>
+            <li class="cost">Little else improves</li>
+          </ul>
+          <textarea id="c-state-entry-helper" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="enter-state" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="enter-state" data-letter="B" aria-pressed="false" aria-label="Pick option B: Intent-driven module"><span class="pk">Pick B</span></button>
+            <h3>Intent-driven module</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Callers pass an intent</li>
+            <li class="gain">One described path</li>
+            <li class="cost">New module and hook</li>
+          </ul>
+          <textarea id="c-state-entry-enter-state" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        <article class="opt" data-option="leave" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="leave" data-letter="C" aria-pressed="false" aria-label="Pick option C: Leave it"><span class="pk">Pick C</span></button>
+            <h3>Leave it</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">No change</li>
+            <li class="gain">No work</li>
+            <li class="cost">Repeats stay</li>
+          </ul>
+          <textarea id="c-state-entry-leave" rows="2" aria-label="Comment on option C" placeholder="Comment on C"></textarea>
+        </article>
+        </div>
+        <textarea id="c-state-entry" class="item-comment" rows="2" aria-label="Comment on decision 9" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#item-ctx-trim" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+    <section id="item-ctx-trim" class="item" data-item="ctx-trim" data-fidelity="diagram" data-depth="both" aria-labelledby="h-ctx-trim">
+      <div class="stage">
+        <div class="hero">
+          <p class="kicker">Keep it simple</p>
+          <h2 id="h-ctx-trim"><span class="num">10</span> Delete two unused fields, or restructure?</h2>
+          <p class="verdict"><strong>Recommended A:</strong> B needs a benchmark for little gain.</p>
+          <figure class="visual" data-visual>
+            <div class="panel"><span class="tag">Before</span><svg viewBox="0 0 300 215" role="img" aria-label="Before: The traffic context carries two unused fields" xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="40" y="10" width="220" height="160" rx="6"/><text class="t" x="150" y="30" text-anchor="middle">Traffic context</text><rect class="bx r" x="55" y="40" width="190" height="28" rx="6"/><text class="t s" x="150.0" y="58.2" text-anchor="middle">rework: unused</text><rect class="bx r" x="55" y="76" width="190" height="28" rx="6"/><text class="t s" x="150.0" y="94.2" text-anchor="middle">inspect: unused</text><rect class="bx n" x="55" y="112" width="190" height="24" rx="6"/><text class="t s" x="150.0" y="128.2" text-anchor="middle">precomputed constants</text><rect class="bx n" x="55" y="142" width="190" height="20" rx="6"/><text class="t s" x="150.0" y="156.2" text-anchor="middle">other fields</text><text class="m r" x="150" y="200" text-anchor="middle">two dead fields</text></svg></div>
+            <div class="panel after"><span class="tag">After, A</span><svg viewBox="0 0 300 215" role="img" aria-label="After option A: after, they are deleted and the precomputed constants stay." xmlns="http://www.w3.org/2000/svg"><rect class="bx n" x="40" y="10" width="220" height="118" rx="6"/><text class="t" x="150" y="30" text-anchor="middle">Traffic context</text><rect class="bx g" x="55" y="42" width="190" height="32" rx="6"/><text class="t s" x="150.0" y="62.2" text-anchor="middle">precomputed constants</text><rect class="bx n" x="55" y="84" width="190" height="32" rx="6"/><text class="t s" x="150.0" y="104.2" text-anchor="middle">other fields</text><rect class="bx f" x="40" y="142" width="220" height="30" rx="6"/><text class="t s" x="150.0" y="161.2" text-anchor="middle">B: drop constants too</text><text class="m" x="150" y="200" text-anchor="middle">B: speed cost unmeasured</text></svg></div>
+          </figure>
+        </div>
+        <p class="chips"><span class="chip ev" title="Read from the code and the design-ADR">Evidence</span><span class="chip">Two-way</span><span class="chip">Effort: tiny</span><span class="chip un">Unknown: speed cost of B</span></p>
+        <button type="button" class="toggle" data-depth-toggle aria-expanded="false" aria-controls="ctx-trim-detail"><span class="tt">Learn the principle</span></button>
+        <div id="ctx-trim-detail" class="detail" hidden>
+          <h4>What the principle means</h4><p><strong>Remove dead code.</strong> Code nobody reads still costs everyone who reads past it. Deleting it is the cheapest simplification there is, because behaviour cannot change. Restructuring live code is a different bet: it needs proof that it pays.</p>
+          <h4>Where it comes from</h4><p>Martin Fowler, <em>Refactoring</em> (1999), counts dead code among the smells; Kent Beck, <em>Extreme Programming Explained</em> (1999), gives the YAGNI rule behind it.</p>
+          <h4>Why it helps here</h4><p>The solve runs up to 800 passes, and the precomputed constants avoid a lookup inside that loop. Dropping them (option B) would need a before-and-after benchmark, which is not worth it for one fewer field group.</p>
+          <h4>The code</h4>
+          <ul class="evidence"><li><span class="k ev">Evidence</span> <code>Ctx</code> (<code>factory-traffic.pure.ts:47–67</code>): no non-test code reads <code>ctx.rework</code> or <code>consts.inspect</code> (grep, this session).</li><li><span class="k ev">Evidence</span> The solve runs up to 800 passes; the precomputed <code>consts</code> avoid a lookup in that loop.</li><li><span class="k un">Unknown</span> How much speed reading <code>constOf</code> in the loop would cost: not measured.</li></ul>
+          <p>Delete <code>rework</code> and <code>consts.inspect</code> and their setup lines; keep <code>consts: { redo, keepExtra, maxBounces }</code>. Speed and output stay the same.</p>
+        </div>
+      </div>
+      <aside class="rail" aria-label="Your decision 10">
+        <div class="opts" role="group" aria-label="Options for decision 10">
+        <article class="opt" data-option="dead" data-recommended="true">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="dead" data-letter="A" aria-pressed="false" aria-label="Pick option A: Delete dead code"><span class="pk">Pick A</span></button>
+            <h3>Delete dead code <span class="rec">Recommended</span></h3>
+          </div>
+          <ul class="lines">
+            <li class="does">Remove two unused fields</li>
+            <li class="gain">Free and safe</li>
+            <li class="cost">Nothing else improves</li>
+          </ul>
+          <textarea id="c-ctx-trim-dead" rows="2" aria-label="Comment on option A" placeholder="Comment on A"></textarea>
+        </article>
+        <article class="opt" data-option="all" data-recommended="false">
+          <div class="opt-head">
+            <button type="button" class="pick" data-pick="all" data-letter="B" aria-pressed="false" aria-label="Pick option B: Also drop precomputed constants"><span class="pk">Pick B</span></button>
+            <h3>Also drop precomputed constants</h3>
+          </div>
+          <ul class="lines">
+            <li class="does">One way to read constants</li>
+            <li class="gain">Simpler context</li>
+            <li class="cost">Slowdown unmeasured</li>
+          </ul>
+          <textarea id="c-ctx-trim-all" rows="2" aria-label="Comment on option B" placeholder="Comment on B"></textarea>
+        </article>
+        </div>
+        <textarea id="c-ctx-trim" class="item-comment" rows="2" aria-label="Comment on decision 10" placeholder="Comment on this decision"></textarea>
+        <div class="rail-foot">
+          <button type="button" class="ghost" data-reset><span aria-hidden="true">↺</span> Reset decision</button>
+          <a class="ghost" href="#approve" aria-label="Next decision">Next ↓</a>
+        </div>
+      </aside>
+    </section>
+      <section id="approve" class="approve" aria-labelledby="approve-title">
+        <div data-reflection>
+          <h2 id="approve-title">Before you approve</h2>
+          <ul><li>Which would you still want if no new use case ever came?</li><li>Where would a future agent look first for beat sampling?</li><li>Which rejected options should be recorded for later reviews?</li><li>What would show a refactor changed the simulation?</li></ul>
+        </div>
+        <div data-next-action class="next">
+          <label for="next-action">Next action</label>
+          <select id="next-action">
+            <option value="build" selected>Build the approved items</option>
+            <option value="revise">Revise the page</option>
+            <option value="adr">Record rejections in the design-ADR, then build</option>
+          </select>
+          <label for="next-text">Instructions</label>
+          <textarea id="next-text" rows="3">(recommended by agent) Build each approved item as one commit with /tdd, by a fresh agent per item, in a worktree off feat/ecology-eval in this order: Ctx trim, flow cells, Settings builders, start test, beat plan, state entry, use-case texts, sim words, stills. Then /code-review and a PR into feat/ecology-eval.</textarea>
+        </div>
+        <div class="feedback">
+          <p><strong>Save accepts the selected Next action</strong>, as does the copied prompt. Save downloads <code>ecology-worth-exploring-b-r2-feedback.md</code>; then tell the agent “saved feedback”. Kept at <code id="destination">/Users/han/Developer/content-library/.scratch/software-ecology/architecture/ecology-worth-exploring-b-r2-feedback.md</code>.</p>
+          <div class="btns">
+            <button type="button" class="primary" data-copy-prompt><span aria-hidden="true">⧉</span> Copy prompt</button>
+            <button type="button" class="primary" data-save><span aria-hidden="true">⤓</span> Save</button>
+            <button type="button" class="ghost" data-reset-all><span aria-hidden="true">↺</span> Reset all</button>
+          </div>
+          <p id="status" role="status"></p>
+          <details id="composer-box">
+            <summary>Show the prompt text</summary>
+            <pre id="handoff" class="handoff" tabindex="0" aria-label="The prompt Copy prompt and Save send"></pre>
+          </details>
+          <p id="earlier-note">Earlier feedback: revision 1 had none.</p>
+          <div id="earlier" hidden>
+            <h3 id="earlier-title">Drafts from earlier revisions (read-only)</h3>
+            <pre class="handoff" tabindex="0" aria-labelledby="earlier-title"></pre>
+          </div>
+          <details class="rests"><summary>What this page rests on</summary><ul><li>src/explorables/software-ecology/: factory-run.pure.ts, factory-tour.pure.ts, factory-scenario.pure.ts, factory-traffic.pure.ts, factory-dials.pure.ts, software-ecology.client.tsx, reset-state.ts, use-factory.ts, use-tour.ts, use-case-data.ts, ecology-sim.node.ts</li><li>src/episodes/explorable-pages/software-ecology/slides/why-how-what/factory-still-state.ts</li><li>The two architecture reviews: architecture-review-engine.html and architecture-review-explorable.html (session scratchpad)</li><li>docs/adr/0024-software-ecology-flow-model-and-use-case-files.md</li><li>Revision 1 of this page: worth-exploring.html</li></ul></details>
+        </div>
+      </section>
+    </main>
+    <script>
+(() => {
+  const root = document.documentElement;
+  const pageId = root.dataset.pageId;
+  const revision = Number(root.dataset.revision);
+  const filename = `${pageId}-r${revision}-feedback.md`;
+  const storageKey = `decision-page:${pageId}`;
+  const RESET_QUESTION = 'Reset all responses and comments, and restore the recommended Next action?';
+  const $ = (selector) => document.querySelector(selector);
+  const status = $('#status');
+  const composer = $('#handoff');
+  const action = $('#next-action');
+  const actionText = $('#next-text');
+  const recommended = { action: action.value, text: actionText.value };
+  const say = (message) => (status.textContent = message);
+  const items = () => [...document.querySelectorAll('[data-item]')];
+  const comments = () => [...document.querySelectorAll('[data-item] textarea, #next-text')];
+  const pickOf = (item) => item.querySelector('.pick[aria-pressed="true"]')?.dataset.pick ?? null;
+
+  // Depth toggles: one per item, closed on load.
+  for (const toggle of document.querySelectorAll('[data-depth-toggle]')) {
+    const label = toggle.querySelector('.tt');
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(open));
+      label.textContent = open ? 'Hide' : 'Learn the principle';
+      document.getElementById(toggle.getAttribute('aria-controls')).hidden = !open;
+    });
+  }
+
+  // Picks: one large target per Option; pressing the picked one again clears it.
+  function paint(item) {
+    const picked = pickOf(item);
+    const opts = item.querySelector('.opts');
+    opts.classList.toggle('has-pick', picked !== null);
+    for (const option of item.querySelectorAll('[data-option]')) {
+      const button = option.querySelector('.pick');
+      const on = option.dataset.option === picked;
+      option.classList.toggle('picked', on);
+      button.setAttribute('aria-pressed', String(on));
+      const pk = button.querySelector('.pk');
+      pk.textContent = `${on ? 'Picked' : 'Pick'} ${button.dataset.letter}`;
+    }
+    const link = document.querySelector(`[data-nav="${item.dataset.item}"]`);
+    if (link) {
+      const letter = picked ? item.querySelector(`.pick[data-pick="${picked}"]`).dataset.letter : null;
+      link.classList.toggle('done', picked !== null);
+      link.setAttribute('aria-label', link.getAttribute('aria-label').replace(/ \(picked .\)$/, '') + (letter ? ` (picked ${letter})` : ''));
+    }
+  }
+  for (const item of items()) {
+    for (const button of item.querySelectorAll('.pick')) {
+      button.addEventListener('click', () => {
+        const was = button.getAttribute('aria-pressed') === 'true';
+        for (const other of item.querySelectorAll('.pick')) other.setAttribute('aria-pressed', 'false');
+        button.setAttribute('aria-pressed', String(!was));
+        paint(item);
+        store();
+        compose();
+        say(was ? `Cleared the pick of decision "${item.dataset.item}".` : `Picked ${button.dataset.letter} for decision "${item.dataset.item}".`);
+      });
+    }
+  }
+
+  // Navigation marks the decision in view.
+  const links = [...document.querySelectorAll('[data-nav]')];
+  if ('IntersectionObserver' in window) {
+    const seen = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        for (const link of links) link.removeAttribute('aria-current');
+        const link = document.querySelector(`[data-nav="${entry.target.dataset.item}"]`);
+        if (link) link.setAttribute('aria-current', 'true');
+      }
+    }, { rootMargin: '-35% 0px -55% 0px' });
+    for (const item of items()) seen.observe(item);
+  }
+
+  function responses() {
+    return items().map((item) => ({
+      item: item.dataset.item,
+      response: pickOf(item) ?? 'skipped',
+      comment: item.querySelector('.item-comment').value,
+      options: [...item.querySelectorAll('[data-option]')].map((option) => ({
+        option: option.dataset.option,
+        comment: option.querySelector('textarea').value,
+      })),
+    }));
+  }
+
+  function handoff() {
+    const destination = $('#destination').textContent;
+    const payload = {
+      page: { id: pageId, revision, mode: root.dataset.mode, path: '/Users/han/Developer/content-library/.scratch/software-ecology/architecture/worth-exploring-b.html' },
+      destination,
+      nextAction: {
+        action: action.value,
+        instructions: actionText.value,
+        approvesRevision: action.value === 'build' ? revision : null,
+      },
+      items: responses(),
+    };
+    return [
+      `# Feedback on decision page ${pageId}, revision ${revision}`,
+      '',
+      `Save this text verbatim to ${destination} unless that file already holds it. Stop if the page's ` +
+        `data-revision is no longer ${revision}. The reviewer accepted the Next action below by sending this; ` +
+        'text marked "(recommended by agent)" is the agent\'s, every comment is the reviewer\'s.',
+      '',
+      '```json',
+      JSON.stringify(payload, null, 2),
+      '```',
+      '',
+    ].join('\n');
+  }
+
+  const compose = () => (composer.textContent = handoff());
+  const showComposer = () => {
+    $('#composer-box').open = true;
+    getSelection().selectAllChildren(composer);
+  };
+
+  function readDrafts() {
+    try {
+      return JSON.parse(localStorage.getItem(storageKey) ?? '{}') ?? {};
+    } catch {
+      return {};
+    }
+  }
+
+  function store() {
+    const draft = {
+      comments: Object.fromEntries(comments().map((field) => [field.id, field.value])),
+      picks: Object.fromEntries(items().map((item) => [item.dataset.item, pickOf(item)])),
+      action: action.value,
+    };
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ ...readDrafts(), [revision]: draft }));
+    } catch {
+      say('Your draft is not kept: browser storage is unavailable. Copy prompt and Save still work.');
+    }
+  }
+
+  function restore() {
+    const drafts = readDrafts();
+    const earlier = Object.keys(drafts).filter((r) => Number(r) < revision);
+    if (earlier.length > 0) {
+      $('#earlier').hidden = false;
+      $('#earlier pre').textContent = JSON.stringify(Object.fromEntries(earlier.map((r) => [r, drafts[r]])), null, 2);
+    }
+    const draft = drafts[revision];
+    if (!draft) return;
+    for (const field of comments())
+      if (typeof draft.comments?.[field.id] === 'string') field.value = draft.comments[field.id];
+    for (const item of items()) {
+      const id = draft.picks?.[item.dataset.item];
+      const button = id ? item.querySelector(`.pick[data-pick="${CSS.escape(id)}"]`) : null;
+      if (button) button.setAttribute('aria-pressed', 'true');
+      paint(item);
+    }
+    if (draft.action) action.value = draft.action;
+  }
+
+  function clearItem(item) {
+    for (const field of item.querySelectorAll('textarea')) field.value = '';
+    for (const button of item.querySelectorAll('.pick')) button.setAttribute('aria-pressed', 'false');
+    paint(item);
+  }
+
+  document.addEventListener('input', () => {
+    store();
+    compose();
+  });
+  action.addEventListener('change', () => {
+    actionText.value = '';
+    store();
+    compose();
+  });
+
+  $('[data-copy-prompt]').addEventListener('click', async () => {
+    const prompt = compose();
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('The clipboard is unavailable');
+      await navigator.clipboard.writeText(prompt);
+      say('Copied the prompt. Paste it into the agent session.');
+    } catch {
+      say('Copy failed. The prompt is shown and selected: copy it with your keyboard.');
+      showComposer();
+    }
+  });
+
+  $('[data-save]').addEventListener('click', () => {
+    let url = null;
+    try {
+      url = URL.createObjectURL(new Blob([compose()], { type: 'text/markdown;charset=utf-8' }));
+      const link = Object.assign(document.createElement('a'), { href: url, download: filename });
+      document.body.append(link);
+      link.click();
+      link.remove();
+      say(`Download started: ${filename}. Then tell the agent "saved feedback".`);
+    } catch {
+      say('Save failed. The prompt is shown and selected: copy it instead.');
+      showComposer();
+    } finally {
+      if (url) setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
+  });
+
+  $('[data-reset-all]').addEventListener('click', () => {
+    if (!confirm(RESET_QUESTION)) {
+      say('Reset cancelled. Nothing changed.');
+      return;
+    }
+    for (const item of items()) clearItem(item);
+    action.value = recommended.action;
+    actionText.value = recommended.text;
+    store();
+    compose();
+    say('Reset all cleared every response and comment and restored the recommended Next action.');
+  });
+
+  for (const button of document.querySelectorAll('[data-reset]'))
+    button.addEventListener('click', () => {
+      const item = button.closest('[data-item]');
+      clearItem(item);
+      store();
+      compose();
+      say(`Cleared the pick and comments of decision "${item.dataset.item}".`);
+    });
+
+  restore();
+  for (const item of items()) paint(item);
+  compose();
+})();
+
+    </script>
+  </body>
+</html>

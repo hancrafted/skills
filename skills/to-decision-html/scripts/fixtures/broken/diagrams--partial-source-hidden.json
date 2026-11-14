@@ -1,0 +1,18 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A page marked partial shows neither an SVG nor the Mermaid source while Mermaid cannot load.",
+  "replace": [
+    {
+      "find": "data-mode=\"decide\"",
+      "with": "data-mode=\"decide\" data-offline=\"partial\""
+    },
+    {
+      "find": "</head>",
+      "with": "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.min.js\"></script></head>"
+    },
+    {
+      "find": "<svg viewBox=\"0 0 360 60\" role=\"img\" aria-label=\"Client to cache to service\" data-design-width=\"1920\">\n              <rect x=\"2\" y=\"15\" width=\"90\" height=\"30\" />\n              <text x=\"20\" y=\"35\">Client</text>\n              <line x1=\"92\" y1=\"30\" x2=\"135\" y2=\"30\" />\n              <rect x=\"135\" y=\"15\" width=\"90\" height=\"30\" />\n              <text x=\"155\" y=\"35\">Cache</text>\n              <line x1=\"225\" y1=\"30\" x2=\"268\" y2=\"30\" />\n              <rect x=\"268\" y=\"15\" width=\"90\" height=\"30\" />\n              <text x=\"282\" y=\"35\">Service</text>\n            </svg>",
+      "with": ""
+    }
+  ]
+}

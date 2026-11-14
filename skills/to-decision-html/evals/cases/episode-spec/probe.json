@@ -1,0 +1,63 @@
+{
+  "about": "Reader-probe questions for the Episode Spec page. Each key and quote comes from decisions.md; `answer` lists every correct choice.",
+  "questions": [
+    {
+      "id": "slide-1-recommended",
+      "question": "Which Option is recommended for Slide 1, \"Every token is spent attention\"?",
+      "choices": {
+        "a": "1a",
+        "b": "1b",
+        "c": "Neither: the page recommends nothing for that Slide"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "#### Option 1a (recommended)"
+      }
+    },
+    {
+      "id": "slide-3-option-count",
+      "question": "How many Options does Slide 3, \"Start fresh when the task changes\", offer?",
+      "choices": {
+        "a": "Two",
+        "b": "Three",
+        "c": "Four"
+      },
+      "answer": ["b"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "#### Option 3c"
+      }
+    },
+    {
+      "id": "learning-goal",
+      "question": "What is the Episode's learning goal?",
+      "choices": {
+        "a": "The viewer can name every model that supports a long context window",
+        "b": "The viewer can explain why an agent forgets in a long session and decide what to put into its context and what to leave out",
+        "c": "The viewer can build an agent with a larger context window",
+        "d": "The viewer can measure recall at each position of the window"
+      },
+      "answer": ["b"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "The viewer can explain why an agent forgets in a long session and decide what to put into its context and what to leave out."
+      }
+    },
+    {
+      "id": "title-slide-pick",
+      "question": "What does picking an Option on the Title slide item pick?",
+      "choices": {
+        "a": "Only the Title slide's visual",
+        "b": "The Title slide and the section slide of every Section, as one set",
+        "c": "The Episode page route",
+        "d": "The Visual language"
+      },
+      "answer": ["b"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "Picking an Option picks the set."
+      }
+    }
+  ]
+}

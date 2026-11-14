@@ -14,7 +14,8 @@ canonical path, which copy mode destroys.
 
 ## Skills
 
-| Skill                                | What it does                                                                                                                                                                        |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`commit`](skills/commit/SKILL.md)   | Authors a commit message git history can be mined from, and carries the zero-dependency shell gate that enforces it. `--setup-husky` wires that gate into a repository's git hooks. |
-| [`cleanup`](skills/cleanup/SKILL.md) | Cleans up local branches and worktrees after a merged PR, or classifies repository-wide cleanup candidates for approval.                                                            |
+| Skill                                                  | What it does                                                                                                                                                                        |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`commit`](skills/commit/SKILL.md)                     | Authors a commit message git history can be mined from, and carries the zero-dependency shell gate that enforces it. `--setup-husky` wires that gate into a repository's git hooks. |
+| [`cleanup`](skills/cleanup/SKILL.md)                   | Cleans up local branches and worktrees after a merged PR, or classifies repository-wide cleanup candidates for approval.                                                            |
+| [`to-decision-html`](skills/to-decision-html/SKILL.md) | Builds standalone decision pages with feedback controls, an offline browser grader and two approved eval baselines.                                                                 |

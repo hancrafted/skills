@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The expiry item's comment field has a caption that is not tied to it, so it has no accessible name.",
+  "replace": [{ "find": "<label for=\"c-expiry\">Comment on this item</label>", "with": "<p>Comment on this item</p>" }]
+}

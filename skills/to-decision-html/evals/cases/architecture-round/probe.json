@@ -1,0 +1,62 @@
+{
+  "about": "Reader-probe questions for the architecture-round page. Each key and quote comes from decisions.md; `answer` lists every correct choice.",
+  "questions": [
+    {
+      "id": "tour-aim-owner",
+      "question": "Where does the page recommend that a tour's aim (its stop step and Sampler) lives?",
+      "choices": {
+        "a": "It stays on FactoryRun",
+        "b": "In a new Tour module that wraps FactoryRun",
+        "c": "The caller passes it to advance on every frame",
+        "d": "In the headless judge"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "Keep it on `FactoryRun`, against the review’s proposal: the run is the only place that can stop mid-frame, and the tour already has its own module."
+      }
+    },
+    {
+      "id": "start-routine",
+      "question": "What does the page recommend for the start sequence that the judge and FactoryRun both write?",
+      "choices": {
+        "a": "A shared startOf module both call",
+        "b": "An equivalence test that pins the two starts together, with no new module",
+        "c": "Leave it with no change",
+        "d": "Delete the judge's start"
+      },
+      "answer": ["b"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "No new module: pin the two starts together with one equivalence test, and drop the redundant `startSettings` argument in `backTour`."
+      }
+    },
+    {
+      "id": "beat-plan-effect",
+      "question": "What does the reader see change on screen or in the ecology:sim output if the one-beatsOf-plan decision is built?",
+      "choices": {
+        "a": "Nothing; only where beats are computed changes",
+        "b": "The tour plays different steps",
+        "c": "The judge's readings change",
+        "d": "A new setting appears on the page"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "decisions.md",
+        "quote": "Nothing on screen or in `ecology:sim` output. A future change to how a beat is sampled is made once, not twice."
+      }
+    },
+    {
+      "id": "ctx-trim",
+      "question": "How far does the page recommend trimming the traffic context Ctx?",
+      "choices": {
+        "a": "Only its dead fields",
+        "b": "Its dead fields and the precomputed consts",
+        "c": "Remove Ctx entirely",
+        "d": "Leave it unchanged"
+      },
+      "answer": ["a"],
+      "source": { "file": "decisions.md", "quote": "Two fields go; nothing else changes." }
+    }
+  ]
+}

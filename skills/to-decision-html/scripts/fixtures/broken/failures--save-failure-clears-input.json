@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A failed save clears every comment and its draft.",
+  "replace": [
+    {
+      "find": "say('Save failed. Copy the prompt below instead.');",
+      "with": "for (const field of comments()) field.value = ''; store(); say('Save failed. Copy the prompt below instead.');"
+    }
+  ]
+}

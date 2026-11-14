@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "Item store recommends both of its Options.",
+  "replace": [
+    {
+      "find": "data-option=\"redis\" data-recommended=\"false\"",
+      "with": "data-option=\"redis\" data-recommended=\"true\""
+    }
+  ]
+}

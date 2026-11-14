@@ -1,0 +1,5 @@
+{
+  "base": "valid-decide.html",
+  "defect": "The item navigation is not sticky, so it scrolls out of view with the page.",
+  "replace": [{ "find": "nav {\n        position: sticky;", "with": "nav {\n        position: static;" }]
+}

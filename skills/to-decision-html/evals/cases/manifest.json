@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "frozenOn": "2026-11-10",
+  "hashAlgorithm": "sha256",
+  "cases": [
+    {
+      "id": "architecture-round",
+      "kind": "frozen-decisions",
+      "mode": "decide",
+      "source": {
+        "session": "5d29bb73-a311-444f-aeda-75218d59632b",
+        "title": "software-ecology architecture round",
+        "repository": "hancrafted/content-library",
+        "branch": "feat/ecology-eval",
+        "turns": "Han asked the agent to work through the Worth-exploring items of two architecture reviews and present its decisions with to-decision-html (2026-11-13).",
+        "copy": "decisions.md renders the agent's decision data verbatim from the session's generator script (gen-decisions.mjs): every item, Option, recommendation, evidence line, before, after and detail. review-engine.html and review-explorable.html are the two review reports byte for byte.",
+        "omitted": "The code on feat/ecology-eval; the paths and line numbers in decisions.md are its only evidence. Revision 1 of the page and Han's review of it, which shaped calibration.md and checklist.json.",
+        "reference": "reference.html is worth-exploring-b.html, the rebuild Han judged great (2026-11-13), built from the same decisions with the skill as of PR #553. Runs never see it."
+      },
+      "prompt": "architecture-round/prompt.md",
+      "attachments": [
+        "architecture-round/decisions.md",
+        "architecture-round/review-engine.html",
+        "architecture-round/review-explorable.html"
+      ],
+      "calibration": "architecture-round/calibration.md",
+      "checklist": "architecture-round/checklist.json",
+      "probe": "architecture-round/probe.json",
+      "reference": "architecture-round/reference.html",
+      "hashes": {
+        "architecture-round/prompt.md": "b4b949a2e04a0bfbb38b0ba98fe6068087175ce0e64c375a0f8ef5fd5f714750",
+        "architecture-round/decisions.md": "7a29f2d37e6e0b8e4fbb5c8829fea8be67905b185aedbb8648e2521333833fe3",
+        "architecture-round/review-engine.html": "cf9ae2e59192e9acf73eb766aaba45e9bf50eecd32e2e30dfe158f7eb3d9e1a0",
+        "architecture-round/review-explorable.html": "e15b68e5784da4154ad61bf82a930335ebe98202481bedc04b74f1608637a748",
+        "architecture-round/calibration.md": "985423815e226f4d89e784fa52a14e0395c95bc25d9359a9e6a1f8457d8562ff",
+        "architecture-round/checklist.json": "ff1e147355fe84ccf92dfe00a3452796743c0d24b85f607be0a4cb400198f43b",
+        "architecture-round/probe.json": "5c5439257666a5067b10caa6a6542d2fa3cb7eca68ffe31dadf8af7e49b692d7",
+        "architecture-round/reference.html": "356b7ad155b4d921ef7d32cc5d38a1ca02dd8532deccfa49cc2fbbfe30b7d114"
+      }
+    },
+    {
+      "id": "episode-spec",
+      "kind": "frozen-decisions",
+      "mode": "decide",
+      "source": {
+        "session": "d4eeec02-feaf-4a64-bd67-50d6fab988de",
+        "title": "Episode Spec page, from template to approval",
+        "repository": "hancrafted/content-library",
+        "branch": "feat/556-spec-template",
+        "commit": "d3e15b61 (approved), 75007abe (refrozen)",
+        "pr": "https://github.com/hancrafted/content-library/pull/566",
+        "turns": "Han approved after four feedback rounds (2026-11-14), then asked: \"can you also save the current version as an eval baseline?\"",
+        "copy": "decisions.md is the sample Episode's Brief (skills/new-episode/assets/sample-episode/brief.md), then its Title slide and four Slides with purpose, words from the sample Dossier and every Option from skills/new-episode/assets/sample-fragments/fragments.html: caption, build notes and mock HTML verbatim. visual-language.html and episode-page.html are those fragments byte for byte. design.css is the page's compiled <style data-design-css> block byte for byte, so a run can inline the tokens the mocks use. calibration.md holds caller facts only, drawn from skills/new-episode/references/spec-calibration.md: mode, audience, items, fidelity, design size, render presets, tokens, Next actions and feedback fields. It states none of the page's layout rules, so the skill must produce them itself. rounds.md quotes Han's words from the four rounds; checklist.json cites it. prompt.md asks the task as a caller would, without the word template.",
+        "omitted": "The Spec template (skills/new-episode/assets/spec-template.html, provenance only), the assembler and the review server; the four fix-round briefs, except the sentences of Han's that rounds.md quotes.",
+        "reference": "reference.html is skills/new-episode/assets/sample-episode/spec/spec.html, approved by Han 2026-11-14 at d3e15b61, refrozen at 75007abe after the final review fixes, which kept the approved look. Round 5 (drafts per revision, read-only locks, one feedback formatter) left its inline design CSS unchanged. It is self-contained: inline CSS and scripts, no link or fetch of another file, so it is frozen byte for byte. Runs never see it.",
+        "provenanceOnly": ["episode-spec/rounds.md"]
+      },
+      "prompt": "episode-spec/prompt.md",
+      "attachments": [
+        "episode-spec/decisions.md",
+        "episode-spec/visual-language.html",
+        "episode-spec/episode-page.html",
+        "episode-spec/design.css"
+      ],
+      "calibration": "episode-spec/calibration.md",
+      "checklist": "episode-spec/checklist.json",
+      "probe": "episode-spec/probe.json",
+      "reference": "episode-spec/reference.html",
+      "hashes": {
+        "episode-spec/prompt.md": "22ae00c999b16e16d99b3833c54e6ecc8fce71066986b0598c82fb53bb4eb48f",
+        "episode-spec/decisions.md": "d04f0ceb8b23e841619a37fe38515fa26f060d5a44825272ec3a5e16b1ffed42",
+        "episode-spec/visual-language.html": "938b200a46e0e9990e0fea30a74d52ee13770ab91e94afaad8949db667d53a50",
+        "episode-spec/episode-page.html": "d9506ccf49730f3e711f15b04be10525d728409a27d9154c5717844c0f9581d7",
+        "episode-spec/design.css": "e04276223363b1ed8992fe8f3710438c7e1befd5db2e4f5e72319b776edbc645",
+        "episode-spec/rounds.md": "48c215ceea53de2ddc3fe546114e352be7dd659e538a77edef92eef6ffd5fd46",
+        "episode-spec/calibration.md": "ffd4380739a4c765fd20f45393c67b8ed7aed9f8b462cff290dbd6ac88a1a77f",
+        "episode-spec/checklist.json": "7a3a244eb20aa03893a067159b5bae99eb30608f3fed0419d8e74bb4a09a1381",
+        "episode-spec/probe.json": "568b4fe3502fc1575f29b5f24022f310f71c2ea45757b052e5d4bea354c06b50",
+        "episode-spec/reference.html": "bdb418828234fae0a2c67ec038fc79da756149aa6d1511b443a486b22b27e445"
+      }
+    }
+  ]
+}

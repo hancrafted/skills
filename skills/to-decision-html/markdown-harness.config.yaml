@@ -1,0 +1,21 @@
+frontmatter:
+  rules:
+    - ruleId: decision-html-reference
+      folders: [references/]
+      intent: 'Skill references are instructions reached by a pointer, not metadata-bearing product records.'
+      frontmatter: forbidden
+    - ruleId: frozen-eval-prompt
+      fileNames: [prompt.md]
+      intent: 'Frozen task prompts are literal eval inputs, not evolving product records.'
+      frontmatter: forbidden
+body-structure:
+  rules:
+    - ruleId: frozen-eval-prompt-shape
+      fileNames: [prompt.md]
+      intent: 'A frozen input states its task, allowed attachments and limits so both arms receive the same context.'
+      undefinedHeadings: forbid
+      headings:
+        - { purpose: heading, level: 1, intent: 'The case being reviewed.' }
+        - { purpose: heading, level: 2, allowed: [{ title: Task }] }
+        - { purpose: heading, level: 2, allowed: [{ title: Input }] }
+        - { purpose: heading, level: 2, allowed: [{ title: Limits }] }
