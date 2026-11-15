@@ -12,6 +12,17 @@ Project scope — the default — so the skills are committed and work for every
 and in CI. Never `--copy`: the `commit` skill's git hook depends on a single
 canonical path, which copy mode destroys.
 
+## Local development
+
+This repository consumes its own skills through live symlinks in `.agents/skills/`
+and `.claude/skills/`, pointing directly at `skills/`. Local edits are immediately
+available to both agent systems without reinstalling published snapshots.
+
+The local package is also named `skills` and has no executable, so bare `npx skills`
+is shadowed here. A version-qualified command such as
+`npx skills@1.8.1 add hancrafted/skills` works, but installs snapshots rather than
+linking to the working source.
+
 ## Skills
 
 | Skill                                    | What it does                                                                                                                                                                        |
