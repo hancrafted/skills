@@ -107,7 +107,7 @@ export function aggregateAndView(iteration: string, facts: BenchmarkFacts): stri
   const dir = skillCreatorDir();
   const bin = python();
   const extra = {
-    skill_name: 'to-decision-html',
+    skill_name: 'to-review',
     skill_path: facts.skillPath,
     metadata: { executor_model: facts.model, analyzer_model: 'none', runs_per_configuration: facts.runs },
     eval_names: facts.evalNames,
@@ -124,7 +124,7 @@ export function aggregateAndView(iteration: string, facts: BenchmarkFacts): stri
     viewer,
     iteration,
     '--skill-name',
-    'to-decision-html',
+    'to-review',
     '--benchmark',
     benchmark,
     '--static',

@@ -1,10 +1,10 @@
 ---
-name: to-decision-html
-description: Turn decisions into one standalone HTML decision page that a person decides from or understands, and bring their feedback back. Use to let someone pick between Options (decide), to explain decisions already made in a ticket or plan (explain), or to revise a decision page from its feedback.
+name: to-review
+description: Creates standalone HTML for human review and revises it from feedback. Use when a person needs to choose between Options, approve or comment on proposals, or understand decisions already made.
 compatibility: The local grader requires Node.js with TypeScript support, @playwright/test, cheerio and Playwright Chromium. Page authoring works without the grader.
 ---
 
-# To decision HTML
+# To review
 
 A **decision page** is one standalone HTML file. In mode `decide` a person decides open decisions from it with confidence; in mode `explain` a reader understands decisions already made. Every item leads with its decision, and each visual serves that decision. You write the page and stop there: the caller owns what happens next, including implementing what the page proposes.
 
@@ -191,4 +191,4 @@ _Done when_ the page is inlined, the person has it open and has those three line
 
 ## Evaluation
 
-The evaluation process grades the skill; a use of the skill delivers its page ungraded. When this skill changes, run the grader (`node scripts/grade-page.ts <page.html>`), the fixture proof (`npm run decision-html:prove`) and the evals. The grader proves mechanics, not taste: whether a page looks right and explains well stays with human review.
+The evaluation process grades the skill; a use of the skill delivers its page ungraded. When this skill changes, run the grader (`node scripts/grade-page.ts <page.html>`), the fixture proof (`npm run review:prove`) and the evals. The grader proves mechanics, not taste: whether a page looks right and explains well stays with human review.

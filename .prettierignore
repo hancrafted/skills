@@ -6,5 +6,5 @@ dist
 .claude
 .archgate/rules.d.ts
 # Frozen eval inputs and grader fixtures are byte-addressed artifacts.
-skills/to-decision-html/evals/cases/
-skills/to-decision-html/scripts/fixtures/
+skills/to-review/evals/cases/
+skills/to-review/scripts/fixtures/
