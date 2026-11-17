@@ -1,0 +1,1198 @@
+<!doctype html>
+<!--
+  The page skeleton of a decision page: copy this file, then fill its slots. Every slot is written in CAPITALS between
+  braces, such as {ITEM TITLE}; replace each one and delete a part you do not need (a second item, a third Option).
+    1. <head>: the page styles, then the toolbar head block. Keep both. Change colours only through the :root tokens.
+    2. <body>, top to bottom: the toolbar, the banner header, the page nav, then <main> with the context row, one
+       section[data-item] per item and the page-wide review panel; last the scroll circle and the two scripts.
+    3. One item = one section[data-item]. Its rail holds the pick bar and the item comment. Each Option is its own
+       article[data-option] with its own data-visual, a data-before / data-after pair and closed collapsibles.
+  The wrap-safe rules stay as they are: min-width: 0 on every grid child, overflow-wrap: break-word, never anywhere.
+  Replace the slug page-skeleton in data-page-id and in the page script, and keep data-revision and the script revision equal.
+-->
+<html lang="en" data-page-id="page-skeleton" data-revision="1" data-mode="decide">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{PAGE TITLE}</title>
+    <style>
+      :root {
+        --background: #fafaf7;
+        --foreground: #1d1d1b;
+        --card: #fff;
+        --border: #8a8a84;
+        --muted: #ecece6;
+        --muted-foreground: #55554f;
+        --accent: #1a5fb4;
+        --ring: #1a5fb4;
+        --good: #1a7f37;
+        --bad: #b42318;
+        --gutter: 2rem;
+      }
+      :root.dark {
+        --background: #16171a;
+        --foreground: #ececea;
+        --card: #202226;
+        --border: #8b8d93;
+        --muted: #2a2c31;
+        --muted-foreground: #a9abb0;
+        --accent: #7db1ff;
+        --ring: #7db1ff;
+        --good: #5fd380;
+        --bad: #ff8a80;
+      }
+      * {
+        box-sizing: border-box;
+        min-width: 0;
+      }
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--foreground);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+        overflow-wrap: break-word;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.6rem;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 1.2rem;
+      }
+      p {
+        margin: 0;
+      }
+      header.top {
+        padding: 24px var(--gutter) 8px;
+      }
+      .minav {
+        position: sticky;
+        top: var(--toolbar-h, 61px);
+        z-index: 10;
+        display: flex;
+        gap: 24px;
+        padding: 8px var(--gutter);
+        background: var(--background);
+        border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+        font-size: 0.9rem;
+      }
+      .minav a,
+      [data-page-nav] a {
+        color: var(--foreground);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+      }
+      html[data-nav='open'] .layout {
+        grid-template-columns: 14rem minmax(0, 1fr);
+      }
+      @media (max-width: 112.49rem) {
+        html[data-nav='open'] .layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      [data-page-nav] {
+        padding: 16px;
+        font-size: 0.9rem;
+      }
+      [data-page-nav] ul {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      @media (min-width: 1101px) {
+        html[data-nav='open'] [data-page-nav] {
+          position: sticky;
+          top: var(--toolbar-h, 61px);
+          align-self: start;
+          max-height: calc(100vh - var(--toolbar-h, 61px));
+          overflow: auto;
+        }
+      }
+      main {
+        max-width: 2000px;
+        padding: 0 var(--gutter) 48px;
+      }
+      .ctx {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 0 0 24px;
+      }
+      .ctx details {
+        flex: 1 1 18rem;
+        padding: 8px 16px;
+        background: var(--card);
+        border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+        border-radius: 12px;
+      }
+      .item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 18rem;
+        gap: 24px;
+        align-items: start;
+        margin: 0 0 48px;
+      }
+      .item > .main {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .item > .rail {
+        position: sticky;
+        top: calc(var(--toolbar-h, 61px) + 8px);
+        grid-column: 2;
+        grid-row: 1;
+        display: grid;
+        gap: 12px;
+      }
+      .rec {
+        margin: 0 0 16px;
+        font-weight: 600;
+      }
+      .opt {
+        display: grid;
+        gap: 12px;
+        margin: 0 0 24px;
+        padding: 24px;
+        background: var(--card);
+        border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+        border-radius: 12px;
+      }
+      .opt h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+      .prob {
+        font-size: 1.05rem;
+      }
+      .prop {
+        font-weight: 600;
+      }
+      .meta {
+        color: var(--muted-foreground);
+        font-size: 0.875rem;
+      }
+      code {
+        padding: 1px 5px;
+        background: var(--muted);
+        border-radius: 5px;
+        font-size: 0.85em;
+      }
+      .visual {
+        max-width: var(--preview-width, 100%);
+        padding: 16px;
+        background: var(--card);
+        border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+        border-radius: 12px;
+        box-shadow: 0 2px 12px color-mix(in oklch, var(--foreground) 10%, transparent);
+      }
+      .ba {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 12px;
+        align-items: stretch;
+      }
+      @media (max-width: 1300px) {
+        .ba {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .arrow {
+          text-align: center;
+        }
+      }
+      .arrow {
+        align-self: center;
+        color: var(--muted-foreground);
+        font-size: 1.5rem;
+      }
+      .pane {
+        padding: 12px;
+        background: var(--background);
+        border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+        border-radius: 10px;
+      }
+      .pane h5 {
+        margin: 0 0 8px;
+        font-size: 0.85rem;
+      }
+      .pane.before {
+        border-left: 4px solid var(--bad);
+      }
+      .pane.after {
+        border-left: 4px solid var(--good);
+      }
+      .term {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.85rem;
+      }
+      .term li {
+        position: relative;
+        padding-left: 22px;
+      }
+      .term li::before {
+        position: absolute;
+        left: 0;
+        font-weight: 700;
+      }
+      .term li.bad::before {
+        content: '\2717';
+        color: var(--bad);
+      }
+      .term li.note::before {
+        content: '\2022';
+        color: var(--muted-foreground);
+      }
+      .term li.chg {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        background: color-mix(in oklch, var(--accent) 16%, transparent);
+        border-radius: 6px;
+        font-weight: 700;
+      }
+      .term li.chg::before {
+        content: '\2192';
+        color: var(--accent);
+      }
+      details.sub {
+        padding: 8px 0;
+        border-top: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+      }
+      details.sub > summary {
+        color: var(--muted-foreground);
+        font-size: 0.875rem;
+        cursor: pointer;
+      }
+      details.sub p,
+      details.sub ul {
+        margin: 8px 0 0;
+        font-size: 0.9rem;
+      }
+      details.sub ul {
+        padding-left: 20px;
+      }
+      .pick {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        margin: 0 0 8px;
+        padding: 2px;
+        background: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      .pick legend {
+        padding: 0 4px;
+        color: var(--muted-foreground);
+        font-size: 0.8rem;
+      }
+      .seg {
+        position: relative;
+        flex: 1 1 40%;
+      }
+      .seg input {
+        position: absolute;
+        inset: 0;
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .seg span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+      }
+      .seg input:checked + span {
+        background: var(--foreground);
+        color: var(--background);
+        font-weight: 700;
+      }
+      .seg input:focus-visible + span {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+      }
+      .tool,
+      button.act {
+        min-height: 44px;
+        padding: 4px 16px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: inherit;
+        font: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      .tool:hover,
+      button.act:hover {
+        background: color-mix(in oklch, var(--foreground) 6%, transparent);
+      }
+      .tool:active,
+      button.act:active {
+        background: color-mix(in oklch, var(--foreground) 12%, transparent);
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: transparent;
+        color: var(--background);
+      }
+      button:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+      }
+      label {
+        display: grid;
+        gap: 4px;
+        font-size: 0.85rem;
+      }
+      textarea,
+      select {
+        width: 100%;
+        padding: 8px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: inherit;
+        font: inherit;
+      }
+      .review {
+        display: grid;
+        gap: 16px;
+        padding: 24px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      .lenses {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .lenses p {
+        font-size: 0.85rem;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 16px;
+      }
+      @media (max-width: 832px) {
+        .lenses,
+        .two {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      pre {
+        max-height: 14rem;
+        margin: 0;
+        padding: 12px;
+        overflow: auto;
+        background: var(--muted);
+        border-radius: 10px;
+        font-size: 0.8rem;
+        white-space: pre-wrap;
+      }
+      .jump {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 30;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        width: 48px;
+        height: 48px;
+        overflow: hidden;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 50%;
+      }
+      .jump button {
+        all: unset;
+        display: grid;
+        place-items: center;
+        min-width: 24px;
+        min-height: 24px;
+        cursor: pointer;
+      }
+      .jump button:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: -2px;
+      }
+      .jump svg {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+
+    <!-- toolbar:head -->
+    <!-- navOpenWidth: the window width from which the navigation opens beside the page; toolbarHeight: the bar's height in px
+     before the script measures it; fitMargin: the px kept above and below a fixed design size; fitRoomMin: the least room
+     in px a fixed design size is scaled into. The dropdown rule below (max-width) is navOpenWidth less 1 px, in rem. -->
+    <script type="application/json" data-toolbar-config>
+      { "navOpenWidth": 1800, "toolbarHeight": 61, "fitMargin": 16, "fitRoomMin": 240 }
+    </script>
+    <style data-toolbar-style>
+      .dh-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.5rem;
+        box-sizing: border-box;
+        padding: 0.5rem var(--gutter, 2rem);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+        background: color-mix(in oklch, var(--card, Canvas) 88%, transparent);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+      }
+      .dh-toolbar > * {
+        flex: none;
+      }
+      /* A tool is a quiet outline; hover and pressed tint it, and an open one is filled. */
+      .dh-tool {
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        min-height: 2.75rem;
+        padding: 0.3rem 1rem;
+        border-radius: 0.625rem;
+        border: 1px solid color-mix(in oklch, var(--border, GrayText) 70%, transparent);
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .dh-tool:hover {
+        background: color-mix(in oklch, var(--foreground, CanvasText) 6%, transparent);
+      }
+      .dh-tool:active {
+        background: color-mix(in oklch, var(--foreground, CanvasText) 12%, transparent);
+      }
+      .dh-tool[aria-expanded='true'] {
+        background: var(--foreground, CanvasText);
+        color: var(--background, Canvas);
+        border-color: transparent;
+      }
+      /* One segmented bar, one selection: a track with a raised, filled thumb under the selected segment. */
+      .dh-seg {
+        display: inline-flex;
+        gap: 2px;
+        padding: 2px;
+        border-radius: 0.75rem;
+        background: color-mix(in oklch, var(--muted, GrayText) 80%, var(--background, Canvas));
+        box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--border, GrayText) 50%, transparent);
+      }
+      .dh-seg button {
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        min-height: 2.5rem;
+        padding: 0.3rem 0.9rem;
+        border-radius: 0.5rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .dh-seg button:hover {
+        background: color-mix(in oklch, var(--foreground, CanvasText) 7%, transparent);
+      }
+      .dh-seg button:active {
+        background: color-mix(in oklch, var(--foreground, CanvasText) 13%, transparent);
+      }
+      .dh-seg button[aria-checked='true'] {
+        background: var(--foreground, CanvasText);
+        color: var(--background, Canvas);
+        font-weight: 600;
+        box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground, CanvasText) 25%, transparent);
+      }
+      .dh-size {
+        font-size: 0.8125rem;
+        color: var(--muted-foreground, GrayText);
+        white-space: nowrap;
+      }
+      .dh-size[hidden] {
+        display: none;
+      }
+      /* The slot for more tools, and the theme switch, sit at the end of the row. */
+      .dh-toolbar-end {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+      }
+      .dh-toolbar button:focus-visible {
+        outline: 2px solid var(--ring, Highlight);
+        outline-offset: 2px;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .dh-tool,
+        .dh-seg button {
+          transition:
+            background-color 120ms ease,
+            border-color 120ms ease,
+            box-shadow 120ms ease;
+        }
+      }
+      /* The navigation is a dropdown: hidden when closed, floating under the toolbar below navOpenWidth when open. */
+      html[data-nav='closed'] [data-page-nav] {
+        display: none;
+      }
+      @media (max-width: 112.49rem) {
+        html[data-nav='open'] [data-page-nav] {
+          display: block;
+          position: fixed;
+          z-index: 15;
+          top: var(--toolbar-h);
+          bottom: 0;
+          left: 0;
+          width: 17rem;
+          max-height: none;
+          overflow-y: auto;
+          box-sizing: border-box;
+          padding: 1rem;
+          background: var(--card, Canvas);
+          border-right: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+          box-shadow: 0 0 2rem color-mix(in oklch, var(--foreground, CanvasText) 18%, transparent);
+        }
+      }
+      @media print {
+        .dh-toolbar {
+          display: none;
+        }
+      }
+    </style>
+    <script>
+      // The theme and the navigation, applied before first paint. Storage may be blocked: every call is guarded.
+      (() => {
+        const root = document.documentElement;
+        const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+        root.style.setProperty('--toolbar-h', config.toolbarHeight + 'px');
+        const read = (key) => {
+          try {
+            return localStorage.getItem(key);
+          } catch {
+            return null;
+          }
+        };
+        const media = matchMedia('(prefers-color-scheme: dark)');
+        const apply = () => {
+          const choice = read('decision-page-theme') || 'auto';
+          root.classList.toggle('dark', choice === 'dark' || (choice === 'auto' && media.matches));
+          root.dataset.theme = choice;
+        };
+        apply();
+        media.addEventListener('change', apply);
+        // Open on a wide screen, collapsed below navOpenWidth, where the content wants every pixel.
+        root.dataset.nav = innerWidth >= config.navOpenWidth ? 'open' : 'closed';
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- toolbar:markup -->
+    <div class="dh-toolbar" role="toolbar" aria-label="Page tools" data-toolbar>
+      <button type="button" class="dh-tool" data-nav-toggle aria-controls="page-nav" aria-expanded="false">
+        Outline
+      </button>
+      <div class="dh-seg" role="radiogroup" aria-label="Preview size" data-presets></div>
+      <output class="dh-size" data-preview-size data-measure="[data-visual]" aria-live="polite"></output>
+      <div class="dh-toolbar-end" data-toolbar-end></div>
+      <button type="button" class="dh-tool" data-theme-toggle>Theme: Auto</button>
+    </div>
+    <!-- A preset is a label, a width in px and, for a vertical one, a height; one without a width is the full column. -->
+    <script type="application/json" data-toolbar-presets>
+      [
+        { "id": "fit", "label": "Fit", "title": "Fit, the full column" },
+        { "id": "desktop", "label": "Desktop", "width": 1920 },
+        { "id": "laptop", "label": "Laptop", "width": 1440 },
+        { "id": "tablet", "label": "Tablet", "width": 1024 },
+        { "id": "mobile", "label": "Mobile", "width": 390 },
+        { "id": "shorts", "label": "Shorts", "width": 1080, "height": 1920 }
+      ]
+    </script>
+
+    <!-- Banner: the h1 and one sentence stating purpose and scope. -->
+    <header class="top">
+      <h1>{PAGE TITLE}</h1>
+      <p>{PURPOSE AND SCOPE IN ONE SENTENCE}. Highlighted lines are what changes.</p>
+    </header>
+    <!-- Section links under the toolbar: one link per item, then Before you approve. -->
+    <nav class="minav" aria-label="Sections">
+      <a href="#item-one">{ITEM LABEL}</a><a href="#review">Before you approve</a>
+    </nav>
+    <div class="layout">
+      <!-- Collapsible navigation: the toolbar's Outline button opens it. One link per item. -->
+      <nav id="page-nav" data-page-nav aria-label="Items">
+        <ul>
+          <li><a href="#item-one">{ITEM LABEL}</a></li>
+          <li><a href="#review">Before you approve</a></li>
+        </ul>
+      </nav>
+      <main>
+        <!-- Context the reader consults rather than decides on: one row of collapsibles, closed. -->
+        <div class="ctx" id="context">
+          <details>
+            <summary>Files and links read</summary>
+            <p>{FILES AND LINKS THE AGENT READ}.</p>
+          </details>
+          <details>
+            <summary>Not on this page</summary>
+            <p>{WHAT WAS LEFT OUT AND WHY}.</p>
+          </details>
+        </div>
+
+        <!-- One item. Copy the whole section for the next item; give it its own id, data-item and radio name. -->
+        <section class="item" id="item-one" data-item="item-one" data-fidelity="diagram" data-depth="simple">
+          <!-- Rail, always beside the item: row 1 is the pick bar with Redesign last, then Reset; row 2 the item comment. -->
+          <aside class="rail">
+            <div class="row1">
+              <fieldset class="pick">
+                <legend>Pick for {ITEM LABEL}</legend>
+                <label class="seg"
+                  ><input
+                    type="radio"
+                    name="pick-item-one"
+                    value="option-a"
+                    checked
+                    aria-label="{OPTION A SHORT NAME}, recommended"
+                  /><span>{OPTION A SHORT NAME} <span aria-hidden="true">&#9733;</span></span></label
+                >
+                <label class="seg"
+                  ><input type="radio" name="pick-item-one" value="option-b" /><span>{OPTION B SHORT NAME}</span></label
+                >
+                <label class="seg"><input type="radio" name="pick-item-one" value="none" /><span>None</span></label>
+                <label class="seg"
+                  ><input type="radio" name="pick-item-one" value="redesign" /><span>&#8635; Redesign</span></label
+                >
+              </fieldset>
+              <button type="button" class="tool" data-reset>Reset pick</button>
+            </div>
+            <label>Comment on this item<textarea rows="4" data-comment="item-one"></textarea></label>
+          </aside>
+          <div class="main">
+            <h2>{ITEM TITLE}</h2>
+            <p class="rec">Recommended: {THE RECOMMENDED OPTION AND ITS REASON IN ONE SENTENCE}.</p>
+
+            <!-- One Option, its own section. Order inside: problem, closed analogy, proposal, before/after visual, then
+                 closed collapsibles for evidence, change, cost and door, impact, and the Option comment. -->
+            <article class="opt" id="option-a" data-option="option-a" data-recommended="true">
+              <h3>{OPTION A TITLE} <code>{IDENTIFIER}</code></h3>
+              <p class="prob">{THE PROBLEM THIS OPTION SOLVES, IN PLAIN WORDS}.</p>
+              <details class="sub">
+                <summary>Analogy</summary>
+                <p>{AN EVERYDAY ANALOGY}.</p>
+                <p class="meta">Where it breaks down: {WHERE THE ANALOGY STOPS HOLDING}.</p>
+              </details>
+              <p class="prop">{WHAT THIS OPTION PROPOSES, IN ONE SENTENCE}.</p>
+              <!-- data-visual marks the box the presets resize; data-before and data-after each hold an svg, img,
+                   canvas or at least two list steps. Give both or neither. Mark the lines that change with class chg. -->
+              <div class="visual ba" data-visual>
+                <div class="pane before" data-before>
+                  <h5>Before</h5>
+                  <ul class="term">
+                    <li class="note">{A STEP THAT STAYS THE SAME}</li>
+                    <li class="bad">{A STEP THAT GOES WRONG TODAY}</li>
+                    <li class="bad">{WHAT THE READER MUST DO BY HAND}</li>
+                  </ul>
+                </div>
+                <div class="arrow" aria-hidden="true">&rarr;</div>
+                <div class="pane after" data-after>
+                  <h5>After</h5>
+                  <ul class="term">
+                    <li class="note">{THE SAME STEP}</li>
+                    <li class="chg">{THE CHANGED STEP}</li>
+                    <li class="chg">{THE NEW RESULT}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="subs">
+                <details class="sub">
+                  <summary>Evidence</summary>
+                  <ul>
+                    <li><b>Evidence.</b> {A FACT WITH ITS SOURCE}.</li>
+                    <li><b>Unknown.</b> {WHAT IS NOT KNOWN}.</li>
+                  </ul>
+                </details>
+                <details class="sub">
+                  <summary>The change and its Enforcer</summary>
+                  <p>{WHAT CHANGES}.</p>
+                  <p><b>Enforcer:</b> {THE CHECK THAT KEEPS IT TRUE}. Agent proposal.</p>
+                </details>
+                <details class="sub">
+                  <summary>Cost and door</summary>
+                  <p>{COST AND RISK}.</p>
+                  <p>Two-way: {HOW TO UNDO IT}.</p>
+                </details>
+                <details class="sub">
+                  <summary>Impact</summary>
+                  <p>{WHAT CHANGES FOR THE READER}.</p>
+                </details>
+                <details class="sub">
+                  <summary>Comment on this option</summary>
+                  <label
+                    >Comment on {OPTION A TITLE}<textarea rows="3" data-comment="item-one/option-a"></textarea>
+                  </label>
+                </details>
+              </div>
+            </article>
+
+            <article class="opt" id="option-b" data-option="option-b" data-recommended="false">
+              <h3>{OPTION B TITLE}</h3>
+              <p class="prob">{THE PROBLEM THIS OPTION SOLVES, IN PLAIN WORDS}.</p>
+              <p class="prop">{WHAT THIS OPTION PROPOSES, IN ONE SENTENCE}.</p>
+              <div class="visual ba" data-visual>
+                <div class="pane before" data-before>
+                  <h5>Before</h5>
+                  <ul class="term">
+                    <li class="note">{A STEP THAT STAYS THE SAME}</li>
+                    <li class="bad">{A STEP THAT GOES WRONG TODAY}</li>
+                  </ul>
+                </div>
+                <div class="arrow" aria-hidden="true">&rarr;</div>
+                <div class="pane after" data-after>
+                  <h5>After</h5>
+                  <ul class="term">
+                    <li class="note">{THE SAME STEP}</li>
+                    <li class="chg">{THE CHANGED STEP}</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="subs">
+                <details class="sub">
+                  <summary>Evidence</summary>
+                  <ul>
+                    <li><b>Evidence.</b> {A FACT WITH ITS SOURCE}.</li>
+                  </ul>
+                </details>
+                <details class="sub">
+                  <summary>Comment on this option</summary>
+                  <label
+                    >Comment on {OPTION B TITLE}<textarea rows="3" data-comment="item-one/option-b"></textarea>
+                  </label>
+                </details>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Page-wide review: one panel at the bottom, full content width. Lenses in a row, then the comment beside
+             the Next action; Copy as prompt, Save and Reset all below. Replace the lenses and the Next action options. -->
+        <section id="review" data-reflection class="review">
+          <h2>Before you approve</h2>
+          <div class="lenses">
+            <p><b>{LENS ONE}.</b> {A QUESTION THE APPROVER SHOULD ASK}?</p>
+            <p><b>{LENS TWO}.</b> {A QUESTION THE APPROVER SHOULD ASK}?</p>
+            <p><b>{LENS THREE}.</b> {A QUESTION THE APPROVER SHOULD ASK}?</p>
+            <p><b>{LENS FOUR}.</b> {A QUESTION THE APPROVER SHOULD ASK}?</p>
+          </div>
+          <div class="two">
+            <label>General comment<textarea rows="4" data-general></textarea></label>
+            <div data-next-action>
+              <label
+                >Next action<select id="next">
+                  <option value="proceed">{THE ACTION AFTER APPROVAL}</option>
+                  <option value="revise">Revise this page</option>
+                  <option value="stop">Stop</option>
+                </select></label
+              >
+              <label
+                >Instructions<textarea rows="2" id="nextText">
+(recommended by agent) {THE INSTRUCTIONS FOR THE NEXT ACTION}.</textarea>
+              </label>
+              <p>Save accepts the selected Next action, as does sending the copied prompt.</p>
+            </div>
+          </div>
+          <div>
+            <button type="button" class="act primary" data-copy-prompt>Copy as prompt</button>
+            <button type="button" class="act" data-save>Save</button>
+            <button type="button" class="act" data-reset-all>Reset all</button>
+            <p role="status" id="status"></p>
+            <label
+              >Reply composer
+              <pre id="composer" tabindex="0"></pre>
+            </label>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Scroll circle: 48 px, upper half to the top, lower half to the bottom. Keep as it is. -->
+    <div class="jump">
+      <button type="button" aria-label="Scroll to top" id="up">
+        <svg viewBox="0 0 16 16"><path d="M3 10l5-5 5 5" /></svg>
+      </button>
+      <button type="button" aria-label="Scroll to bottom" id="down">
+        <svg viewBox="0 0 16 16"><path d="M3 6l5 5 5-5" /></svg>
+      </button>
+    </div>
+
+    <!-- Page script: the id and revision match data-page-id and data-revision; 'proceed' is the recommended Next action. -->
+    <!-- toolbar:script -->
+    <script>
+      (() => {
+        const root = document.documentElement;
+        const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+        const bar = document.querySelector('[data-toolbar]');
+        const write = (key, value) => {
+          try {
+            localStorage.setItem(key, value);
+          } catch {
+            // Without storage the choice lasts until the page closes.
+          }
+        };
+        const size = bar.querySelector('[data-preview-size]');
+        const presets = JSON.parse(document.querySelector('script[data-toolbar-presets]')?.textContent || '[]');
+        const sizeOf = ({ width, height }) => (height ? width + ' × ' + height + ' px' : width + ' px');
+        // A preset with a width and a height has a fixed design size.
+        const isFixed = (preset) => Boolean(preset?.width && preset.height);
+        const current = () => presets.find((preset) => preset.id === root.dataset.preset);
+
+        // The size the previews take now, shown only while it fits on the row.
+        const fit = () => {
+          size.hidden = false;
+          if (bar.scrollWidth > bar.clientWidth) size.hidden = true;
+        };
+        const report = () => {
+          const target = [...document.querySelectorAll(size.dataset.measure || '[data-visual]')].find(
+            (candidate) => candidate.offsetParent !== null,
+          );
+          const preset = current();
+          const shown = target ? Math.round(target.getBoundingClientRect().width) : 0;
+          size.value = !target
+            ? ''
+            : isFixed(preset)
+              ? 'Showing ' + sizeOf(preset) + ' at ' + Math.round((shown / preset.width) * 100) + '%'
+              : 'Showing ' + shown + ' px wide';
+          fit();
+        };
+
+        // A fixed design size scales down uniformly so the whole frame fits the viewport below the toolbar, between a
+        // margin above and below; the page applies --preview-scale (SKILL.md step 4).
+        const scale = () => {
+          const preset = current();
+          if (!isFixed(preset)) {
+            root.style.removeProperty('--preview-scale');
+            return;
+          }
+          const room = Math.max(innerHeight - bar.offsetHeight - 2 * config.fitMargin, config.fitRoomMin);
+          root.style.setProperty('--preview-scale', Math.min(1, room / preset.height).toFixed(4));
+        };
+
+        // The sticky parts of the page sit below the toolbar, whose height is --toolbar-h.
+        const measure = () => {
+          root.style.setProperty('--toolbar-h', bar.offsetHeight + 'px');
+          scale();
+        };
+        if (typeof ResizeObserver === 'function') new ResizeObserver(measure).observe(bar);
+        measure();
+        addEventListener('resize', () => {
+          scale();
+          report();
+        });
+
+        // The presets: one segmented bar, one selection. A preset with a width sets --preview-width and data-preset on <html>.
+        const group = bar.querySelector('[data-presets]');
+        const segments = presets.map((preset) => {
+          const name = preset.title || preset.label + ', ' + sizeOf(preset);
+          const segment = document.createElement('button');
+          segment.type = 'button';
+          segment.dataset.preset = preset.id;
+          segment.setAttribute('role', 'radio');
+          segment.setAttribute('aria-label', name);
+          segment.title = name;
+          segment.textContent = preset.label;
+          group.append(segment);
+          return segment;
+        });
+        const choose = (at, focus) => {
+          const preset = presets[at];
+          if (preset.width) {
+            root.style.setProperty('--preview-width', preset.width + 'px');
+            root.dataset.preset = preset.id;
+          } else {
+            root.style.removeProperty('--preview-width');
+            delete root.dataset.preset;
+          }
+          if (isFixed(preset)) {
+            root.style.setProperty('--preview-height', preset.height + 'px');
+            root.dataset.previewFixed = '';
+          } else {
+            root.style.removeProperty('--preview-height');
+            delete root.dataset.previewFixed;
+          }
+          scale();
+          segments.forEach((segment, other) => {
+            segment.setAttribute('aria-checked', String(other === at));
+            segment.tabIndex = other === at ? 0 : -1;
+          });
+          if (focus) segments[at].focus();
+          report();
+        };
+        segments.forEach((segment, at) => {
+          segment.addEventListener('click', () => choose(at, false));
+          segment.addEventListener('keydown', (event) => {
+            const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+            const to = event.key === 'Home' ? 0 : event.key === 'End' ? segments.length - 1 : undefined;
+            if (step === undefined && to === undefined) return;
+            event.preventDefault();
+            choose(to ?? (at + step + segments.length) % segments.length, true);
+          });
+        });
+        const start = Math.max(
+          0,
+          presets.findIndex((preset) => !preset.width),
+        );
+        segments.forEach((segment, at) => {
+          segment.setAttribute('aria-checked', String(at === start));
+          segment.tabIndex = at === start ? 0 : -1;
+        });
+
+        // The navigation: open in the page's grid on a wide screen, a dropdown under the toolbar below navOpenWidth.
+        const toggle = bar.querySelector('[data-nav-toggle]');
+        const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+        const sync = () => toggle.setAttribute('aria-expanded', String(root.dataset.nav === 'open'));
+        const close = () => {
+          root.dataset.nav = 'closed';
+          sync();
+          report();
+        };
+        toggle.addEventListener('click', () => {
+          root.dataset.nav = root.dataset.nav === 'open' ? 'closed' : 'open';
+          sync();
+          report();
+        });
+        panel?.addEventListener('click', (event) => {
+          if (event.target.closest('a') && innerWidth < config.navOpenWidth) close();
+        });
+        addEventListener('keydown', (event) => {
+          if (event.key !== 'Escape' || root.dataset.nav !== 'open' || innerWidth >= config.navOpenWidth) return;
+          close();
+          toggle.focus();
+        });
+        sync();
+
+        // The theme: follow the system, or force light or dark.
+        const theme = bar.querySelector('[data-theme-toggle]');
+        const choices = ['auto', 'light', 'dark'];
+        const label = () =>
+          (theme.textContent = 'Theme: ' + (root.dataset.theme[0].toUpperCase() + root.dataset.theme.slice(1)));
+        theme.addEventListener('click', () => {
+          const next = choices[(choices.indexOf(root.dataset.theme) + 1) % choices.length];
+          write('decision-page-theme', next);
+          root.dataset.theme = next;
+          root.classList.toggle(
+            'dark',
+            next === 'dark' || (next === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches),
+          );
+          label();
+        });
+        label();
+
+        addEventListener('DOMContentLoaded', report);
+        addEventListener('load', report);
+      })();
+    </script>
+    <script>
+      (() => {
+        const id = 'page-skeleton',
+          rev = 1,
+          $ = (s, r = document) => [...r.querySelectorAll(s)],
+          st = document.getElementById('status'),
+          box = document.getElementById('composer');
+        const key = 'decision-draft-' + id + '-r' + rev;
+        const get = () => {
+          try {
+            return JSON.parse(localStorage.getItem(key) || '{}');
+          } catch {
+            return {};
+          }
+        };
+        const put = () => {
+          try {
+            localStorage.setItem(key, JSON.stringify(draft()));
+          } catch {}
+        };
+        const draft = () => ({
+          picks: Object.fromEntries(
+            $('.item').map((i) => [i.dataset.item, ($('input:checked', i)[0] || {}).value || null]),
+          ),
+          comments: Object.fromEntries($('[data-comment]').map((t) => [t.dataset.comment, t.value])),
+          general: $('[data-general]')[0].value,
+          next: document.getElementById('next').value,
+          nextText: document.getElementById('nextText').value,
+        });
+        const defaults = () =>
+          $('.item').forEach((i) => {
+            const r = $('[data-recommended=true]', i)[0];
+            $('input[type=radio]', i).forEach((x) => (x.checked = r && x.value === r.dataset.option));
+          });
+        const text = () => {
+          const d = draft();
+          const j = {
+            page: id,
+            revision: rev,
+            mode: 'decide',
+            path: location.pathname,
+            destination: id + '-r' + rev + '-feedback.md',
+            nextAction: { action: d.next, instructions: d.nextText, approvedRevision: rev },
+            generalComment: d.general,
+            items: $('.item').map((i) => {
+              const p = d.picks[i.dataset.item];
+              return {
+                id: i.dataset.item,
+                response: p === null ? 'skipped' : p,
+                comment: d.comments[i.dataset.item],
+                options: Object.fromEntries(
+                  $('[data-option]', i).map((o) => [
+                    o.dataset.option,
+                    d.comments[i.dataset.item + '/' + o.dataset.option],
+                  ]),
+                ),
+              };
+            }),
+          };
+          return (
+            '# Decision page ' +
+            id +
+            ' revision ' +
+            rev +
+            ' (decide)\n\nSave this text verbatim to ' +
+            j.destination +
+            '. Stop if the page revision differs. Sending it accepts the Next action.\n\n```json\n' +
+            JSON.stringify(j, null, 2) +
+            '\n```\n'
+          );
+        };
+        const sync = () => {
+          box.textContent = text();
+          put();
+          marks();
+        };
+        const marks = () =>
+          $('[data-pick]').forEach((b) => {
+            const on = ($('input:checked', b.closest('.item'))[0] || {}).value === b.dataset.pick;
+            b.setAttribute('aria-pressed', String(on));
+            b.textContent = on ? 'Picked' : 'Pick this one';
+          });
+
+        const saved = get();
+        $('[data-comment]').forEach((t) => (t.value = saved.comments?.[t.dataset.comment] || ''));
+        if (saved.picks)
+          $('.item').forEach((i) => {
+            const p = saved.picks[i.dataset.item];
+            if (p !== undefined) $('input[type=radio]', i).forEach((x) => (x.checked = x.value === p));
+          });
+        if (saved.general) $('[data-general]')[0].value = saved.general;
+        if (saved.next) document.getElementById('next').value = saved.next;
+        if (saved.nextText !== undefined) document.getElementById('nextText').value = saved.nextText;
+        $('[data-pick]').forEach((b) =>
+          b.addEventListener('click', () => {
+            const i = b.closest('.item');
+            const x = $('input[type=radio]', i).find((r) => r.value === b.dataset.pick);
+            if (x) {
+              x.checked = true;
+              sync();
+            }
+          }),
+        );
+        document.addEventListener('input', sync);
+        document.addEventListener('change', sync);
+        sync();
+        $('[data-depth-toggle]').forEach((b) =>
+          b.addEventListener('click', () => {
+            const d = b.parentElement.querySelector('.detail');
+            d.hidden = !d.hidden;
+            b.setAttribute('aria-expanded', String(!d.hidden));
+          }),
+        );
+        $('[data-reset]').forEach((b) =>
+          b.addEventListener('click', () => {
+            const i = b.closest('.item');
+            const r = $('[data-recommended=true]', i)[0];
+            $('input[type=radio]', i).forEach((x) => (x.checked = !!r && x.value === r.dataset.option));
+            sync();
+          }),
+        );
+        document.querySelector('[data-reset-all]').addEventListener('click', () => {
+          if (!confirm('Reset every pick and comment?')) {
+            st.textContent = 'Reset cancelled; nothing changed.';
+            return;
+          }
+          defaults();
+          $('textarea[data-comment],[data-general]').forEach((t) => (t.value = ''));
+          document.getElementById('next').value = 'proceed';
+          st.textContent = 'Everything reset.';
+          sync();
+        });
+        document.getElementById('next').addEventListener('change', () => {
+          document.getElementById('nextText').value = '';
+          sync();
+        });
+        document.querySelector('[data-copy-prompt]').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(text());
+            st.textContent = 'Copied';
+          } catch {
+            st.textContent = 'Copy was denied; select the reply composer text and copy it by hand.';
+          }
+        });
+        document.querySelector('[data-save]').addEventListener('click', () => {
+          let a;
+          try {
+            a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([text()], { type: 'text/markdown' }));
+          } catch {
+            st.textContent = 'Save failed; copy the reply composer text by hand.';
+            return;
+          }
+          a.download = id + '-r' + rev + '-feedback.md';
+          try {
+            a.click();
+            st.textContent = 'Download started: ' + a.download + '. Then say "saved feedback".';
+          } catch {
+            st.textContent = 'Save failed; copy the reply composer text by hand.';
+          }
+        });
+        document.getElementById('up').onclick = () => scrollTo({ top: 0 });
+        document.getElementById('down').onclick = () => scrollTo({ top: document.body.scrollHeight });
+      })();
+    </script>
+  </body>
+</html>
