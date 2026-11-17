@@ -1,0 +1,80 @@
+{
+  "about": "Reader-probe questions for the Fortify decision page. Each key and quote comes from candidates.md; `answer` lists every correct choice.",
+  "questions": [
+    {
+      "id": "core-bare-meaning",
+      "question": "What does it mean that `core.bare` was true on the main checkout?",
+      "choices": {
+        "a": "git treats the folder as storage only, with no working files",
+        "b": "git refuses to fetch",
+        "c": "the repository is read-only",
+        "d": "git ignores hooks"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "candidates.md",
+        "quote": "`core.bare=true` tells git the folder is storage only, with no working files to build in."
+      }
+    },
+    {
+      "id": "qw1-timeout-exists",
+      "question": "Before the fix, did the slow tests already have a per-test timeout?",
+      "choices": {
+        "a": "Yes, 60 seconds, since 2026-11-13",
+        "b": "No, none",
+        "c": "Yes, 7 minutes",
+        "d": "Only in CI"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "candidates.md",
+        "quote": "testTimeout 60_000 since 2026-11-13"
+      }
+    },
+    {
+      "id": "qw4-what-failed",
+      "question": "On 2026-11-17, what went unnoticed?",
+      "choices": {
+        "a": "`binding.yml` still named a skill that `main` had renamed, and nothing failed",
+        "b": "A merge deleted `binding.yml`",
+        "c": "The Binding named two skills twice",
+        "d": "`to-review` was not installed"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "candidates.md",
+        "quote": "`docs/drive/binding.yml` still named the old one and nothing failed"
+      }
+    },
+    {
+      "id": "wt-new-rerun",
+      "question": "What did the rerun of `wt:new` report after its first run failed?",
+      "choices": {
+        "a": "branch already exists",
+        "b": "npm ci failed again",
+        "c": "worktree is bare",
+        "d": "lock held"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "candidates.md",
+        "quote": "A rerun failed with \"branch already exists\""
+      }
+    },
+    {
+      "id": "subagent-stops",
+      "question": "How often did a Subagent stop before committing and merging?",
+      "choices": {
+        "a": "Twice",
+        "b": "Once",
+        "c": "Never",
+        "d": "Every run"
+      },
+      "answer": ["a"],
+      "source": {
+        "file": "candidates.md",
+        "quote": "Twice, a Subagent stopped before committing and merging"
+      }
+    }
+  ]
+}

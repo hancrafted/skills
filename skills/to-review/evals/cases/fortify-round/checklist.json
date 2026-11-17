@@ -1,0 +1,103 @@
+{
+  "about": "Case items for the Fortify decision page, judged yes or no on top of the confidence bar. Each is a ruling the Operator made in three feedback rounds on the page, or a fact in candidates.md. The calibration states none of the rulings, so a run must produce them itself. Each ruling cites the round and quotes rounds.md.",
+  "items": [
+    {
+      "id": "plain-name",
+      "question": "Ruling: every Option has a name a reader can understand. Does every Option carry a name in plain words that a reader who knows no internal shorthand understands (for example not 'core.bare flipped' or 'hung slow test' alone)?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 1,
+        "quote": "I have no idea what Hang Slow Test, Half-Made Word Tree and Core by Flipped means."
+      }
+    },
+    {
+      "id": "section-per-option",
+      "question": "Ruling: one section per Option. Does every Option have its own section with its own before/after visual and its own comment, rather than one comparison widget per category?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 1,
+        "quote": "it would be better to have like one section per quick win and not to force it into one so there's a bit more room to explain each of the proposals."
+      }
+    },
+    {
+      "id": "problem-in-two-lines",
+      "question": "Ruling: the problem comes first, short. Does each Option state what fails today in at most two lines, in plain precise language?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 2,
+        "quote": "title, 2-line description stating the problem in simple but precise lanugae"
+      }
+    },
+    {
+      "id": "analogy-collapsed",
+      "question": "Ruling: the analogy is a collapsible. Is each Option's analogy, where it has one, behind a closed toggle?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 2,
+        "quote": "analgoy as collapisble"
+      }
+    },
+    {
+      "id": "principle-to-outcome",
+      "question": "Ruling: the proposal leads with a principle. Does each Option's proposal name the principle it applies and the outcome it achieves, in one line?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 2,
+        "quote": "apply principle X+Y in order to achieve Z"
+      }
+    },
+    {
+      "id": "before-after-visual",
+      "question": "Ruling: before and after is a visual. Does each Option show its before and after as a visual (steps in order, a flow, a dependency diagram or a paired checklist) with what changes marked, not as prose?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 2,
+        "quote": "a before after comparison, visualized as graph, chart, flowchart, dependency diagrams, steps in order and what changes"
+      }
+    },
+    {
+      "id": "evidence-says-what",
+      "question": "Ruling: evidence says what it shows. Does every evidence label say what happened, when and what it cost (or say unknown), never only a count?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 1,
+        "quote": "simply stating like this like to record or one on record it doesn't mean anything to me like what kind of record what is the evidence"
+      }
+    },
+    {
+      "id": "detail-closed",
+      "question": "Ruling: detail sits below, closed. With every collapsible closed, are evidence, cost and impact out of view, and can a reader still pick each Option?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 2,
+        "quote": "below all relevant info like evidence, cost, impact,... as collapsibles."
+      }
+    },
+    {
+      "id": "not-too-much-text",
+      "question": "Ruling: little text for a stressed reader. With every collapsible closed, can a stressed reader read one Option's open content in about 15 seconds, with no wall of text?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 2,
+        "quote": "both session produce way to much text (opus much much worse) for a stressed human to parse"
+      }
+    },
+    {
+      "id": "no-mid-word-wrap",
+      "question": "Ruling: text does not wrap heavily. At laptop and tablet width, does every word, inline code and list item stay whole on its line, none broken one letter per line?",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "round": 3,
+        "quote": "some before after cause text to wrap heavily"
+      }
+    },
+    {
+      "id": "existing-state",
+      "question": "Fact: the slow tests already have a per-test timeout. Does the page avoid proposing a per-test timeout for slow tests as new?",
+      "source": {
+        "file": "candidates.md",
+        "quote": "testTimeout 60_000 since 2026-11-13"
+      }
+    }
+  ]
+}

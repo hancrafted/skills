@@ -31,6 +31,8 @@ The caller supplies the domain. Take each input from the caller first:
 | Feedback route       | How feedback returns, per the [feedback contract](references/feedback-contract.md). |
 | Optional             | Mode, motion library, per-item depth and fidelity rung.                             |
 
+Without caller input, write for a **cold reader**: someone who was in the session, recalls none of it, and is under high load.
+
 Explore the working folder and any links you are given for evidence. The page lists every file and link you read, so the reader sees what its claims rest on.
 
 For a revision of an existing page, read it first: keep its page id and every item and Option id, and raise `data-revision` by one.
@@ -50,7 +52,7 @@ _Done when_ the page has a mode and every item a depth and rung, each confirmed 
 Order items by consequence, most consequential first. For each item:
 
 1. **Decision.** State it in one sentence at the reader's **altitude**, the level they judge it at, then what changes for them: under each Option in `decide`, overall in `explain`. A decision made in code but judged by its effect names, per Option, the principle or pattern it applies (decoupling, high cohesion, a SOLID principle, a design pattern), its benefit, its cost and its impact; symbols and files sit in the detailed layer.
-2. **Evidence.** Assemble the bundle: examples, visuals, context and references. Label every statement as evidence (with its source), agent proposal or unknown. A research question is not a finding. Explain technical meaning in plain words and keep the precise detail in the detailed layer.
+2. **Evidence.** Assemble the bundle: examples, visuals, context and references. Label every statement as evidence (with its source), agent proposal or unknown. A label says what the evidence shows, never only how many; an incident gives what happened, when and its cost, or `unknown`. A research question is not a finding. Explain technical meaning in plain words and keep the precise detail in the detailed layer.
 3. **Rendering.** Choose it from the table, at a rung of the fidelity ladder.
 
 | Decision                 | Rendering that helps a person judge it                                                                                      |
@@ -63,7 +65,7 @@ Order items by consequence, most consequential first. For each item:
 | Bug fix                  | Observed against expected behaviour, then the before/after proposal; a reproduced failure told apart from a reconstruction. |
 | Concept or requirement   | A relationship diagram, worked example or process visual; precise detail one step deeper.                                   |
 
-Show before and after for every change, fixes included. The before comes from evidence; when it is unknown, the page says unknown. Graph-shaped relationships get a diagram; when a graph layout hides the point, compose HTML and SVG instead. True alternatives differ in the decision itself. An analogy explains and never proves: give it a show/hide toggle on its item and name where it breaks down.
+Show before and after for every change, fixes included. The before comes from evidence; when it is unknown, the page says unknown. Graph-shaped relationships get a diagram; when a graph layout hides the point, compose HTML and SVG instead. True alternatives differ in the decision itself. An analogy explains and never proves: give it a show/hide toggle on its Option, closed by default, and name where it breaks down.
 
 ### Fidelity ladder
 
@@ -71,9 +73,9 @@ Show before and after for every change, fixes included. The before comes from ev
 
 ### Depth
 
-Each item has a depth, set per item like its rung. The simple view alone clears the confidence bar; the detailed layer adds what a reader needs to verify the item, never the decision itself.
+Each item has a depth, set per item like its rung. The simple view alone, with every collapsible closed, clears the confidence bar; the detailed layer adds what a reader needs to verify the item, never the decision itself.
 
-The simple view is **scannable**: the decision in one sentence, the visual, and per Option at most three short lines (what it does, its benefit, its cost), plus the reason on the recommended one. Evidence, door and effort show as short labels; each evidence label names its source, and the detailed layer quotes it. Everything longer belongs in the detailed layer, which **teaches**: for a principle, what it means, where it comes from and why it helps here, then the precise detail and references.
+The simple view is an **inverted pyramid**, one slot per line: the plain-words name; the problem, for a **cold reader**; the proposal, led by its principle where one applies; the before/after visual. Everything else (evidence, door, effort, cost, impact, the analogy) opens on demand. Everything longer belongs in the detailed layer, which **teaches**: for a principle, what it means, where it comes from and why it helps here, then the precise detail and references.
 
 | Depth      | The item shows                                                                                      | Choose it when                                                               |
 | ---------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -93,12 +95,13 @@ Animate with CSS transitions and the Web Animations API, and honour `prefers-red
 
 An item is finished when a reader can answer from the page alone:
 
-1. What is the decision, in one sentence?
-2. What changes for me?
-3. Which statements are evidence, which are proposals, which are unknown?
-4. Which Option is recommended, and why? (`decide`)
-5. Is the fidelity enough to judge it?
-6. Is it a one-way or two-way door, and how much effort does it take? (`decide`)
+1. Can a cold reader say, per Option, what it is and what runs differently after? (`decide`; in `explain`, per item, what it is and what changes)
+2. What is the decision, in one sentence?
+3. What changes for me?
+4. Which statements are evidence, which are proposals, which are unknown?
+5. Which Option is recommended, and why? (`decide`)
+6. Is the fidelity enough to judge it?
+7. Is it a one-way or two-way door, and how much effort does it take? (`decide`)
 
 _Done when_ every item clears the bar for its mode.
 

@@ -2,14 +2,34 @@
   "about": "SKILL.md's confidence bar (step 3) as yes/no questions about the whole page, plus the fidelity ladder's rule that each item names its rung and step 5's rule that reflection prompts carry no answers. `modes` names the modes a question applies to; keep both in step with SKILL.md.",
   "items": [
     {
+      "id": "cold-reader",
+      "modes": ["decide"],
+      "question": "Can a cold reader say, per Option, what it is and what runs differently after?"
+    },
+    {
+      "id": "cold-reader",
+      "modes": ["explain"],
+      "question": "Can a cold reader say, per item, what it is and what changes?"
+    },
+    {
       "id": "decision",
       "modes": ["decide", "explain"],
       "question": "Does every item state its decision in one sentence before its visuals and detail?"
     },
     {
+      "id": "closed-pick",
+      "modes": ["decide", "explain"],
+      "question": "With every collapsible closed, can a reader pick each item?"
+    },
+    {
       "id": "consequence",
       "modes": ["decide"],
       "question": "Does every item show what changes for the reader under each of its Options?"
+    },
+    {
+      "id": "before-after-visual",
+      "modes": ["decide"],
+      "question": "Where an Option changes something existing, is its before and after a visual, not prose?"
     },
     {
       "id": "consequence",

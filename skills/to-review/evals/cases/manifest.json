@@ -53,7 +53,9 @@
         "copy": "decisions.md is the sample Episode's Brief (skills/new-episode/assets/sample-episode/brief.md), then its Title slide and four Slides with purpose, words from the sample Dossier and every Option from skills/new-episode/assets/sample-fragments/fragments.html: caption, build notes and mock HTML verbatim. visual-language.html and episode-page.html are those fragments byte for byte. design.css is the page's compiled <style data-design-css> block byte for byte, so a run can inline the tokens the mocks use. calibration.md holds caller facts only, drawn from skills/new-episode/references/spec-calibration.md: mode, audience, items, fidelity, design size, render presets, tokens, Next actions and feedback fields. It states none of the page's layout rules, so the skill must produce them itself. rounds.md quotes Han's words from the four rounds; checklist.json cites it. prompt.md asks the task as a caller would, without the word template.",
         "omitted": "The Spec template (skills/new-episode/assets/spec-template.html, provenance only), the assembler and the review server; the four fix-round briefs, except the sentences of Han's that rounds.md quotes.",
         "reference": "reference.html is skills/new-episode/assets/sample-episode/spec/spec.html, approved by Han 2026-11-14 at d3e15b61, refrozen at 75007abe after the final review fixes, which kept the approved look. Round 5 (drafts per revision, read-only locks, one feedback formatter) left its inline design CSS unchanged. It is self-contained: inline CSS and scripts, no link or fetch of another file, so it is frozen byte for byte. Runs never see it.",
-        "provenanceOnly": ["episode-spec/rounds.md"]
+        "provenanceOnly": [
+          "episode-spec/rounds.md"
+        ]
       },
       "prompt": "episode-spec/prompt.md",
       "attachments": [
@@ -77,6 +79,51 @@
         "episode-spec/checklist.json": "7a3a244eb20aa03893a067159b5bae99eb30608f3fed0419d8e74bb4a09a1381",
         "episode-spec/probe.json": "568b4fe3502fc1575f29b5f24022f310f71c2ea45757b052e5d4bea354c06b50",
         "episode-spec/reference.html": "bdb418828234fae0a2c67ec038fc79da756149aa6d1511b443a486b22b27e445"
+      }
+    },
+    {
+      "id": "fortify-round",
+      "kind": "frozen-decisions",
+      "mode": "decide",
+      "source": {
+        "session": "7ac142d6-4597-4275-966a-380855289004",
+        "title": "Drive Fortify decision page, three redraws",
+        "repository": "hancrafted/content-library",
+        "branch": "feat/drive",
+        "turns": "The Operator rejected the first page (v1) as unexplained, rejected two redraws as too wordy, then chose the sonnet redraw as the baseline over opus and haiku (2026-11-17).",
+        "copy": "candidates.md is the Fortify evidence and the observed failures of the Drive run, verbatim, plus two facts the first page lacked. rounds.md quotes the Operator's three rounds; checklist.json cites it. reference.html is the sonnet redraw (v3), byte for byte.",
+        "omitted": "The Drive code on feat/drive; the opus and haiku brief files.",
+        "reference": "reference.html is the v3 sonnet page: baseline, known defect: comment-in-view. The Operator kept it as the baseline over the opus and haiku pages; it is not judged great. Runs never see it. It declares data-depth=\"simple\", so a run's depth may differ from the reference; the checklist does not test depth.",
+        "provenanceOnly": [
+          "fortify-round/rounds.md",
+          "fortify-round/negative.v1.html",
+          "fortify-round/v1-quickwin.png",
+          "fortify-round/v3-opus-wrap.png",
+          "fortify-round/v3-opus.html",
+          "fortify-round/v3-haiku.html"
+        ]
+      },
+      "prompt": "fortify-round/prompt.md",
+      "attachments": [
+        "fortify-round/candidates.md"
+      ],
+      "calibration": "fortify-round/calibration.md",
+      "checklist": "fortify-round/checklist.json",
+      "probe": "fortify-round/probe.json",
+      "reference": "fortify-round/reference.html",
+      "hashes": {
+        "fortify-round/prompt.md": "02013c9ee5bd452ceec373fffdce34e63bcd292f72740af21a8cb0ef5aac8fc7",
+        "fortify-round/candidates.md": "c5b363ddffaf7fa8d1f2f9ac0d4c5f30d9c605b33dcf57612594af81186a77ec",
+        "fortify-round/rounds.md": "6b8745392287bd5b4329b20e6df1d87cc32d5d53e21000b2fac32dedd67a9605",
+        "fortify-round/calibration.md": "82e1162c47b1b75579b0195457e305f5e660d876aaf26bcb4cf490d1bd8bc0ad",
+        "fortify-round/checklist.json": "fccb46a78c4a673725f03ea6ea7da8d2df8adb35437cb2b507b3abe262528916",
+        "fortify-round/probe.json": "f1226ace23311db3cbc3dc06b9931810d77c1170b4e5b3ad6a95c7e75b756804",
+        "fortify-round/reference.html": "64ff0831b4e6a6b0fbe85b63e2fa0fd24f3a373b7e887dfba05fc2d7d9586b7c",
+        "fortify-round/negative.v1.html": "7ff6dedad3ba7db9065a9f360d06b59fbba7516badf231970784911d67631bc0",
+        "fortify-round/v1-quickwin.png": "aa965f07c96b8031676a1e46fcb1f1bdeb6c99544268f4844f8ca2c549a25339",
+        "fortify-round/v3-opus-wrap.png": "b247bc38ee388d756883a6e267845693ec57fe5726e1870b03712ceecdc5c12d",
+        "fortify-round/v3-opus.html": "167b7e2aa375c77c6b0beed2de287448509d2662e8cea38ccdd4e1d54da3c3eb",
+        "fortify-round/v3-haiku.html": "e9dcca1dd24c4a4b49148f1966e29688ebd6e7873eb2d3ee2cf2f40f99f78ce9"
       }
     }
   ]
