@@ -9,7 +9,8 @@ interface Item {
   id: string;
   left: number;
   column: Rect | null;
-  options: { id: string; rect: Rect }[];
+  options: { id: string; rect: Rect; visual?: Rect | null }[];
+  ownVisuals?: boolean;
 }
 const item = (id: string, overrides: Partial<Item> = {}): Item => ({
   id,
@@ -66,6 +67,24 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  it('fails an Option section whose own visual is under 1000 px', () => {
+    // ARRANGE
+    const sectioned = item('fortify', {
+      column: null,
+      ownVisuals: true,
+      options: [{ id: 'bare', rect: rect(48, 1020), visual: rect(48, 640) }],
+    });
+    const expected = [
+      'item "fortify": option "bare" has a visual 640px wide with the navigation collapsed; keep at least 1000px',
+    ];
+
+    // ACT
+    const problems = check.judge(observation({ items: [sectioned] }));
+
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
   it('fails an empty column left of the content after the navigation collapsed', () => {
     // ARRANGE
     const loaded = observation({ items: [item('store', { left: 152, column: rect(168, 1020), options: [] })] });
@@ -110,6 +129,24 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  it('passes Option sections of 1000 px visuals that sit under each other, not in a rail', () => {
+    // ARRANGE
+    const sectioned = item('fortify', {
+      column: null,
+      ownVisuals: true,
+      options: [
+        { id: 'bare', rect: rect(48, 1020), visual: rect(48, 1000) },
+        { id: 'phase', rect: rect(48, 1020), visual: rect(48, 1020) },
+      ],
+    });
+
+    // ACT
+    const problems = check.judge(observation({ items: [sectioned] }));
+
+    // ASSERT
+    expect(problems).toEqual([]);
+  });
+
   it('accepts a start exactly one gutter from the edge and a column of exactly 1000 px', () => {
     // ARRANGE
     const loaded = observation({ items: [item('store', { left: 48, column: rect(48, 1000) })] });

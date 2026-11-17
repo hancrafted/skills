@@ -1,0 +1,495 @@
+<!doctype html>
+<!-- Grader fixture: a correct decide page. Every broken fixture in broken/ is this page with one defect. -->
+<html lang="en" data-page-id="cache-layer" data-revision="1" data-mode="decide">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cache layer: decision page</title>
+    <style>
+      :root {
+        --bg: #fbfaf7;
+        --surface: #ffffff;
+        --text: #1d1c1a;
+        --muted: #55524c;
+        --line: #d9d5cc;
+        --accent: #1f5fae;
+        --focus: #b3470e;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #161513;
+          --surface: #201f1c;
+          --text: #f1eee8;
+          --muted: #b9b4aa;
+          --line: #3a3833;
+          --accent: #8db8ef;
+          --focus: #f0a46c;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+      }
+      a {
+        color: var(--accent);
+      }
+      header {
+        padding: 24px 32px;
+        border-bottom: 1px solid var(--line);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: 32px;
+        padding: 24px 32px;
+      }
+      .layout[data-nav='collapsed'] {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .layout[data-nav='collapsed'] nav {
+        display: none;
+      }
+      nav {
+        position: sticky;
+        top: 16px;
+        align-self: start;
+      }
+      section[data-item] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        column-gap: 24px;
+        margin-bottom: 40px;
+        padding: 24px 16px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      @media (max-width: 900px) {
+        section[data-item] {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      section[data-item] .main svg {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        padding: 8px 0;
+        background: var(--surface);
+      }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+      article[data-option] {
+        padding: 16px 4px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      article[data-recommended='true'] {
+        border-color: var(--accent);
+      }
+      label.pick {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        margin: 8px 0;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      label.pick:has(input:checked) {
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      .label {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      textarea,
+      select {
+        width: 100%;
+        font: inherit;
+        color: inherit;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        html {
+          scroll-behavior: smooth;
+        }
+        article[data-option] {
+          transition: transform 150ms ease-out;
+        }
+        article[data-option]:hover {
+          transform: translateY(-2px);
+        }
+      }
+      :focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 2px;
+      }
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+      svg text {
+        fill: var(--text);
+      }
+      svg rect,
+      svg line {
+        stroke: var(--text);
+        fill: none;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+      .handoff {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        padding: 12px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Cache layer</h1>
+      <p>Decide where cached responses live. Mode: decide. Revision 1.</p>
+      <button type="button" id="nav-toggle" aria-expanded="true" aria-controls="item-nav">Hide navigation</button>
+    </header>
+    <div class="layout" data-nav="open">
+      <nav id="item-nav" aria-label="Items">
+        <ol>
+          <li><a href="#item-store">1. Cache store</a></li>
+          <li><a href="#item-expiry">2. Expiry</a></li>
+          <li><a href="#approve">Before you approve</a></li>
+        </ol>
+      </nav>
+      <main>
+        <section id="item-store" data-item="store" data-fidelity="diagram" data-depth="simple">
+          <div class="main">
+            <h2>1. Where should cached responses live?</h2>
+            <p>Door: one-way. Effort: medium. Rung: diagram, enough because each Option changes the data flow differently.</p>
+            <article data-option="memory" data-recommended="true">
+              <h3>A. In process memory (recommended)</h3>
+              <p>What changes for you: no new service to run; caches reset on deploy.</p>
+              <p>Why recommended: the evidence shows one instance, so a shared store buys nothing yet.</p>
+              <svg data-visual viewBox="0 0 360 60" role="img" aria-label="Client to in process cache to service" data-design-width="1920">
+                <rect x="2" y="15" width="90" height="30" />
+                <text x="20" y="35">Client</text>
+                <line x1="92" y1="30" x2="135" y2="30" />
+                <rect x="135" y="15" width="90" height="30" />
+                <text x="155" y="35">Cache</text>
+                <line x1="225" y1="30" x2="268" y2="30" />
+                <rect x="268" y="15" width="90" height="30" />
+                <text x="282" y="35">Service</text>
+              </svg>
+              <label for="c-store-memory">Comment on A</label>
+              <textarea id="c-store-memory"></textarea>
+            </article>
+            <article data-option="redis" data-recommended="false">
+              <h3>B. Shared Redis</h3>
+              <p>What changes for you: one more service to operate; caches survive deploys.</p>
+              <svg data-visual viewBox="0 0 360 60" role="img" aria-label="Client to shared Redis cache to service" data-design-width="1920">
+                <rect x="2" y="15" width="90" height="30" />
+                <text x="20" y="35">Client</text>
+                <line x1="92" y1="30" x2="135" y2="30" />
+                <rect x="135" y="15" width="90" height="30" />
+                <text x="155" y="35">Cache</text>
+                <line x1="225" y1="30" x2="268" y2="30" />
+                <rect x="268" y="15" width="90" height="30" />
+                <text x="282" y="35">Service</text>
+              </svg>
+              <label for="c-store-redis">Comment on B</label>
+              <textarea id="c-store-redis"></textarea>
+            </article>
+            <p class="label">Evidence: the service answers in 800 ms at p95 (load test, 2026-10-02).</p>
+          </div>
+          <div class="rail">
+            <fieldset>
+              <legend>Cache store</legend>
+              <label class="pick"><input type="radio" name="store" value="memory" /> Pick A</label>
+              <label class="pick"><input type="radio" name="store" value="redis" /> Pick B</label>
+            </fieldset>
+            <label for="c-store">Comment on this item</label>
+            <textarea id="c-store"></textarea>
+            <button type="button" data-reset>
+              <span aria-hidden="true">↺</span> Reset this item's picks and comments
+            </button>
+          </div>
+        </section>
+        <section id="item-expiry" data-item="expiry" data-fidelity="diagram" data-depth="both">
+          <div class="main">
+            <h2>2. Should entries expire after five minutes?</h2>
+            <p>Door: two-way. Effort: small. Rung: diagram, enough because the choice is yes or no.</p>
+            <p class="label">Agent proposal: five minutes matches the upstream data refresh. Unknown: peak traffic.</p>
+            <button type="button" data-depth-toggle aria-expanded="false" aria-controls="expiry-detail">
+              Show detail
+            </button>
+            <div id="expiry-detail" hidden>
+              <p>Reference: the upstream feed publishes every five minutes (<code>docs/feed.md</code>).</p>
+            </div>
+          </div>
+          <div class="rail">
+            <fieldset>
+              <legend>Expire after five minutes?</legend>
+              <label><input type="radio" name="expiry" value="yes" /> Yes</label>
+              <label><input type="radio" name="expiry" value="no" /> No</label>
+            </fieldset>
+            <label for="c-expiry">Comment on this item</label>
+            <textarea id="c-expiry"></textarea>
+            <button type="button" data-reset>
+              <span aria-hidden="true">↺</span> Reset this item's picks and comments
+            </button>
+          </div>
+        </section>
+        <section id="approve" aria-labelledby="approve-title">
+          <div data-reflection>
+            <h2 id="approve-title">Before you approve</h2>
+            <ul>
+              <li>What happens to users when the cache serves stale data?</li>
+              <li>Who notices first if the cache stops working?</li>
+            </ul>
+          </div>
+          <div data-next-action>
+            <label for="next-action">Next action</label>
+            <select id="next-action">
+              <option value="approve" selected>Approve and implement</option>
+              <option value="revise">Revise the page</option>
+            </select>
+            <label for="next-text">Instructions</label>
+            <textarea id="next-text">(recommended by agent) Implement option A test-first.</textarea>
+          </div>
+          <div class="feedback">
+            <p>
+              <strong>Save accepts the selected Next action</strong>, and so does sending the copied prompt. Save
+              downloads <code>cache-layer-r1-feedback.md</code>; then tell the agent "saved feedback". The agent keeps
+              it at <code id="destination">/work/decisions/cache-layer-r1-feedback.md</code>.
+            </p>
+            <button type="button" data-copy-prompt><span aria-hidden="true">⧉</span> Copy prompt</button>
+            <button type="button" data-save><span aria-hidden="true">⤓</span> Save</button>
+            <button type="button" data-reset-all><span aria-hidden="true">↺</span> Reset all</button>
+            <p id="status" role="status"></p>
+            <h3 id="handoff-title">The prompt Copy prompt and Save send</h3>
+            <pre id="handoff" class="handoff" tabindex="0" aria-labelledby="handoff-title"></pre>
+            <div id="earlier" hidden>
+              <h3 id="earlier-title">Feedback on earlier revisions (read-only)</h3>
+              <pre class="handoff" tabindex="0" aria-labelledby="earlier-title"></pre>
+            </div>
+          </div>
+          <p>Files explored: <code>service/handler.ts</code>, <code>docs/load-test.md</code>.</p>
+        </section>
+      </main>
+    </div>
+    <script>
+      document.getElementById('nav-toggle').addEventListener('click', (event) => {
+        const layout = document.querySelector('.layout');
+        const collapse = layout.dataset.nav === 'open';
+        layout.dataset.nav = collapse ? 'collapsed' : 'open';
+        event.currentTarget.setAttribute('aria-expanded', String(!collapse));
+        event.currentTarget.textContent = collapse ? 'Show navigation' : 'Hide navigation';
+      });
+      for (const toggle of document.querySelectorAll('[data-depth-toggle]')) {
+        toggle.addEventListener('click', () => {
+          const detail = document.getElementById(toggle.getAttribute('aria-controls'));
+          const open = toggle.getAttribute('aria-expanded') !== 'true';
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.textContent = open ? 'Show simple' : 'Show detail';
+          detail.hidden = !open;
+        });
+      }
+      // The reply composer, a live preview of the prompt beside Copy prompt, follows html-effectiveness
+      // unknowns/03-design-directions.html (Copyright 2026 Anthropic PBC, Apache-2.0).
+      (() => {
+        const root = document.documentElement;
+        const pageId = root.dataset.pageId;
+        const revision = Number(root.dataset.revision);
+        const filename = `${pageId}-r${revision}-feedback.md`;
+        const storageKey = `decision-page:${pageId}`;
+        const RESET_QUESTION = 'Reset all responses and comments, and restore the recommended Next action?';
+        const $ = (selector) => document.querySelector(selector);
+        const status = $('#status');
+        const composer = $('#handoff');
+        const action = $('#next-action');
+        const actionText = $('#next-text');
+        const recommended = { action: action.value, text: actionText.value };
+        const say = (message) => (status.textContent = message);
+        const text = (field) => field.value;
+        const comments = () => [...document.querySelectorAll('[data-item] textarea, #next-text')];
+
+        function responses() {
+          return [...document.querySelectorAll('[data-item]')].map((item) => ({
+            item: item.dataset.item,
+            response: item.querySelector('input[type="radio"]:checked')?.value ?? 'skipped',
+            comment: text(item.querySelector(':scope > .rail > textarea')),
+            options: [...item.querySelectorAll('[data-option]')].map((option) => ({
+              option: option.dataset.option,
+              comment: text(option.querySelector('textarea')),
+            })),
+          }));
+        }
+
+        function handoff() {
+          const destination = $('#destination').textContent;
+          const payload = {
+            page: { id: pageId, revision, mode: root.dataset.mode, path: '/work/decisions/cache-layer.html' },
+            destination,
+            nextAction: {
+              action: action.value,
+              instructions: text(actionText),
+              approvesRevision: action.value === 'approve' ? revision : null,
+            },
+            items: responses(),
+          };
+          return [
+            `# Feedback on decision page ${pageId}, revision ${revision}`,
+            '',
+            `Save this text verbatim to ${destination} unless that file already holds it. Stop if the page's ` +
+              `data-revision is no longer ${revision}. The reviewer accepted the Next action below by sending this; ` +
+              'text marked "(recommended by agent)" is the agent\'s, every comment is the reviewer\'s.',
+            '',
+            '```json',
+            JSON.stringify(payload, null, 2),
+            '```',
+            '',
+          ].join('\n');
+        }
+
+        const compose = () => (composer.textContent = handoff());
+        const selectComposer = () => getSelection().selectAllChildren(composer);
+
+        function readDrafts() {
+          try {
+            return JSON.parse(localStorage.getItem(storageKey) ?? '{}') ?? {};
+          } catch {
+            return {};
+          }
+        }
+
+        function store() {
+          const draft = {
+            comments: Object.fromEntries(comments().map((field) => [field.id, field.value])),
+            picks: Object.fromEntries(
+              [...document.querySelectorAll('[data-item] input[type="radio"]:checked')].map((r) => [r.name, r.value]),
+            ),
+            action: action.value,
+          };
+          try {
+            localStorage.setItem(storageKey, JSON.stringify({ ...readDrafts(), [revision]: draft }));
+          } catch {
+            say('Your draft is not kept: browser storage is unavailable. Copy prompt and Save still work.');
+          }
+        }
+
+        function restore() {
+          const drafts = readDrafts();
+          const earlier = Object.keys(drafts).filter((r) => Number(r) < revision);
+          if (earlier.length > 0) {
+            $('#earlier').hidden = false;
+            $('#earlier pre').textContent = JSON.stringify(
+              Object.fromEntries(earlier.map((r) => [r, drafts[r]])),
+              null,
+              2,
+            );
+          }
+          const draft = drafts[revision];
+          if (!draft) return;
+          for (const field of comments())
+            if (typeof draft.comments?.[field.id] === 'string') field.value = draft.comments[field.id];
+          for (const [name, value] of Object.entries(draft.picks ?? {})) {
+            const radio = document.querySelector(`input[name="${CSS.escape(name)}"][value="${CSS.escape(value)}"]`);
+            if (radio) radio.checked = true;
+          }
+          if (draft.action) action.value = draft.action;
+        }
+
+        function clearItem(item) {
+          for (const field of item.querySelectorAll('textarea')) field.value = '';
+          for (const radio of item.querySelectorAll('input[type="radio"]')) radio.checked = false;
+        }
+
+        document.addEventListener('input', () => {
+          store();
+          compose();
+        });
+        action.addEventListener('change', () => {
+          actionText.value = '';
+          store();
+          compose();
+        });
+
+        $('[data-copy-prompt]').addEventListener('click', async () => {
+          const prompt = compose();
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error('The clipboard is unavailable');
+            await navigator.clipboard.writeText(prompt);
+            say('Copied the prompt. Paste it into the agent session.');
+          } catch {
+            say('Copy failed. The prompt below is selected: copy it with your keyboard.');
+            selectComposer();
+          }
+        });
+
+        $('[data-save]').addEventListener('click', () => {
+          let url = null;
+          try {
+            url = URL.createObjectURL(new Blob([compose()], { type: 'text/markdown;charset=utf-8' }));
+            const link = Object.assign(document.createElement('a'), { href: url, download: filename });
+            document.body.append(link);
+            link.click();
+            link.remove();
+            say(`Download started: ${filename}. Then tell the agent "saved feedback".`);
+          } catch {
+            say('Save failed. Copy the prompt below instead.');
+            selectComposer();
+          } finally {
+            if (url) setTimeout(() => URL.revokeObjectURL(url), 10000);
+          }
+        });
+
+        $('[data-reset-all]').addEventListener('click', () => {
+          if (!confirm(RESET_QUESTION)) {
+            say('Reset cancelled. Nothing changed.');
+            return;
+          }
+          for (const item of document.querySelectorAll('[data-item]')) clearItem(item);
+          action.value = recommended.action;
+          actionText.value = recommended.text;
+          store();
+          compose();
+          say('Reset all cleared every response and comment and restored the recommended Next action.');
+        });
+
+        for (const button of document.querySelectorAll('[data-reset]'))
+          button.addEventListener('click', () => {
+            const item = button.closest('[data-item]');
+            clearItem(item);
+            store();
+            compose();
+            say(`Cleared the picks and comments of item "${item.dataset.item}".`);
+          });
+
+        restore();
+        compose();
+      })();
+    </script>
+  </body>
+</html>

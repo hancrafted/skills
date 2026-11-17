@@ -1,0 +1,10 @@
+{
+  "base": "valid-option-sections.html",
+  "defect": "An Option section's visual is not sticky and sits 900 px above its comment, so typing the comment scrolls the visual out of view.",
+  "replace": [
+    {
+      "find": "section[data-item] .main svg {\n        position: sticky;",
+      "with": "section[data-item] .main svg {\n        margin-bottom: 900px;\n        position: static;"
+    }
+  ]
+}

@@ -112,7 +112,7 @@ A banner `<header>` holds the `<h1>` and a sentence stating purpose and scope. A
 While the reviewer types, pastes or dictates a comment, at least half of the visual it is about stays in view, even with tall content and long comments. Take this arrangement unless another keeps visual and comment in view together better: the item's decision and visual sticky in the main column, a sticky right-hand rail beside it, and a collapsible left navigation to win back width. The rail holds, top to bottom:
 
 - **Row 1:** the pick bar (step 5), with its Redesign segment last, a "Show details" toggle button (`aria-expanded`) and the item's Reset.
-- **The Option cards**, under row 1 and collapsed until Show details. A card keeps its description, its build notes and a View button, shows Recommended once, and leaves picking to the pick bar.
+- **The Option cards**, under row 1 and collapsed until Show details. An Option that needs its own before/after (not one that is merely long) is its own section, with its own `data-visual` and its own comment; the rail then holds only the pick bar (row 1), and cards stay for Options that share one visual. A card keeps its description, its build notes and a View button, shows Recommended once, and leaves picking to the pick bar.
 - **Row 2:** the item's comment, a `<textarea>` of 4 rows by default.
 - **Supporting text**, below the comment: text the reader consults about an item rather than decides on (its background, rationale or the words behind it) sits in the rail as collapsibles, closed by default, so the visual leads the main column.
 
