@@ -8,7 +8,8 @@ interface ItemRoom {
   readonly id: string;
   readonly left: number;
   readonly column: Rect | null;
-  readonly options: readonly { readonly id: string; readonly rect: Rect }[];
+  readonly options: readonly { readonly id: string; readonly rect: Rect; readonly visual?: Rect | null }[];
+  readonly ownVisuals?: boolean;
 }
 
 interface Observation {
@@ -36,14 +37,34 @@ function itemRooms(kit: Kit): ItemRoom[] {
         id: item.getAttribute('data-item') ?? '',
         left: box(item).left,
         column: visual === null ? null : box(visual),
+        ownVisuals: item.querySelector('[data-option] [data-visual]') !== null,
         options: [...item.querySelectorAll('[data-option]')]
           .filter((option) => box(option).width > 0)
-          .map((option) => ({ id: option.getAttribute('data-option') ?? '', rect: box(option) })),
+          .map((option) => {
+            const own = kit.largestVisual(option);
+            return {
+              id: option.getAttribute('data-option') ?? '',
+              rect: box(option),
+              visual: own === null ? null : box(own),
+            };
+          }),
       };
     });
 }
 
-function itemProblems({ id, column, options }: ItemRoom, state: string): string[] {
+function sectionProblems({ id, options }: ItemRoom, state: string): string[] {
+  return options.flatMap(({ id: option, visual }) =>
+    visual != null && Math.floor(visual.width) < MIN_COLUMN
+      ? [
+          `item "${id}": option "${option}" has a visual ${Math.floor(visual.width)}px wide ${state}; keep at least ${MIN_COLUMN}px`,
+        ]
+      : [],
+  );
+}
+
+function itemProblems(room: ItemRoom, state: string): string[] {
+  if (room.ownVisuals === true) return sectionProblems(room, state);
+  const { id, column, options } = room;
   if (column === null) return [];
   const narrow =
     Math.floor(column.width) < MIN_COLUMN
