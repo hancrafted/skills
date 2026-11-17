@@ -4,7 +4,7 @@
   "replace": [
     {
       "find": "<h3>A. In process memory (recommended)</h3>",
-      "with": "<h3>A. In process memory (recommended)</h3>\n                <svg data-before role=\"img\" aria-label=\"Before\"></svg>"
+      "with": "<h3>A. In process memory (recommended)</h3>\n                <svg data-before width=\"24\" height=\"24\" role=\"img\" aria-label=\"Before\"></svg>"
     }
   ]
 }
