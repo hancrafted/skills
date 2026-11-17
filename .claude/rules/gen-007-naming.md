@@ -1,0 +1,1 @@
+../../.archgate/adrs/GEN-007-naming.md

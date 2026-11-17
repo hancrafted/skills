@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import path from 'node:path';
 import tseslint from 'typescript-eslint';
+import { NAMING_FILES, UNIT_SUFFIXES } from './tools/lint/unit-suffixes.ts';
 
 // Resolve relative imports before comparing skill identities, including nested scripts and type-only edges.
 const crossSkillScripts = {
@@ -67,6 +68,10 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    files: NAMING_FILES,
+    rules: { 'no-restricted-syntax': ['error', ...UNIT_SUFFIXES] },
   },
   eslintConfigPrettier,
 );
