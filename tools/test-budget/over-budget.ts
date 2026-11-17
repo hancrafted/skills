@@ -1,6 +1,4 @@
-// `node tools/test-budget/over-budget.ts <vitest-json-report> <budget-ms>`: prints, as Markdown, every fast-suite test
-// that took longer than the budget, slowest first, and prints nothing when none did. The nightly workflow files the
-// output as an issue; each line proposes moving that test to the slow lane or making it faster (ARCH-003-testing §4).
+// decision: ARCH-003 §4
 import { readFileSync } from 'node:fs';
 import { overBudget, type VitestJsonReport } from './over-budget.pure.ts';
 

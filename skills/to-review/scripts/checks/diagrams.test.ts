@@ -3,7 +3,6 @@ import { check } from './diagrams.ts';
 
 const SOURCE = '\n  flowchart LR\n    Client --> Cache --> Service\n';
 
-/** One Mermaid source as the check observes it; each test overrides the field it is about. */
 const diagram = (fields: Partial<Parameters<typeof check.judge>[0]['diagrams'][number]> = {}) => ({
   name: 'store-flow',
   written: SOURCE,

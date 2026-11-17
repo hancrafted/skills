@@ -1,12 +1,8 @@
-// The page contract's data- attributes, read from the rendered DOM: identity, revision and mode on <html>, fidelity
-// and depth on each item, a recommendation flag on each Option, a name on each Mermaid source.
 import { load, type CheerioAPI } from 'cheerio';
 import { DEPTHS, FIDELITY_RUNGS, MODES, type Check } from '../grader/check.ts';
 
-/** A cheerio selection of DOM elements. */
 type Selection = ReturnType<CheerioAPI>;
 
-/** One attribute of one element, with the words a problem uses to point at it. */
 interface Field {
   readonly subject: string;
   readonly name: string;

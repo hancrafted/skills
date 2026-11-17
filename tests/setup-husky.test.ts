@@ -3,11 +3,6 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createDir, createRepo, gitConfig, message, REPO_ROOT, runScript, SETUP_HUSKY } from './helpers/commit-gate';
 
-/**
- * A repo that looks like one husky has already been installed into, with the
- * skill present at its canonical installed path. Building it by hand keeps these
- * tests off the network — husky's own installer is not what is under test.
- */
 function copySkill(dir: string): void {
   cpSync(join(REPO_ROOT, 'skills', 'commit'), join(dir, '.agents', 'skills', 'commit'), { recursive: true });
 }

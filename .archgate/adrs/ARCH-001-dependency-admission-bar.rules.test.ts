@@ -1,8 +1,5 @@
 /// <reference path="../rules.d.ts" />
 
-// Sibling test for ARCH-001-dependency-admission-bar.rules.ts — pass and fail
-// path for the single rule, covering every refused range form named in the ADR.
-
 import { describe, expect, it } from 'vitest';
 import ruleSet from './ARCH-001-dependency-admission-bar.rules';
 

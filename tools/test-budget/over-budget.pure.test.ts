@@ -3,7 +3,6 @@ import { overBudget, type VitestJsonReport } from './over-budget.pure.ts';
 
 const ROOT = '/repo';
 
-/** A report in Vitest's JSON reporter shape: one file per entry, each test's full name and duration in ms. */
 function report(files: Record<string, Record<string, number | null>>): VitestJsonReport {
   return {
     testResults: Object.entries(files).map(([file, tests]) => ({

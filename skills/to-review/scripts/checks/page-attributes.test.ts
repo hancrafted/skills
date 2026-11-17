@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { fixturePage } from '../grader/fixtures.ts';
 import { check } from './page-attributes.ts';
 
-/** A minimal page: the attributes on <html>, then the body. */
 const page = (htmlAttributes: string, body: string): string =>
   `<!doctype html><html ${htmlAttributes}><body>${body}</body></html>`;
 const ROOT = 'data-page-id="p" data-revision="1" data-mode="decide"';

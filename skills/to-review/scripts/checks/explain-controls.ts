@@ -1,15 +1,8 @@
-// An explain page's controls: settled decisions rendered without pick controls, though reviewer tools may stay, with
-// open reflection prompts and a "Questions?" comment field.
 import { load, type CheerioAPI } from 'cheerio';
 import type { Check } from '../grader/check.ts';
 
-/** The decide page's hooks for choosing: an Option, and the Next action. Present at all, they offer a pick. */
 const PICK_HOOKS = ['[data-option]', '[data-next-action]'] as const;
 const CHOICE_INPUTS = ['input[type="radio"]', 'input[type="checkbox"]', 'select'] as const;
-/**
- * A choice input is a pick when it answers an item: it sits inside one and names no element it changes. A reviewer
- * tool (a theme select in the header, a show/hide toggle with `aria-controls`) changes the view and answers nothing.
- */
 const RESPONSE_SCOPE = ':is([data-item], [data-option], [data-next-action]) ';
 const RESPONSE = ':not([aria-controls])';
 

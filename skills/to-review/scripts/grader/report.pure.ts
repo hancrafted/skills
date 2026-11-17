@@ -1,11 +1,8 @@
-// The grader's JSON: one result per check, problems merged across viewport widths, and the rule that decides
-// whether a fixture proves what its name claims.
 import type { Mode } from './check.ts';
 import { checkOfFixture } from './fixtures.pure.ts';
 
 export type Status = 'pass' | 'fail' | 'skip';
 
-/** One check at one width; `problems` is null when the check does not apply to the page's mode. */
 export interface WidthResult {
   readonly width: number;
   readonly problems: readonly string[] | null;
@@ -20,7 +17,6 @@ export interface CheckResult {
 
 export interface Report {
   readonly page: string;
-  /** The mode the page declared; null when it declared none it may. */
   readonly mode: Mode | null;
   readonly pass: boolean;
   readonly checks: readonly CheckResult[];
@@ -28,13 +24,11 @@ export interface Report {
 
 export interface Proof {
   readonly fixture: string;
-  /** The check a broken fixture names; null for a valid fixture. */
   readonly check: string | null;
   readonly proves: boolean;
   readonly reason: string;
 }
 
-/** Merges a check's widths: a problem every width saw is listed once, any other is prefixed with its widths. */
 export function combine({ id, summary }: { id: string; summary: string }, widths: readonly WidthResult[]): CheckResult {
   const ran = widths.filter((width) => width.problems !== null);
   if (ran.length === 0) return { id, summary, status: 'skip', problems: [] };
@@ -51,7 +45,6 @@ export function toReport(page: string, mode: Mode | null, checks: readonly Check
   return { page, mode, pass: checks.every((check) => check.status !== 'fail'), checks };
 }
 
-/** A valid fixture fails no check; a broken one fails the check it names and no other. */
 export function proofOf(fixture: string, report: Report): Proof {
   const check = checkOfFixture(fixture);
   const failing = report.checks.filter((result) => result.status === 'fail').map((result) => result.id);

@@ -1,13 +1,19 @@
-// The verify runner's process adapter: runs one step's shell command and buffers everything it prints, so steps
-// running side by side never interleave their output.
 import { spawn } from 'node:child_process';
 import type { Step, StepRun } from './verify.pure.ts';
+
+const STDIN_CLOSED_BECAUSE_ARCHGATE_READS_NON_TTY_STDIN_AS_FILE_LIST: ['ignore', 'pipe', 'pipe'] = [
+  'ignore',
+  'pipe',
+  'pipe',
+];
 
 export function runCommand(step: Step): Promise<StepRun> {
   const started = performance.now();
   return new Promise((resolve, reject) => {
-    // stdin closed: archgate reads a non-TTY stdin as its file list (see .husky/pre-push).
-    const child = spawn(step.command, { shell: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(step.command, {
+      shell: true,
+      stdio: STDIN_CLOSED_BECAUSE_ARCHGATE_READS_NON_TTY_STDIN_AS_FILE_LIST,
+    });
     const chunks: Buffer[] = [];
     child.stdout.on('data', (chunk: Buffer) => chunks.push(chunk));
     child.stderr.on('data', (chunk: Buffer) => chunks.push(chunk));

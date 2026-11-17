@@ -1,11 +1,5 @@
 /// <reference path="../rules.d.ts" />
 
-// Sibling test for GEN-004-escalated-tech-debt.rules.ts — pass and fail path for
-// the one rule, plus the boundaries it is easy to get wrong: the comment opener
-// that separates a live marker from prose naming one, the issue link on the
-// marker's own line, and the source-file scope. Markers appear as assembled
-// string data, never as comments in this file.
-
 import { describe, expect, it } from 'vitest';
 import ruleSet from './GEN-004-escalated-tech-debt.rules';
 
@@ -15,15 +9,12 @@ interface Reported {
   line?: number;
 }
 
-// Minimal glob -> RegExp for the double below. A '**' segment spans any number
-// of path segments including none; a lone '*' spans one segment's characters.
 function globToRegExp(pattern: string): RegExp {
   const segments = pattern.split('/');
   let body = '';
   segments.forEach((segment, index) => {
     const separator = index === 0 ? '' : '/';
     if (segment === '**') {
-      // Absorb the trailing separator so '**' can span zero segments too.
       body += index === segments.length - 1 ? `${separator}.*` : `${separator}(?:[^/]+/)*`;
       return;
     }
@@ -36,9 +27,6 @@ function globToRegExp(pattern: string): RegExp {
   return new RegExp(`^${body}$`);
 }
 
-// Stands in for archgate's RuleContext: a line-based grepFiles over an
-// in-memory file set, and a report sink that keeps violations and drops the
-// tiers this ADR does not use (every rule runs at error).
 function makeCtx(files: Record<string, string>) {
   const violations: Reported[] = [];
   const ctx = {
@@ -79,8 +67,6 @@ function makeCtx(files: Record<string, string>) {
 const FILE = 'skills/commit/scripts/lib/parser.ts';
 const ISSUE = 'https://github.com/hancrafted/skills/issues/317';
 
-// Assembled rather than written literally, so this file never carries a live
-// marker of its own.
 const MARK = `tech-${'debt'}`;
 
 const rule = ruleSet.rules['tech-debt-links-issue'];

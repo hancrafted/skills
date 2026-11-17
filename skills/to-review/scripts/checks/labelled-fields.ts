@@ -1,5 +1,3 @@
-// Every field and button has an accessible name, so a screen reader announces what each one is for. Fields take
-// it from a <label>, aria-label, aria-labelledby or title; buttons from their text as well.
 import { load, type CheerioAPI } from 'cheerio';
 import type { Check } from '../grader/check.ts';
 
@@ -42,7 +40,6 @@ const ordinal = (n: number): string => {
   return `${n}${suffix}`;
 };
 
-/** A reader can find the element from this: its id, else its name, else its position among its tag. */
 function describe($: CheerioAPI, element: Element): string {
   const tag = String($(element).prop('tagName')).toLowerCase();
   const id = $(element).attr('id');

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { runPlan, type Exec, type Plan } from './verify.pure.ts';
 
-/** A stand-in for the process adapter: each step exits with the code `codes` names (0 by default) and logs its run. */
 function fakeExec(codes: Readonly<Record<string, number>> = {}, outputs: Readonly<Record<string, string>> = {}) {
   const log: string[] = [];
   const exec: Exec = async (step) => {

@@ -14,12 +14,7 @@ function firstShellBlockAfter(markdown: string, heading: string): string {
   return match[1];
 }
 
-/**
- * lib/hook.sh claims to be the single definition of the hook body, because two
- * install flows write it and a repository whose hook disagrees judges commits
- * differently. A claim in a comment is not a guarantee — these are.
- */
-describe('the canonical hook body', () => {
+describe('the canonical hook body, the single definition both install flows write', () => {
   const canonical = canonicalHookBody().trimEnd();
 
   it('is produced by lib/hook.sh and delegates to the installed gate path', () => {

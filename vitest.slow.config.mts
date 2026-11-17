@@ -2,7 +2,7 @@ import path from 'node:path';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 // Disk-read inputs rerun the whole slow lane; Vitest matches these against absolute paths.
-const TRIGGERS = ['package-lock.json', 'skills/**', 'vitest.slow.config.mts'];
+const TRIGGERS = ['package-lock.json', 'skills/**', 'eslint.config.mjs', 'tools/lint/**', 'vitest.slow.config.mts'];
 
 export default defineConfig({
   test: {

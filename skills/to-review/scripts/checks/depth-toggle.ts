@@ -1,5 +1,3 @@
-// Depth: an item with depth "both" carries exactly one [data-depth-toggle], starts on its simple view and reveals
-// more when the toggle is activated; a "simple" or "detailed" item has no toggle.
 import type { Page } from '@playwright/test';
 import type { Check } from '../grader/check.ts';
 
@@ -7,7 +5,6 @@ interface ItemDepth {
   readonly id: string;
   readonly depth: string;
   readonly toggles: number;
-  /** For a "both" item with a toggle: whether activating it showed more text. Null when not tried. */
   readonly revealed: boolean | null;
 }
 

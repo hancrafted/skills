@@ -1,5 +1,3 @@
-// No horizontal scroll and no text overflow: the page is no wider than its viewport, and no box hides or spills
-// its text. A box made to scroll its own content (overflow auto or scroll) is a deliberate choice and passes.
 import type { Check } from '../grader/check.ts';
 import { describeElement, type ElementFacts } from '../grader/element.pure.ts';
 import { inPage, type Kit } from '../grader/in-page.ts';
@@ -16,11 +14,9 @@ interface Box {
 
 interface Observation {
   readonly page: { readonly scrollWidth: number; readonly clientWidth: number };
-  /** The innermost text-bearing boxes whose content is larger than the box, in document order. */
   readonly boxes: readonly Box[];
 }
 
-/** Sub-pixel layout rounds; a pixel of excess is noise, not overflow. */
 const TOLERANCE = 1;
 const SCROLLS = new Set(['auto', 'scroll']);
 const HIDES = new Set(['hidden', 'clip']);
@@ -40,14 +36,13 @@ function downwards({ facts, overflowY, scrollHeight, clientHeight }: Box): strin
   return `${describeElement(facts)} ${how} ${excess}px of its content below its box; let the box grow`;
 }
 
-/** Runs in the page: every rendered box holding text whose content outgrows it, innermost only. */
 function overflowingBoxes(kit: Kit): Box[] {
   const SKIP = 'html, body, svg, svg *, textarea, input, select, option, script, style, [hidden]';
   const over = (el: Element) => el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1;
   const candidates = [...document.querySelectorAll('body *')].filter((el) => {
     if (el.matches(SKIP) || !el.textContent?.trim()) return false;
-    // An unrendered, collapsed or visually-hidden (1px) box shows no text to overflow.
-    if (el.clientWidth <= 1 || el.clientHeight <= 1) return false;
+    const unrenderedCollapsedOrVisuallyHiddenOnePixelBox = el.clientWidth <= 1 || el.clientHeight <= 1;
+    if (unrenderedCollapsedOrVisuallyHiddenOnePixelBox) return false;
     return over(el);
   });
   return candidates

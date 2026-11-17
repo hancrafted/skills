@@ -28,7 +28,7 @@ Prohibition fails the other way: an agent forbidden to cut corners cuts them out
 
 ### 2. Mark and file (📜 Rule: `tech-debt-links-issue`)
 
-1. An accepted shortcut MUST carry a `tech-debt` comment at the fence: `// tech-debt: hand-rolled parser, https://github.com/hancrafted/skills/issues/12`.
+1. An accepted shortcut MUST carry a `tech-debt` comment at the fence: `// tech-debt: https://github.com/hancrafted/skills/issues/12`.
 2. The issue link MUST sit on the marker's own line; a bare `#12` does not count.
 3. The issue carries the `tech-debt` label and states the cost and the undo.
 4. Prose naming the marker is not one: only a marker opening a comment is checked.

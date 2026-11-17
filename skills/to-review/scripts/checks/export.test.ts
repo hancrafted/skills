@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { COMMENT } from '../grader/feedback.pure.ts';
 import { check, type ExportObservation } from './export.ts';
 
-/** A page that round-trips the comment: Copy prompt and Save carry the same handoff, as a JSON payload. */
 const handoff = `# Feedback on cache-layer, revision 2\n\n\`\`\`json\n${JSON.stringify({ comment: COMMENT }, null, 2)}\n\`\`\`\n`;
 const passing: ExportObservation = {
   mode: 'decide',

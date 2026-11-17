@@ -1,11 +1,8 @@
-// The page loads with networking blocked and requests nothing outside itself. The one exception: a page marked
-// <html data-offline="partial"> may request Mermaid from jsDelivr at an exact version.
 import { load } from 'cheerio';
 import type { Check } from '../grader/check.ts';
 
 interface Observation {
   readonly partial: boolean;
-  /** Every URL the page requested; the grader blocked them all. */
   readonly requests: readonly string[];
 }
 

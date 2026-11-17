@@ -11,7 +11,6 @@ interface Item {
   column: Rect | null;
   options: { id: string; rect: Rect }[];
 }
-/** An item with its visual in a 1020 px column at x = 48 and its Options in a 300 px rail at its right. */
 const item = (id: string, overrides: Partial<Item> = {}): Item => ({
   id,
   left: 32,

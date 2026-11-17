@@ -1,19 +1,13 @@
-// AA contrast: in the light and the dark theme, every rendered run of text reaches 4.5:1 against the background
-// behind it, or 3:1 when large (24px, or 18.66px bold). Backgrounds are composited from the page canvas up through
-// every translucent layer; text over a background image or gradient is skipped, since its colour behind the text
-// is unknown. Text drawn inside SVG is out of scope.
 import type { Check } from '../grader/check.ts';
 import { describeElement, type ElementFacts } from '../grader/element.pure.ts';
 import { inPage, type Kit } from '../grader/in-page.ts';
 
-/** Red, green and blue 0–255, alpha 0–1. */
 type Rgba = readonly number[];
 
 interface Sample {
   readonly facts: ElementFacts;
   readonly scheme: string;
   readonly color: Rgba;
-  /** Background layers from the page canvas up to the text's own box; null over an image or gradient. */
   readonly layers: readonly Rgba[] | null;
   readonly fontSize: number;
   readonly fontWeight: number;
@@ -27,7 +21,6 @@ const over = (top: Rgba, bottom: Rgba): Rgba => {
   return [0, 1, 2].map((channel) => top[channel] * alpha + bottom[channel] * (1 - alpha)).concat(1);
 };
 
-/** WCAG 2 relative luminance of an opaque colour. */
 function luminance([red, green, blue]: Rgba): number {
   const linear = (channel: number) => {
     const c = channel / 255;
@@ -36,7 +29,6 @@ function luminance([red, green, blue]: Rgba): number {
   return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
 }
 
-/** The WCAG 2 contrast ratio of text over an opaque background, the text blended in first when translucent. */
 export function contrastRatio(text: Rgba, background: Rgba): number {
   const [lighter, darker] = [luminance(over(text, background)), luminance(background)].sort((a, b) => b - a);
   return (lighter + 0.05) / (darker + 0.05);
@@ -56,9 +48,7 @@ function problemOf(sample: Sample): string | null {
   return `${describeElement(sample.facts)} has contrast ${shown}:1 in the ${sample.scheme} theme; AA needs ${needed}:1${forLarge}`;
 }
 
-/** Runs in the page: every shown element with its own text outside SVG and disabled controls, its colour and the backgrounds behind it. */
 function textSamples(kit: Kit, scheme: string): Sample[] {
-  // The canvas behind every layer: dark only when the page opts into a dark colour scheme.
   const darkCanvas = scheme === 'dark' && /dark/.test(getComputedStyle(document.documentElement).colorScheme);
   const canvas = darkCanvas ? [18, 18, 18, 1] : [255, 255, 255, 1];
   const layersOf = (element: Element): number[][] | null => {

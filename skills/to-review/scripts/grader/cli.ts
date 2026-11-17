@@ -1,4 +1,3 @@
-// The grade commands' command line: exactly one path, which exists. Anything else prints the usage and exits 2.
 import { existsSync } from 'node:fs';
 
 export function onePath(usage: string): string {
