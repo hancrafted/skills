@@ -8,7 +8,7 @@ interface ItemRoom {
   readonly id: string;
   readonly left: number;
   readonly column: Rect | null;
-  readonly options: readonly { readonly id: string; readonly rect: Rect }[];
+  readonly options: readonly { readonly id: string; readonly rect: Rect; readonly visual: Rect | null }[];
 }
 
 interface Observation {
@@ -38,27 +38,50 @@ function itemRooms(kit: Kit): ItemRoom[] {
         column: visual === null ? null : box(visual),
         options: [...item.querySelectorAll('[data-option]')]
           .filter((option) => box(option).width > 0)
-          .map((option) => ({ id: option.getAttribute('data-option') ?? '', rect: box(option) })),
+          .map((option) => {
+            const own = option.querySelector('[data-visual]') === null ? null : kit.largestVisual(option);
+            return {
+              id: option.getAttribute('data-option') ?? '',
+              rect: box(option),
+              visual: own === null ? null : box(own),
+            };
+          }),
       };
     });
 }
 
-function itemProblems({ id, column, options }: ItemRoom, state: string): string[] {
+function sectionProblems({ id, options }: ItemRoom, state: string): string[] {
+  return options.flatMap(({ id: option, visual }) => {
+    if (visual === null) return [];
+    const width = Math.floor(visual.width);
+    return width < MIN_COLUMN
+      ? [`item "${id}": option "${option}" has a visual ${width}px wide ${state}; keep at least ${MIN_COLUMN}px`]
+      : [];
+  });
+}
+
+function railProblems({ id, column, options }: ItemRoom, state: string): string[] {
   if (column === null) return [];
+  const width = Math.floor(column.width);
   const narrow =
-    Math.floor(column.width) < MIN_COLUMN
+    width < MIN_COLUMN
       ? [
-          `item "${id}": the content column is ${Math.floor(column.width)}px wide ${state}; keep at least ${MIN_COLUMN}px with the rail beside it`,
+          `item "${id}": the content column is ${width}px wide ${state}; keep at least ${MIN_COLUMN}px with the rail beside it`,
         ]
       : [];
   const under = options
-    .filter(({ rect }) => !isBeside(column, rect))
+    .filter(({ visual, rect }) => visual === null && !isBeside(column, rect))
     .map(
       ({ id: option }) =>
         `item "${id}": option "${option}" sits under the content column, not in a rail beside it; put the Options in a rail to its right`,
     );
   return [...narrow, ...under];
 }
+
+const itemProblems = (room: ItemRoom, state: string): string[] => [
+  ...sectionProblems(room, state),
+  ...railProblems(room, state),
+];
 
 export const check: Check<Observation> = {
   id: 'laptop-room',

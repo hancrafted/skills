@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "An Option tags two paragraphs as its before and after instead of drawing them.",
+  "replace": [
+    {
+      "find": "<h3>A. In process memory (recommended)</h3>",
+      "with": "<h3>A. In process memory (recommended)</h3>\n                <p data-before>Before: caches live in each process.</p>\n                <p data-after>After: still in each process.</p>"
+    }
+  ]
+}

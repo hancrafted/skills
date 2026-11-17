@@ -1,0 +1,14 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A narrow paragraph breaks the segment of a hyphenated token in the middle of the segment, while the token's hyphens stay legal break points.",
+  "replace": [
+    {
+      "find": "</style>",
+      "with": ".squeezed { display: block; width: 7ch; overflow-wrap: anywhere; }\n</style>"
+    },
+    {
+      "find": "</body>",
+      "with": "<p class=\"squeezed\">a-very-long-hyphenated-token</p></body>"
+    }
+  ]
+}

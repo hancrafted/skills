@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en" data-page-id="drive-fortify" data-revision="1" data-mode="decide">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drive Fortify decisions</title>
+<style>
+:root{--background:#fafaf7;--foreground:#1d1d1b;--card:#fff;--border:#8a8a84;--muted:#ecece6;--muted-foreground:#55554f;--accent:#1a5fb4;--ring:#1a5fb4;--gutter:2rem}
+:root.dark{--background:#16171a;--foreground:#ececea;--card:#202226;--border:#8b8d93;--muted:#2a2c31;--muted-foreground:#a9abb0;--accent:#7db1ff;--ring:#7db1ff}
+body{margin:0;background:var(--background);color:var(--foreground);font:16px/1.5 system-ui,sans-serif}
+header.top{padding:24px var(--gutter) 8px}h1{margin:0 0 8px;font-size:1.6rem}h2{font-size:1.2rem;margin:0 0 8px}
+.layout{display:grid;grid-template-columns:1fr;gap:24px}
+html[data-nav=open] .layout{grid-template-columns:14rem 1fr}
+@media(max-width:112.49rem){html[data-nav=open] .layout{grid-template-columns:1fr}}
+[data-page-nav]{padding:16px;font-size:.9rem}[data-page-nav] ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+[data-page-nav] a{color:var(--foreground)}
+main{padding:0 var(--gutter) 48px;max-width:2000px;min-width:0}
+.item{display:grid;grid-template-columns:minmax(0,1fr) 24rem;gap:24px;margin:0 0 48px;align-items:start}
+@media(max-width:1100px){.item{grid-template-columns:1fr}}
+.main{position:sticky;top:var(--toolbar-h,61px);background:var(--background);padding-top:8px;max-height:none}
+.rail{position:sticky;top:calc(var(--toolbar-h,61px) + 8px);display:grid;gap:12px}
+@media(max-width:1100px){.main,.rail{position:static}}
+.visual{background:var(--card);border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:16px;box-shadow:0 2px 12px color-mix(in oklch,var(--foreground) 10%,transparent);max-width:var(--preview-width,100%)}
+.visual svg{width:100%;height:auto}.st{fill:var(--foreground);font-size:13px}.sb{fill:var(--accent)}
+.lead{margin:0 0 12px}.meta{color:var(--muted-foreground);font-size:.875rem}
+.pick{display:flex;flex-wrap:wrap;gap:2px;padding:2px;border:1px solid var(--border);border-radius:12px;background:var(--muted);margin:0 0 8px}
+.pick legend{font-size:.8rem;padding:0 4px;color:var(--muted-foreground)}
+.seg{position:relative;flex:1 1 auto}.seg input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.seg span{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:4px 12px;border-radius:8px;font-weight:500;font-size:.85rem;text-align:center;box-sizing:border-box}
+.seg input:checked+span{background:var(--foreground);color:var(--background);font-weight:700}
+.seg input:focus-visible+span{outline:2px solid var(--ring);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tool,button.act{font:inherit;font-size:.85rem;min-height:44px;padding:4px 16px;border-radius:10px;border:1px solid var(--border);background:transparent;color:inherit;cursor:pointer}
+.tool:hover,button.act:hover{background:color-mix(in oklch,var(--foreground) 6%,transparent)}.tool:active{background:color-mix(in oklch,var(--foreground) 12%,transparent)}
+button.primary{background:var(--accent);color:var(--background);border-color:transparent}
+button:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+textarea,select{width:100%;box-sizing:border-box;font:inherit;border:1px solid var(--border);border-radius:10px;background:var(--card);color:inherit;padding:8px}
+label{display:grid;gap:4px;font-size:.85rem}
+.card{background:var(--card);border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:16px;margin:12px 0;display:grid;gap:8px}
+.card h4{margin:0}.card ul{margin:0;padding-left:20px}.card p{margin:0}.why{font-weight:600}
+.ctx{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 24px}.ctx details{flex:1 1 18rem;border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:8px 16px;background:var(--card)}
+.review{border:1px solid var(--border);border-radius:12px;padding:24px;background:var(--card);display:grid;gap:16px}
+.lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.lenses p{margin:0;font-size:.85rem}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media(max-width:832px){.lenses,.two{grid-template-columns:1fr}}
+.jump{position:fixed;right:16px;bottom:16px;width:48px;height:48px;border-radius:50%;overflow:hidden;border:1px solid var(--border);background:var(--card);display:grid;grid-template-rows:1fr 1fr;z-index:30}
+.jump button{all:unset;display:grid;place-items:center;min-height:24px;min-width:24px;cursor:pointer}.jump button:focus-visible{outline:2px solid var(--ring);outline-offset:-2px}
+.jump svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+pre{white-space:pre-wrap;background:var(--muted);padding:12px;border-radius:10px;font-size:.8rem;max-height:14rem;overflow:auto}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<!-- navOpenWidth: the window width from which the navigation opens beside the page; toolbarHeight: the bar's height in px
+     before the script measures it; fitMargin: the px kept above and below a fixed design size; fitRoomMin: the least room
+     in px a fixed design size is scaled into. The dropdown rule below (max-width) is navOpenWidth less 1 px, in rem. -->
+<script type="application/json" data-toolbar-config>
+  { "navOpenWidth": 1800, "toolbarHeight": 61, "fitMargin": 16, "fitRoomMin": 240 }
+</script>
+<style data-toolbar-style>
+  .dh-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+    padding: 0.5rem var(--gutter, 2rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    background: color-mix(in oklch, var(--card, Canvas) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+  }
+  .dh-toolbar > * {
+    flex: none;
+  }
+  /* A tool is a quiet outline; hover and pressed tint it, and an open one is filled. */
+  .dh-tool {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-height: 2.75rem;
+    padding: 0.3rem 1rem;
+    border-radius: 0.625rem;
+    border: 1px solid color-mix(in oklch, var(--border, GrayText) 70%, transparent);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .dh-tool:hover {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 6%, transparent);
+  }
+  .dh-tool:active {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 12%, transparent);
+  }
+  .dh-tool[aria-expanded='true'] {
+    background: var(--foreground, CanvasText);
+    color: var(--background, Canvas);
+    border-color: transparent;
+  }
+  /* One segmented bar, one selection: a track with a raised, filled thumb under the selected segment. */
+  .dh-seg {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 0.75rem;
+    background: color-mix(in oklch, var(--muted, GrayText) 80%, var(--background, Canvas));
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--border, GrayText) 50%, transparent);
+  }
+  .dh-seg button {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-height: 2.5rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 0.5rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .dh-seg button:hover {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 7%, transparent);
+  }
+  .dh-seg button:active {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 13%, transparent);
+  }
+  .dh-seg button[aria-checked='true'] {
+    background: var(--foreground, CanvasText);
+    color: var(--background, Canvas);
+    font-weight: 600;
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground, CanvasText) 25%, transparent);
+  }
+  .dh-size {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground, GrayText);
+    white-space: nowrap;
+  }
+  .dh-size[hidden] {
+    display: none;
+  }
+  /* The slot for more tools, and the theme switch, sit at the end of the row. */
+  .dh-toolbar-end {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .dh-toolbar button:focus-visible {
+    outline: 2px solid var(--ring, Highlight);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .dh-tool,
+    .dh-seg button {
+      transition:
+        background-color 120ms ease,
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+    }
+  }
+  /* The navigation is a dropdown: hidden when closed, floating under the toolbar below navOpenWidth when open. */
+  html[data-nav='closed'] [data-page-nav] {
+    display: none;
+  }
+  @media (max-width: 112.49rem) {
+    html[data-nav='open'] [data-page-nav] {
+      display: block;
+      position: fixed;
+      z-index: 15;
+      top: var(--toolbar-h);
+      bottom: 0;
+      left: 0;
+      width: 17rem;
+      max-height: none;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 1rem;
+      background: var(--card, Canvas);
+      border-right: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+      box-shadow: 0 0 2rem color-mix(in oklch, var(--foreground, CanvasText) 18%, transparent);
+    }
+  }
+  @media print {
+    .dh-toolbar {
+      display: none;
+    }
+  }
+</style>
+<script>
+  // The theme and the navigation, applied before first paint. Storage may be blocked: every call is guarded.
+  (() => {
+    const root = document.documentElement;
+    const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+    root.style.setProperty('--toolbar-h', config.toolbarHeight + 'px');
+    const read = (key) => {
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    };
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => {
+      const choice = read('decision-page-theme') || 'auto';
+      root.classList.toggle('dark', choice === 'dark' || (choice === 'auto' && media.matches));
+      root.dataset.theme = choice;
+    };
+    apply();
+    media.addEventListener('change', apply);
+    // Open on a wide screen, collapsed below navOpenWidth, where the content wants every pixel.
+    root.dataset.nav = innerWidth >= config.navOpenWidth ? 'open' : 'closed';
+  })();
+</script>
+
+
+</head>
+<body>
+
+<div class="dh-toolbar" role="toolbar" aria-label="Page tools" data-toolbar>
+  <button type="button" class="dh-tool" data-nav-toggle aria-controls="page-nav" aria-expanded="false">Outline</button>
+  <div class="dh-seg" role="radiogroup" aria-label="Preview size" data-presets></div>
+  <output class="dh-size" data-preview-size data-measure="[data-visual]" aria-live="polite"></output>
+  <div class="dh-toolbar-end" data-toolbar-end></div>
+  <button type="button" class="dh-tool" data-theme-toggle>Theme: Auto</button>
+</div>
+<!-- A preset is a label, a width in px and, for a vertical one, a height; one without a width is the full column. -->
+<script type="application/json" data-toolbar-presets>[{"id":"fit","label":"Fit","title":"Fit, the full column"},{"id":"laptop","label":"Laptop","width":1440},{"id":"tablet","label":"Tablet","width":1024}]</script>
+
+
+<header class="top"><h1>Drive Fortify: what do we harden after this Workflow?</h1>
+<p>Spec #663, PR #695. Two picks: one quick win now, one architectural ticket. Every option names one failure mode, its evidence, the Enforcer that would catch it and its prior count. This is the first Workflow, so no entry reaches the smell count of 3 and no `fortify` ticket is open.</p></header>
+<div class="layout"><nav id="page-nav" data-page-nav aria-label="Items"><ul><li><a href="#quick-win">Quick win</a></li><li><a href="#architectural">Architectural</a></li><li><a href="#context">Context</a></li><li><a href="#review">Before you approve</a></li></ul></nav>
+<main><div class="ctx" id="context"><details><summary>Smells and open ticket</summary><p>Smells (count 3+): none. Open `fortify` ticket: none, so nothing to replace or wait behind.</p></details>
+<details><summary>Not on this page</summary><p>FM-K resume after quota reset (1 correction, large; in learnings.md), spec drift, guard merge tests (fixed in review), plugin hook on core.hooksPath (no repo Enforcer), Decision-doc guard false blocks (needs a design call), and the two deferred entries (non-Node detection, husky-only wiring).</p></details>
+<details><summary>Files and links read</summary><p>.scratch/drive/decisions.md, .scratch/drive/fortify-evidence.md, docs/drive/learnings.md, docs/drive/enforcers.yml, PR #695 comments, .archgate/adrs/ listing, skills/drive/references/fortify.md. Evidence is labelled per option; Enforcer choices are agent proposals.</p></details></div>
+<section class="item" id="quick-win" data-item="quick-win" data-fidelity="diagram" data-depth="both">
+<div class="main"><h2>Quick win: which one failure mode do we harden now?</h2><p class="lead">Pick one 15 to 30 minute fix that a Subagent merges before cleanup, or pick none.</p>
+<div class="visual" data-visual><svg viewBox="0 0 520 100" role="img" aria-label="Incidents on record per option"><text x="0" y="20" class="st">Hung slow test</text><rect x="190" y="4" width="100" height="20" rx="4" class="sb"/><text x="296" y="19" class="st">1 on record</text><text x="0" y="50" class="st">Half-made worktree</text><rect x="190" y="34" width="100" height="20" rx="4" class="sb"/><text x="296" y="49" class="st">1 on record</text><text x="0" y="80" class="st">core.bare flipped</text><rect x="190" y="64" width="100" height="20" rx="4" class="sb"/><text x="296" y="79" class="st">1 on record</text></svg></div>
+<p class="meta">Two-way door, 15 to 30 min each. Fidelity: diagram: bars of observed incidents are enough to rank three narrow fixes.</p>
+<button type="button" class="tool" data-depth-toggle aria-expanded="false">Show failure modes, evidence and Enforcers</button>
+<div class="detail" hidden><article class="card" data-option="qw-hung-slow-test" data-recommended="true"><h4>Hung slow test (recommended)</h4><ul><li>Does: a timeout turns a hang into a failing test.</li><li>Benefit: no manual process-tree kill; `wt:done` can finish.</li><li>Cost: a slow-but-fine test may need a longer timeout.</li></ul><p class="why">Recommended: the clearest cause and the cheapest fix, and every Workflow runs slow tests.</p><p><b>Failure mode.</b> A hung `test:slow` run keeps a worktree alive and `wt:done` refuses to tear it down.</p><p>Evidence: decisions.md observed failure 3: vitest hung 7+ minutes, the Orchestrator killed the process tree by hand. Correction: none.</p><p>Enforcer: test-runner `test:slow` with a test and hook timeout set in the slow vitest config, so a hang fails instead of waits (deterministic).</p><p>Prior count 0, new.</p><label>Comment on Hung slow test<textarea rows="2" data-comment="quick-win/qw-hung-slow-test"></textarea></label></article><article class="card" data-option="qw-wt-new-rollback" data-recommended="false"><h4>Half-made worktree</h4><ul><li>Does: `wt:new` removes what it created when a step fails.</li><li>Benefit: a rerun works at once.</li><li>Cost: rollback code to maintain; the cause of the stack trace stays unknown.</li></ul><p><b>Failure mode.</b> A failed `wt:new` leaves its branch behind, so the rerun fails with &quot;branch already exists&quot;.</p><p>Evidence: observed failure 1: Node stack trace after the branch was created, `npm ci` rerun by hand.</p><p>Enforcer: test-runner `test:slow` with an injected install failure that asserts branch and folder are gone (deterministic).</p><p>Prior count 0, new.</p><label>Comment on Half-made worktree<textarea rows="2" data-comment="quick-win/qw-wt-new-rollback"></textarea></label></article><article class="card" data-option="qw-core-bare" data-recommended="false"><h4>core.bare flipped</h4><ul><li>Does: preflight fails loudly when the flag flips.</li><li>Benefit: catches it at once instead of mid-run.</li><li>Cost: detects, never prevents; finding the leaking test is separate work.</li></ul><p><b>Failure mode.</b> The main checkout&#x27;s git config reads `core.bare=true`.</p><p>Evidence: observed failure 2: found set mid-run and reset by a Subagent; cause unknown, a leaking test is suspected.</p><p>Enforcer: new check in `npm run preflight` and before `wt:done`: `core.bare` is false in the main checkout (deterministic).</p><p>Prior count 0, new.</p><label>Comment on core.bare flipped<textarea rows="2" data-comment="quick-win/qw-core-bare"></textarea></label></article><article class="card" data-option="none" data-recommended="false"><h4>None</h4><ul><li>No quick win this Workflow; log it like an unpicked option.</li></ul><label>Comment on None<textarea rows="2" data-comment="quick-win/none"></textarea></label></article></div></div>
+<aside class="rail"><div class="row1"><fieldset class="pick"><legend>Pick for Quick win</legend><label class="seg"><input type="radio" name="pick-quick-win" value="qw-hung-slow-test" checked><span>Hung slow test <span aria-hidden="true">★</span><span class="sr">recommended</span></span></label><label class="seg"><input type="radio" name="pick-quick-win" value="qw-wt-new-rollback"><span>Half-made worktree</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="qw-core-bare"><span>core.bare flipped</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="none"><span>None</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="redesign"><span>&#8635; Redesign</span></label></fieldset>
+<button type="button" class="tool" data-reset>Reset pick</button></div>
+<label>Comment on this item<textarea rows="4" data-comment="quick-win"></textarea></label>
+<details><summary>Ranking rule</summary><p>Ranked by evidence strength: Operator corrections first, then observed incidents, then deferred reviews. Enforcers rank deterministic first.</p></details></aside></section><section class="item" id="architectural" data-item="architectural" data-fidelity="diagram" data-depth="both">
+<div class="main"><h2>Architectural: which one ticket joins the tracker as the open `fortify` ticket?</h2><p class="lead">Pick one ticket-sized hardening, or pick none. There is no open `fortify` ticket to replace or wait behind.</p>
+<div class="visual" data-visual><svg viewBox="0 0 520 100" role="img" aria-label="Incidents on record per option"><text x="0" y="20" class="st">Phase and branch announcement</text><rect x="190" y="4" width="200" height="20" rx="4" class="sb"/><text x="396" y="19" class="st">2 on record</text><text x="0" y="50" class="st">Subagent stops before merge</text><rect x="190" y="34" width="200" height="20" rx="4" class="sb"/><text x="396" y="49" class="st">2 on record</text><text x="0" y="80" class="st">Parallel tickets share files</text><rect x="190" y="64" width="100" height="20" rx="4" class="sb"/><text x="296" y="79" class="st">1 on record</text></svg></div>
+<p class="meta">Two-way door for the ticket, a ticket of work each. Fidelity: diagram: incident counts and an Enforcer per option are enough to choose a ticket.</p>
+<button type="button" class="tool" data-depth-toggle aria-expanded="false">Show failure modes, evidence and Enforcers</button>
+<div class="detail" hidden><article class="card" data-option="ar-phase-announce" data-recommended="true"><h4>Phase and branch announcement (recommended)</h4><ul><li>Does: `drive status` states the phase; the hook blocks a branch-creating step without it.</li><li>Benefit: the Operator is never surprised by a step.</li><li>Cost: the hook checks that a marker exists, not that the Orchestrator read it.</li></ul><p class="why">Recommended: the only failure the Operator corrected twice, and it is the Operator who pays for it.</p><p><b>Failure mode.</b> The Orchestrator starts a step without naming its DRIVE phase, the branch state that follows, or the Operator&#x27;s decision points.</p><p>Evidence: two Operator corrections in decisions.md (stopped `wt:new` &quot;are we starting to implement?&quot;; &quot;can this session run until end or does it require a human?&quot; and a review guide). Now in learnings.md.</p><p>Enforcer: new hook on `wt:new` that requires a fresh phase marker written by a new `drive status` command, which prints phase, next branch state and Operator decision points (deterministic; `drive status` is tested).</p><p>Prior count 0 before this page; entered in learnings.md at count 1, proposed.</p><label>Comment on Phase and branch announcement<textarea rows="2" data-comment="architectural/ar-phase-announce"></textarea></label></article><article class="card" data-option="ar-subagent-stop" data-recommended="false"><h4>Subagent stops before merge</h4><ul><li>Does: a stop with unmerged work is refused and the Subagent told why.</li><li>Benefit: no relay messages from the Orchestrator.</li><li>Cost: a hook in each harness; a legitimately blocked Subagent needs an escape.</li></ul><p><b>Failure mode.</b> A Subagent ends its turn with its Task branch uncommitted or unmerged.</p><p>Evidence: observed failure 4: twice a Subagent stopped &quot;waiting on monitor&quot; and needed a SendMessage to finish the brief&#x27;s last steps.</p><p>Enforcer: new SubagentStop hook running a tested `drive worktree verify-done`: tree clean and Task branch an ancestor of the Integration branch (deterministic).</p><p>Prior count 0, new.</p><label>Comment on Subagent stops before merge<textarea rows="2" data-comment="architectural/ar-subagent-stop"></textarea></label></article><article class="card" data-option="ar-file-overlap" data-recommended="false"><h4>Parallel tickets share files</h4><ul><li>Does: overlapping tickets run in sequence or merge into one.</li><li>Benefit: no conflicting sync, no relays.</li><li>Cost: tickets must declare their files, which they may get wrong.</li></ul><p><b>Failure mode.</b> Two parallel tickets edit the same file, so one sync conflicts.</p><p>Evidence: observed failure 7: #667 and #668 and fix Subagents shared `learnings.md` and `binding.yml`; rules relayed by SendMessage, one sync conflicted.</p><p>Enforcer: new check in dispatch that fails when two tickets declare an overlapping file, tested (deterministic; relies on declared files).</p><p>Prior count 0, new.</p><label>Comment on Parallel tickets share files<textarea rows="2" data-comment="architectural/ar-file-overlap"></textarea></label></article><article class="card" data-option="none" data-recommended="false"><h4>None</h4><ul><li>No architectural ticket now; log it like an unpicked option.</li></ul><label>Comment on None<textarea rows="2" data-comment="architectural/none"></textarea></label></article></div></div>
+<aside class="rail"><div class="row1"><fieldset class="pick"><legend>Pick for Architectural</legend><label class="seg"><input type="radio" name="pick-architectural" value="ar-phase-announce" checked><span>Phase and branch announcement <span aria-hidden="true">★</span><span class="sr">recommended</span></span></label><label class="seg"><input type="radio" name="pick-architectural" value="ar-subagent-stop"><span>Subagent stops before merge</span></label><label class="seg"><input type="radio" name="pick-architectural" value="ar-file-overlap"><span>Parallel tickets share files</span></label><label class="seg"><input type="radio" name="pick-architectural" value="none"><span>None</span></label><label class="seg"><input type="radio" name="pick-architectural" value="redesign"><span>&#8635; Redesign</span></label></fieldset>
+<button type="button" class="tool" data-reset>Reset pick</button></div>
+<label>Comment on this item<textarea rows="4" data-comment="architectural"></textarea></label>
+<details><summary>Ranking rule</summary><p>Ranked by evidence strength: Operator corrections first, then observed incidents, then deferred reviews. Enforcers rank deterministic first.</p></details></aside></section>
+<section id="review" data-reflection class="review"><h2>Before you approve</h2><div class="lenses"><p><b>Operations.</b> Does the hook or timeout stop real work?</p><p><b>Security.</b> Does a new hook widen what an agent may run?</p><p><b>Information architecture.</b> Does the fix live in the skill or in docs/drive/?</p><p><b>Accessibility.</b> Can the Operator read the new output at a glance?</p></div>
+<div class="two"><label>General comment<textarea rows="4" data-general></textarea></label>
+<div data-next-action><label>Next action<select id="next"><option value="fortify">Dispatch the quick win and file the architectural ticket</option><option value="revise">Revise this page</option><option value="stop">Stop</option></select></label>
+<label>Instructions<textarea rows="2" id="nextText">(recommended by agent) Dispatch the quick win as one task, file the architectural pick labelled fortify, update learnings.md.</textarea></label>
+<p>Save accepts the selected Next action, as does sending the copied prompt.</p></div></div>
+<div><button type="button" class="act primary" data-copy-prompt>Copy as prompt</button> <button type="button" class="act" data-save>Save</button> <button type="button" class="act" data-reset-all>Reset all</button>
+<p role="status" id="status"></p><label>Reply composer<pre id="composer" tabindex="0"></pre></label></div>
+<!-- Reply composer pattern after html-effectiveness unknowns/03-design-directions.html: Apache-2.0, Copyright 2026 Anthropic PBC. -->
+</section></main></div>
+<div class="jump"><button type="button" aria-label="Scroll to top" id="up"><svg viewBox="0 0 16 16"><path d="M3 10l5-5 5 5"/></svg></button><button type="button" aria-label="Scroll to bottom" id="down"><svg viewBox="0 0 16 16"><path d="M3 6l5 5 5-5"/></svg></button></div>
+
+<script>
+  (() => {
+    const root = document.documentElement;
+    const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+    const bar = document.querySelector('[data-toolbar]');
+    const write = (key, value) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // Without storage the choice lasts until the page closes.
+      }
+    };
+    const size = bar.querySelector('[data-preview-size]');
+    const presets = JSON.parse(document.querySelector('script[data-toolbar-presets]')?.textContent || '[]');
+    const sizeOf = ({ width, height }) => (height ? width + ' × ' + height + ' px' : width + ' px');
+    // A preset with a width and a height has a fixed design size.
+    const isFixed = (preset) => Boolean(preset?.width && preset.height);
+    const current = () => presets.find((preset) => preset.id === root.dataset.preset);
+
+    // The size the previews take now, shown only while it fits on the row.
+    const fit = () => {
+      size.hidden = false;
+      if (bar.scrollWidth > bar.clientWidth) size.hidden = true;
+    };
+    const report = () => {
+      const target = [...document.querySelectorAll(size.dataset.measure || '[data-visual]')].find(
+        (candidate) => candidate.offsetParent !== null,
+      );
+      const preset = current();
+      const shown = target ? Math.round(target.getBoundingClientRect().width) : 0;
+      size.value = !target
+        ? ''
+        : isFixed(preset)
+          ? 'Showing ' + sizeOf(preset) + ' at ' + Math.round((shown / preset.width) * 100) + '%'
+          : 'Showing ' + shown + ' px wide';
+      fit();
+    };
+
+    // A fixed design size scales down uniformly so the whole frame fits the viewport below the toolbar, between a
+    // margin above and below; the page applies --preview-scale (SKILL.md step 4).
+    const scale = () => {
+      const preset = current();
+      if (!isFixed(preset)) {
+        root.style.removeProperty('--preview-scale');
+        return;
+      }
+      const room = Math.max(innerHeight - bar.offsetHeight - 2 * config.fitMargin, config.fitRoomMin);
+      root.style.setProperty('--preview-scale', Math.min(1, room / preset.height).toFixed(4));
+    };
+
+    // The sticky parts of the page sit below the toolbar, whose height is --toolbar-h.
+    const measure = () => {
+      root.style.setProperty('--toolbar-h', bar.offsetHeight + 'px');
+      scale();
+    };
+    if (typeof ResizeObserver === 'function') new ResizeObserver(measure).observe(bar);
+    measure();
+    addEventListener('resize', () => {
+      scale();
+      report();
+    });
+
+    // The presets: one segmented bar, one selection. A preset with a width sets --preview-width and data-preset on <html>.
+    const group = bar.querySelector('[data-presets]');
+    const segments = presets.map((preset) => {
+      const name = preset.title || preset.label + ', ' + sizeOf(preset);
+      const segment = document.createElement('button');
+      segment.type = 'button';
+      segment.dataset.preset = preset.id;
+      segment.setAttribute('role', 'radio');
+      segment.setAttribute('aria-label', name);
+      segment.title = name;
+      segment.textContent = preset.label;
+      group.append(segment);
+      return segment;
+    });
+    const choose = (at, focus) => {
+      const preset = presets[at];
+      if (preset.width) {
+        root.style.setProperty('--preview-width', preset.width + 'px');
+        root.dataset.preset = preset.id;
+      } else {
+        root.style.removeProperty('--preview-width');
+        delete root.dataset.preset;
+      }
+      if (isFixed(preset)) {
+        root.style.setProperty('--preview-height', preset.height + 'px');
+        root.dataset.previewFixed = '';
+      } else {
+        root.style.removeProperty('--preview-height');
+        delete root.dataset.previewFixed;
+      }
+      scale();
+      segments.forEach((segment, other) => {
+        segment.setAttribute('aria-checked', String(other === at));
+        segment.tabIndex = other === at ? 0 : -1;
+      });
+      if (focus) segments[at].focus();
+      report();
+    };
+    segments.forEach((segment, at) => {
+      segment.addEventListener('click', () => choose(at, false));
+      segment.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+        const to = event.key === 'Home' ? 0 : event.key === 'End' ? segments.length - 1 : undefined;
+        if (step === undefined && to === undefined) return;
+        event.preventDefault();
+        choose(to ?? (at + step + segments.length) % segments.length, true);
+      });
+    });
+    const start = Math.max(
+      0,
+      presets.findIndex((preset) => !preset.width),
+    );
+    segments.forEach((segment, at) => {
+      segment.setAttribute('aria-checked', String(at === start));
+      segment.tabIndex = at === start ? 0 : -1;
+    });
+
+    // The navigation: open in the page's grid on a wide screen, a dropdown under the toolbar below navOpenWidth.
+    const toggle = bar.querySelector('[data-nav-toggle]');
+    const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+    const sync = () => toggle.setAttribute('aria-expanded', String(root.dataset.nav === 'open'));
+    const close = () => {
+      root.dataset.nav = 'closed';
+      sync();
+      report();
+    };
+    toggle.addEventListener('click', () => {
+      root.dataset.nav = root.dataset.nav === 'open' ? 'closed' : 'open';
+      sync();
+      report();
+    });
+    panel?.addEventListener('click', (event) => {
+      if (event.target.closest('a') && innerWidth < config.navOpenWidth) close();
+    });
+    addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || root.dataset.nav !== 'open' || innerWidth >= config.navOpenWidth) return;
+      close();
+      toggle.focus();
+    });
+    sync();
+
+    // The theme: follow the system, or force light or dark.
+    const theme = bar.querySelector('[data-theme-toggle]');
+    const choices = ['auto', 'light', 'dark'];
+    const label = () =>
+      (theme.textContent = 'Theme: ' + (root.dataset.theme[0].toUpperCase() + root.dataset.theme.slice(1)));
+    theme.addEventListener('click', () => {
+      const next = choices[(choices.indexOf(root.dataset.theme) + 1) % choices.length];
+      write('decision-page-theme', next);
+      root.dataset.theme = next;
+      root.classList.toggle(
+        'dark',
+        next === 'dark' || (next === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches),
+      );
+      label();
+    });
+    label();
+
+    addEventListener('DOMContentLoaded', report);
+    addEventListener('load', report);
+  })();
+</script>
+
+<script>
+(()=>{
+const id='drive-fortify',rev=1,$=(s,r=document)=>[...r.querySelectorAll(s)],st=document.getElementById('status'),box=document.getElementById('composer');
+const key='decision-draft-'+id+'-r'+rev;const get=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}};
+const put=()=>{try{localStorage.setItem(key,JSON.stringify(draft()))}catch{}};
+const draft=()=>({picks:Object.fromEntries($('.item').map(i=>[i.dataset.item,($('input:checked',i)[0]||{}).value||null])),comments:Object.fromEntries($('[data-comment]').map(t=>[t.dataset.comment,t.value])),general:$('[data-general]')[0].value,next:document.getElementById('next').value,nextText:document.getElementById('nextText').value});
+const defaults=()=>$('.item').forEach(i=>{const r=$('[data-recommended=true]',i)[0];$('input[type=radio]',i).forEach(x=>x.checked=r&&x.value===r.dataset.option)});
+const text=()=>{const d=draft();const j={page:id,revision:rev,mode:'decide',path:location.pathname,destination:id+'-r'+rev+'-feedback.md',nextAction:{action:d.next,instructions:d.nextText,approvedRevision:rev},generalComment:d.general,items:$('.item').map(i=>{const p=d.picks[i.dataset.item];return {id:i.dataset.item,response:p===null?'skipped':p,comment:d.comments[i.dataset.item],options:Object.fromEntries($('[data-option]',i).map(o=>[o.dataset.option,d.comments[i.dataset.item+'/'+o.dataset.option]]))}})};
+return '# Decision page '+id+' revision '+rev+' (decide)\n\nSave this text verbatim to '+j.destination+'. Stop if the page revision differs. Sending it accepts the Next action.\n\n```json\n'+JSON.stringify(j,null,2)+'\n```\n'};
+const sync=()=>{box.textContent=text();put()};
+const saved=get();$('[data-comment]').forEach(t=>t.value=saved.comments?.[t.dataset.comment]||'');
+if(saved.picks)$('.item').forEach(i=>{const p=saved.picks[i.dataset.item];if(p!==undefined)$('input[type=radio]',i).forEach(x=>x.checked=x.value===p)});
+if(saved.general)$('[data-general]')[0].value=saved.general;if(saved.next)document.getElementById('next').value=saved.next;if(saved.nextText!==undefined)document.getElementById('nextText').value=saved.nextText;
+document.addEventListener('input',sync);document.addEventListener('change',sync);sync();
+$('[data-depth-toggle]').forEach(b=>b.addEventListener('click',()=>{const d=b.parentElement.querySelector('.detail');d.hidden=!d.hidden;b.setAttribute('aria-expanded',String(!d.hidden))}));
+$('[data-reset]').forEach(b=>b.addEventListener('click',()=>{const i=b.closest('.item');const r=$('[data-recommended=true]',i)[0];$('input[type=radio]',i).forEach(x=>x.checked=!!r&&x.value===r.dataset.option);sync()}));
+document.querySelector('[data-reset-all]').addEventListener('click',()=>{if(!confirm('Reset every pick and comment?')){st.textContent='Reset cancelled; nothing changed.';return}defaults();$('textarea[data-comment],[data-general]').forEach(t=>t.value='');document.getElementById('next').value='fortify';st.textContent='Everything reset.';sync()});
+document.getElementById('next').addEventListener('change',()=>{document.getElementById('nextText').value='';sync()});
+document.querySelector('[data-copy-prompt]').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text());st.textContent='Copied'}catch{st.textContent='Copy was denied; select the reply composer text and copy it by hand.'}});
+document.querySelector('[data-save]').addEventListener('click',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text()],{type:'text/markdown'}));a.download=id+'-r'+rev+'-feedback.md';a.click();st.textContent='Download started: '+a.download+'. Then say "saved feedback".'});
+document.getElementById('up').onclick=()=>scrollTo({top:0});document.getElementById('down').onclick=()=>scrollTo({top:document.body.scrollHeight});
+})();
+</script></body></html>

@@ -9,13 +9,13 @@ interface Item {
   id: string;
   left: number;
   column: Rect | null;
-  options: { id: string; rect: Rect }[];
+  options: { id: string; rect: Rect; visual: Rect | null }[];
 }
 const item = (id: string, overrides: Partial<Item> = {}): Item => ({
   id,
   left: 32,
   column: rect(48, 1020),
-  options: [{ id: 'a', rect: rect(1092, 300) }],
+  options: [{ id: 'a', rect: rect(1092, 300), visual: null }],
   ...overrides,
 });
 const observation = (overrides: { navigation?: NavigationState; nav?: Rect | null; items?: Item[] } = {}) => ({
@@ -66,6 +66,44 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  it('fails an Option section whose own visual is under 1000 px', () => {
+    // ARRANGE
+    const sectioned = item('fortify', {
+      column: null,
+      options: [{ id: 'bare', rect: rect(48, 1020), visual: rect(48, 640) }],
+    });
+    const expected = [
+      'item "fortify": option "bare" has a visual 640px wide with the navigation collapsed; keep at least 1000px',
+    ];
+
+    // ACT
+    const problems = check.judge(observation({ items: [sectioned] }));
+
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
+  it('checks a mixed item: Options with a visual by width, the others by the rail rule', () => {
+    // ARRANGE
+    const mixed = item('fortify', {
+      column: rect(48, 1020),
+      options: [
+        { id: 'bare', rect: rect(48, 1020), visual: rect(48, 640) },
+        { id: 'plain', rect: rect(48, 1020), visual: null },
+      ],
+    });
+    const expected = [
+      'item "fortify": option "bare" has a visual 640px wide with the navigation collapsed; keep at least 1000px',
+      'item "fortify": option "plain" sits under the content column, not in a rail beside it; put the Options in a rail to its right',
+    ];
+
+    // ACT
+    const problems = check.judge(observation({ items: [mixed] }));
+
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
   it('fails an empty column left of the content after the navigation collapsed', () => {
     // ARRANGE
     const loaded = observation({ items: [item('store', { left: 152, column: rect(168, 1020), options: [] })] });
@@ -96,7 +134,9 @@ describe('failure cases', () => {
 
   it('fails Options that sit under the content instead of in a rail beside it', () => {
     // ARRANGE
-    const loaded = observation({ items: [item('store', { options: [{ id: 'redis', rect: rect(48, 1020) }] })] });
+    const loaded = observation({
+      items: [item('store', { options: [{ id: 'redis', rect: rect(48, 1020), visual: null }] })],
+    });
     const expected = [
       'item "store": option "redis" sits under the content column, not in a rail beside it; put the Options in a rail to its right',
     ];
@@ -110,6 +150,23 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  it('passes Option sections of 1000 px visuals that sit under each other, not in a rail', () => {
+    // ARRANGE
+    const sectioned = item('fortify', {
+      column: null,
+      options: [
+        { id: 'bare', rect: rect(48, 1020), visual: rect(48, 1000) },
+        { id: 'phase', rect: rect(48, 1020), visual: rect(48, 1020) },
+      ],
+    });
+
+    // ACT
+    const problems = check.judge(observation({ items: [sectioned] }));
+
+    // ASSERT
+    expect(problems).toEqual([]);
+  });
+
   it('accepts a start exactly one gutter from the edge and a column of exactly 1000 px', () => {
     // ARRANGE
     const loaded = observation({ items: [item('store', { left: 48, column: rect(48, 1000) })] });

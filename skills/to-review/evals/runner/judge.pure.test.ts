@@ -15,8 +15,11 @@ describe('checklist judge', () => {
     it("asks a decide page the whole confidence bar, then the case's own items", () => {
       // ARRANGE
       const expected = [
+        'bar cold-reader',
         'bar decision',
+        'bar closed-pick',
         'bar consequence',
+        'bar before-after-visual',
         'bar labels',
         'bar recommendation',
         'bar fidelity',
@@ -36,7 +39,9 @@ describe('checklist judge', () => {
     it('asks an explain page only the bar questions for settled decisions', () => {
       // ARRANGE
       const expected = [
+        'bar cold-reader',
         'bar decision',
+        'bar closed-pick',
         'bar consequence',
         'bar labels',
         'bar fidelity',
@@ -49,8 +54,11 @@ describe('checklist judge', () => {
 
       // ASSERT
       expect(checklist.map(({ id }) => id)).toEqual(expected);
-      expect(checklist[1].question).toBe('Does every item say what changes for the reader overall?');
-      expect(checklist[5].question).toContain('reflection block ask only open questions');
+      const question = (id: string) => checklist.find((item) => item.id === id)?.question;
+      expect(question('bar cold-reader')).toBe('Can a cold reader say, per item, what it is and what changes?');
+      expect(question('bar closed-pick')).toBe('With every collapsible closed, can a reader pick each item?');
+      expect(question('bar consequence')).toBe('Does every item say what changes for the reader overall?');
+      expect(question('bar open-reflection')).toContain('reflection block ask only open questions');
     });
 
     it('passes a yes and quotes its evidence', () => {

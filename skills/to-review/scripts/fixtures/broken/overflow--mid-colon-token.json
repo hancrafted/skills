@@ -1,0 +1,14 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A narrow paragraph breaks a colon-joined token in the middle of the word.",
+  "replace": [
+    {
+      "find": "</style>",
+      "with": ".squeezed { display: block; width: 3ch; overflow-wrap: anywhere; }\n</style>"
+    },
+    {
+      "find": "</body>",
+      "with": "<p class=\"squeezed\">wt:new</p></body>"
+    }
+  ]
+}
