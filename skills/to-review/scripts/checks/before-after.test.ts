@@ -86,6 +86,31 @@ describe('edge cases', () => {
     expect(problems).toEqual(expected);
   });
 
+  it('passes a flow of div steps', () => {
+    // ARRANGE
+    const flow = '<div class="flow"><div>one</div><div>two</div></div>';
+    const html = option(`<div data-before>${flow}</div>`, `<div data-after>${STEPS}</div>`);
+
+    // ACT
+    const problems = check.judge(html);
+
+    // ASSERT
+    expect(problems).toEqual([]);
+  });
+
+  it('fails one step that nests a list of two', () => {
+    // ARRANGE
+    const nested = '<ul><li>one<ul><li>a</li><li>b</li></ul></li></ul>';
+    const html = option(`<div data-before>${nested}</div>`, `<div data-after>${STEPS}</div>`);
+    const expected = ['Option "a" data-before holds no visual; use an svg, img, canvas or at least two steps'];
+
+    // ACT
+    const problems = check.judge(html);
+
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
   it('applies to both modes', () => {
     // ARRANGE
     const expected = undefined;

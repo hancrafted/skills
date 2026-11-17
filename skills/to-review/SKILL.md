@@ -77,11 +77,11 @@ Each item has a depth, set per item like its rung. The simple view alone, with e
 
 The simple view is an **inverted pyramid**, one slot per line: the plain-words name; the problem, for a **cold reader**; the proposal, led by its principle where one applies; the before/after visual. Everything else (evidence, door, effort, cost, impact, the analogy) opens on demand. Everything longer belongs in the detailed layer, which **teaches**: for a principle, what it means, where it comes from and why it helps here, then the precise detail and references.
 
-| Depth      | The item shows                                                                                      | Choose it when                                                               |
-| ---------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `simple`   | The decision, what changes, the visual, the labelled evidence and, in `decide`, the recommendation. | The audience is new to the domain, or the item has no detail worth checking. |
-| `detailed` | The simple view plus context, precise technical detail and references, all shown at once.           | Every reader will verify the claims.                                         |
-| `both`     | The simple view first, and one toggle that reveals the detailed layer.                              | The audience mixes newcomers with readers who verify.                        |
+| Depth      | The item shows                                                                                             | Choose it when                                                               |
+| ---------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `simple`   | The pyramid's four slots alone; the labelled evidence and, in `decide`, the recommendation open on demand. | The audience is new to the domain, or the item has no detail worth checking. |
+| `detailed` | The simple view plus context, precise technical detail and references, all shown at once.                  | Every reader will verify the claims.                                         |
+| `both`     | The simple view first, and one toggle that reveals the detailed layer.                                     | The audience mixes newcomers with readers who verify.                        |
 
 Without caller input, propose `both` for an item whose references or technical detail stand behind a simple decision, and `simple` otherwise.
 
