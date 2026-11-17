@@ -15,6 +15,12 @@ interface Box {
 interface Observation {
   readonly page: { readonly scrollWidth: number; readonly clientWidth: number };
   readonly boxes: readonly Box[];
+  readonly brokenWords: readonly BrokenWord[];
+}
+
+interface BrokenWord {
+  readonly facts: ElementFacts;
+  readonly word: string;
 }
 
 const TOLERANCE = 1;
@@ -26,7 +32,7 @@ function sideways({ facts, overflowX, scrollWidth, clientWidth }: Box): string |
   if (excess <= TOLERANCE || SCROLLS.has(overflowX)) return null;
   const how = HIDES.has(overflowX) ? 'hides' : 'spills';
   const where = HIDES.has(overflowX) ? 'sideways' : 'past its box sideways';
-  return `${describeElement(facts)} ${how} ${excess}px of its content ${where}; let it wrap`;
+  return `${describeElement(facts)} ${how} ${excess}px of its content ${where}; wrap at word boundaries by giving the column room or shortening the text`;
 }
 
 function downwards({ facts, overflowY, scrollHeight, clientHeight }: Box): string | null {
@@ -61,25 +67,58 @@ function overflowingBoxes(kit: Kit): Box[] {
     });
 }
 
+function brokenWords(kit: Kit): BrokenWord[] {
+  const SKIP = 'svg, textarea, input, select, option, script, style, [hidden], [aria-hidden="true"]';
+  const rendered = (parent: Element | null): parent is Element =>
+    parent !== null &&
+    parent.closest(SKIP) === null &&
+    kit.shown(parent) &&
+    getComputedStyle(parent).visibility !== 'hidden';
+  const splitsLines = (node: Node, start: number, end: number): boolean => {
+    const range = document.createRange();
+    range.setStart(node, start);
+    range.setEnd(node, end);
+    const rects = [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0);
+    return rects.some((rect) => Math.abs(rect.top - rects[0].top) > rect.height / 2);
+  };
+  const found: BrokenWord[] = [];
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
+    const parent = node.parentElement;
+    if (!rendered(parent)) continue;
+    for (const match of (node.textContent ?? '').matchAll(/[^\s\-\u2010-\u2015/]{2,}/g)) {
+      if (splitsLines(node, match.index, match.index + match[0].length)) {
+        found.push({ facts: kit.facts(parent), word: match[0] });
+      }
+    }
+  }
+  return found;
+}
+
 export const check: Check<Observation> = {
   id: 'overflow',
-  summary: 'The page never scrolls sideways, and no box hides or spills its text.',
+  summary: 'The page never scrolls sideways, and no box hides or spills its text, and no word breaks across lines.',
   async observe({ page }) {
-    const [pageWidth, boxes] = await Promise.all([
+    const [pageWidth, boxes, words] = await Promise.all([
       page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
       })),
       inPage(page, overflowingBoxes, null),
+      inPage(page, brokenWords, null),
     ]);
-    return { page: pageWidth, boxes };
+    return { page: pageWidth, boxes, brokenWords: words };
   },
-  judge({ page, boxes }) {
+  judge({ page, boxes, brokenWords: split }) {
     const pageProblem =
       page.scrollWidth - page.clientWidth > TOLERANCE
         ? [`the page scrolls sideways: its content is ${page.scrollWidth}px wide in a ${page.clientWidth}px viewport`]
         : [];
     const boxProblems = boxes.flatMap((box) => [sideways(box), downwards(box)]);
-    return [...pageProblem, ...boxProblems.filter((problem): problem is string => problem !== null)];
+    const wordProblems = split.map(
+      ({ facts, word }) =>
+        `${describeElement(facts)} breaks the word "${word}" across two lines; wrap at word boundaries by giving the column room or shortening the text`,
+    );
+    return [...pageProblem, ...boxProblems.filter((problem): problem is string => problem !== null), ...wordProblems];
   },
 };
