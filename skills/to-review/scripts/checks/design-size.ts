@@ -1,9 +1,3 @@
-// The page grows with the screen. A visual that declares a design size with `data-design-width="<px>"` (a 1920 px
-// frame) renders, at 2560 × 1440, at least as wide as min(design width, available width), where
-//   available = screen width − navigation still shown − rail − 3 gutters (48 px: before, between and after).
-// The rail is the widest Option of the visual's item that sits beside the visual, 0 when none does; the navigation
-// is collapsed first by its toggle, as laptop-room does, and counts only while it is still shown beside the content.
-// A visual without the attribute is not measured. The visual is the element carrying the attribute.
 import type { Check } from '../grader/check.ts';
 import { collapseNavigation, navigationBox, resize, type NavigationState } from '../grader/layout.ts';
 import { GUTTER, navigationTaken, railWidth } from '../grader/room.pure.ts';
@@ -11,7 +5,6 @@ import type { Rect, Viewport } from '../grader/viewport.pure.ts';
 
 interface Visual {
   readonly item: string;
-  /** The attribute's value as written. */
   readonly design: string;
   readonly rect: Rect;
   readonly options: readonly { readonly id: string; readonly rect: Rect }[];
@@ -20,7 +13,6 @@ interface Visual {
 interface Observation {
   readonly viewport: Viewport;
   readonly navigation: NavigationState;
-  /** The navigation's box when it is still shown. */
   readonly nav: Rect | null;
   readonly visuals: readonly Visual[];
 }
@@ -32,7 +24,6 @@ const STATE: Record<NavigationState, string> = {
   none: 'as the page stands',
 };
 
-/** Runs in the page: every shown element declaring a design width, with the Options of its item. */
 function declaredVisuals(): Visual[] {
   const box = (element: Element) => element.getBoundingClientRect().toJSON() as Rect;
   return [...document.querySelectorAll('[data-design-width]')]

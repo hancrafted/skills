@@ -1,10 +1,5 @@
 /// <reference path="../rules.d.ts" />
 
-// Sibling test for ARCH-003-testing.rules.ts — pass and fail path for
-// `suite-three-blocks`, `test-body-aaa` and `assert-no-magic`, plus their easy-to-get-wrong
-// boundaries: nested describes, it.each, combined and lowercase markers, and
-// the skill-script and tool scopes.
-
 import { describe, expect, it } from 'vitest';
 import ruleSet from './ARCH-003-testing.rules';
 
@@ -14,8 +9,6 @@ interface Reported {
   line?: number;
 }
 
-// Stands in for archgate's RuleContext over an in-memory file set. The rules
-// glob skill-script and repository-tool test siblings.
 function makeCtx(files: Record<string, string>) {
   const violations: Reported[] = [];
   const ctx = {

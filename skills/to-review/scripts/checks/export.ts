@@ -1,6 +1,3 @@
-// A comment survives the round trip: typed into the page (an item's comment, or explain's Questions field), it comes
-// back byte-identical through Copy prompt and through the Save download, which is named `<page-id>-r<N>-feedback.md`,
-// and both carry the same handoff. Applies to both modes; nothing here needs a Next action.
 import type { Check } from '../grader/check.ts';
 import { carriesComment, COMMENT, controlProblem, feedbackFilename } from '../grader/feedback.pure.ts';
 import {
@@ -19,15 +16,11 @@ export interface ExportObservation {
   readonly pageId: string;
   readonly revision: string;
   readonly controls: { readonly comment: boolean; readonly copy: number; readonly save: number };
-  /** What the comment field held after typing; null without a field. */
   readonly typed: string | null;
-  /** What Copy prompt wrote to the clipboard; null when it wrote nothing. */
   readonly copied: string | null;
-  /** What Save downloaded; null when no download started. */
   readonly download: Download | null;
 }
 
-/** On an explain page explain-controls reports a missing Questions field; here it only ends the check. */
 function controlProblems({ controls, mode }: ExportObservation): string[] {
   return [
     ...(controls.comment || mode === 'explain'
@@ -43,7 +36,6 @@ function copyProblems(copied: string | null): string[] {
   return carriesComment(copied) ? [] : ['Copy prompt did not carry the typed comment byte-identical'];
 }
 
-/** `expectedName` is null without a page id, which page-attributes reports. */
 function saveProblems(download: Download | null, expectedName: string | null): string[] {
   if (download === null) return ['Save started no download'];
   return [

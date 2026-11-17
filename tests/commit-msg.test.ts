@@ -4,7 +4,6 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createDir, createRepo, GATE, message, runGate, runScript, SOURCE_TRAILER } from './helpers/commit-gate';
 
-/** Default git config — `core.commentChar` unset, so it is `#`. */
 const repo = createRepo();
 const gate = (msg: string, env?: Record<string, string>) => runGate(msg, { cwd: repo, env });
 
@@ -103,12 +102,13 @@ describe('body shape', () => {
     expect(gate(message('feat: do a thing', body)).code).toBe(0);
   });
 
-  // A fence is quotation, not shape: what it holds is neither judged against the
-  // six categories nor counted as satisfying them.
-  it.each(['```', '~~~'])('accepts a quoted heading inside a %s fence', (fence) => {
-    const body = ['### Changed', '1. Quote the doc heading:', '', fence, '### Warnings', fence].join('\n');
-    expect(gate(message('docs: quote a heading', body)).code).toBe(0);
-  });
+  it.each(['```', '~~~'])(
+    'accepts a quoted heading inside a %s fence, quotation that is neither judged nor counted',
+    (fence) => {
+      const body = ['### Changed', '1. Quote the doc heading:', '', fence, '### Warnings', fence].join('\n');
+      expect(gate(message('docs: quote a heading', body)).code).toBe(0);
+    },
+  );
 
   it('rejects when the only category heading is quoted inside a fence', () => {
     const body = ['Prose only.', '', '```', '### Added', '1. quoted, not real', '```'].join('\n');
@@ -129,9 +129,7 @@ describe('Source trailer', () => {
     expect(gate(message('feat: do a thing')).code).toBe(0);
   });
 
-  // The regression test that justifies git's parser over a text search: this
-  // message *contains* `Source:` but `git log` would return nothing for it.
-  it('rejects a trailer followed by a prose paragraph', () => {
+  it('rejects a trailer followed by a prose paragraph, which contains Source: yet git log parses no trailer from it', () => {
     const result = gate(`${message('feat: do a thing')}\nOne more thought.\n`);
     expect(result.code).toBe(1);
     expect(result.output).toContain('✖ Source');
@@ -147,11 +145,8 @@ describe('Source trailer', () => {
     expect(result.output).toContain('✖ Source');
   });
 
-  // "A bare `#123` resolves to nothing in a fork, a mirror, or a corpus." The
-  // *form* of a reference is delegated to the repo's tracker docs, but this one
-  // case is checkable without knowing anything about the tracker.
   it.each(['Source: #123', 'Source: #123 | wire up the gate', 'Source:  #7  '])(
-    'rejects the bare issue number in %o',
+    'rejects the bare issue number in %o, which resolves to nothing in a fork, a mirror, or a corpus',
     (trailer) => {
       const result = gate(message('feat: do a thing', '### Added\n1. Thing.', trailer));
       expect(result.code).toBe(1);
@@ -159,10 +154,8 @@ describe('Source trailer', () => {
     },
   );
 
-  // The hashless spelling is the same hole: it is exactly what a branch name
-  // like feature/78-commit-skill yields before expansion.
   it.each(['Source: 78', 'Source: 78 | wire up the gate', 'Source:  42  '])(
-    'rejects the hashless bare issue number in %o',
+    'rejects the hashless bare issue number in %o, what a branch name like feature/78-commit-skill yields before expansion',
     (trailer) => {
       const result = gate(message('feat: do a thing', '### Added\n1. Thing.', trailer));
       expect(result.code).toBe(1);
@@ -233,10 +226,6 @@ describe('exemptions', () => {
   });
 });
 
-/**
- * What `git commit` (editor path, `--verbose`) actually hands the hook: the
- * message, then the comment template, then a scissors line and the full diff.
- */
 const EDITOR_NOISE = (commentChar: string): string =>
   [
     `${commentChar} Please enter the commit message for your changes.`,
@@ -302,9 +291,7 @@ describe('invocation', () => {
     expect(result.output).toContain('✖');
   });
 
-  // The gate is the whole scripts/ directory. An install that took only the entry
-  // file must say so rather than emit a bare "not found" from a failed source.
-  it('explains itself when lib/ did not come along', () => {
+  it('explains itself when lib/ did not come along, instead of a bare "not found" from a failed source of the entry file alone', () => {
     const orphan = createDir();
     cpSync(GATE, join(orphan, 'commit-msg'));
     writeFileSync(join(orphan, 'msg'), message('feat: do a thing'));

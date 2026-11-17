@@ -1,12 +1,3 @@
-// A laptop gives the content its room. At 1440 × 900, with the navigation collapsed by its toggle (a page without a
-// collapsible navigation is measured as it stands):
-//   - no empty column wider than the page gutter (48 px) remains left of the content: the items start no further
-//     from the screen's left edge than the navigation's right edge, if it is still shown, plus 48 px;
-//   - the content column of each item is at least 1000 px wide, with its Options in a rail beside it.
-// The content column is the item's visual: the largest `[data-visual]` in the item outside its Options, else the
-// largest svg, img, canvas, video or iframe there. Put `data-visual` on the box that fills the column when the drawing
-// inside is narrower. An item without a visual has no column and is skipped; the rail is judged only for an item
-// with Options, which sit beside the column when they start at its right edge or further right.
 import type { Check } from '../grader/check.ts';
 import { inPage, type Kit } from '../grader/in-page.ts';
 import { collapseNavigation, navigationBox, resize, type NavigationState } from '../grader/layout.ts';
@@ -15,9 +6,7 @@ import type { Rect, Viewport } from '../grader/viewport.pure.ts';
 
 interface ItemRoom {
   readonly id: string;
-  /** The item's left edge. */
   readonly left: number;
-  /** Its content column, or null when the item has no visual. */
   readonly column: Rect | null;
   readonly options: readonly { readonly id: string; readonly rect: Rect }[];
 }
@@ -25,7 +14,6 @@ interface ItemRoom {
 interface Observation {
   readonly viewport: Viewport;
   readonly navigation: NavigationState;
-  /** The navigation's box when it is still shown. */
   readonly nav: Rect | null;
   readonly items: readonly ItemRoom[];
 }
@@ -38,7 +26,6 @@ const STATE: Record<NavigationState, string> = {
   none: 'as the page stands',
 };
 
-/** Runs in the page: every item that is shown, with its column and Options. */
 function itemRooms(kit: Kit): ItemRoom[] {
   const box = (element: Element) => element.getBoundingClientRect().toJSON() as Rect;
   return [...document.querySelectorAll('[data-item]')]

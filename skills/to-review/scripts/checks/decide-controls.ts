@@ -1,5 +1,3 @@
-// A decide page's controls: one recommended Option per item with Options, a Next action to choose, and a
-// "Before you approve" reflection block of open questions above it.
 import { load, type CheerioAPI } from 'cheerio';
 import type { Check } from '../grader/check.ts';
 
@@ -37,7 +35,6 @@ function reflectionProblems($: CheerioAPI): string[] {
   return asks ? [] : ['[data-reflection] asks no open question; expected prompts ending in "?"'];
 }
 
-/** The reflection block must come before the Next action in reading order. */
 function orderProblems($: CheerioAPI): string[] {
   const [reflection, next] = [$('[data-reflection]'), $('[data-next-action]')];
   if (reflection.length !== 1 || next.length !== 1) return [];

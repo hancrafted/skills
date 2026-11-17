@@ -1,10 +1,6 @@
 /// <reference path="../rules.d.ts" />
 
-// GEN-004 — Escalated Tech Debt: an accepted shortcut stays fenced, marked and
-// filed. One Discipline so far; the escalation itself (name the trade-off,
-// state the cost, get it accepted) is human work no check can see, so the rule
-// holds the part a file shows: every marker names its issue.
-// Self-contained by design: archgate forbids imports between rules files.
+// decision: GEN-004 §2.4
 const SOURCE_DIRS = ['skills/*/scripts', 'tools', '.github'];
 const SOURCE_GLOBS = [
   '**/*.ts',
@@ -19,13 +15,8 @@ const SOURCE_GLOBS = [
   '**/*.yaml',
 ];
 
-// A marker is live only as the FIRST token of a comment, so the opener must sit
-// immediately before the keyword — prose naming the marker is not one, which
-// keeps this ADR's own vocabulary writable (GEN-004 §1.2). Matched textually,
-// so the rule reaches every language with these comment openers.
 const MARKER_RE = /(?:\/\/|\/\*|#)[ \t]*tech-debt\b/;
 
-// The issue link must share the marker's line: a bare `#317` resolves nowhere.
 const ISSUE_LINK_RE = /https?:\/\/\S+\/issues\/\d+/;
 
 export default {

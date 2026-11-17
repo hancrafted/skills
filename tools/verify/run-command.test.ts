@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { runCommand } from './run-command.ts';
 
-/** A shell command running a one-line Node script, so the test needs nothing but the Node it runs on. */
 function node(script: string): string {
   return `node -e ${JSON.stringify(script)}`;
 }

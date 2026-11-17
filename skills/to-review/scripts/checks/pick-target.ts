@@ -1,21 +1,11 @@
-// Picking an Option is the item's most visible action: every Option has a pick control with a hit area of at least
-// 44 × 44 CSS px and a visible text label. An aria-label alone is not a label: it is not shown.
-//
-// A pick control for Option O (the `[data-option]` with id `O` in item I) is a radio or checkbox input, a `select`,
-// a `button[aria-pressed]` or an element with role radio or checkbox that either sits inside O, or sits in I outside
-// every Option and has `value="O"` (a select: holds an `<option value="O">`), as a segmented control at the head of
-// the item does. Its hit area is the largest box among the control and its `<label>` elements, since a click on a
-// label picks the control. An Option passes when at least one of its pick controls has both the area and the label.
 import type { Check } from '../grader/check.ts';
 import { describeElement, type ElementFacts } from '../grader/element.pure.ts';
 import { inPage, type Kit } from '../grader/in-page.ts';
 
 interface PickControl {
   readonly facts: ElementFacts;
-  /** The hit area in CSS px: the largest box among the control and its labels. */
   readonly width: number;
   readonly height: number;
-  /** The text a reader sees as the control's label; '' when it shows none. */
   readonly label: string;
 }
 
@@ -23,7 +13,6 @@ interface PickOption {
   readonly item: string;
   readonly option: string;
   readonly controls: readonly PickControl[];
-  /** The Option itself is not shown, as in a closed detail layer. */
   readonly hidden?: boolean;
 }
 
@@ -35,7 +24,6 @@ const MIN_TARGET = 44;
 const CONTROLS =
   'input[type="radio"], input[type="checkbox"], select, button[aria-pressed], [role="radio"], [role="checkbox"]';
 
-/** Runs in the page: the pick controls of every Option that is shown. */
 function pickOptions(kit: Kit, selector: string): PickOption[] {
   return [...document.querySelectorAll('[data-option]')].map((option) => {
     const controls = kit.tiedControls(option, selector).map((control) => ({

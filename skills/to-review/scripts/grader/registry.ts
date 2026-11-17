@@ -1,5 +1,3 @@
-// Finds the checks: every `../checks/<id>.ts` that is not a test exports `check` with that id. Adding a check is
-// adding a file there; nothing else registers it.
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -7,7 +5,6 @@ import type { Check } from './check.ts';
 
 const CHECKS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../checks');
 
-/** The check module file names, sorted, so checks run and report in a stable order. */
 export function checkFiles(): string[] {
   return readdirSync(CHECKS)
     .filter((file) => file.endsWith('.ts') && !file.endsWith('.test.ts'))

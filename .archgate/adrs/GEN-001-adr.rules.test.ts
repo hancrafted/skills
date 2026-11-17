@@ -1,7 +1,5 @@
 /// <reference path="../rules.d.ts" />
 
-// Sibling test for GEN-001-adr.rules.ts — pass and fail path per rule.
-
 import { describe, expect, it } from 'vitest';
 import ruleSet from './GEN-001-adr.rules';
 
@@ -10,8 +8,6 @@ interface Reported {
   file?: string;
 }
 
-// A glob stand-in faithful enough for archgate's matcher: `**/` spans zero or
-// more directories, `*` stays inside one segment, `{a,b}` alternates.
 function globToRegExp(pattern: string): RegExp {
   let source = '';
   let braceDepth = 0;
@@ -172,7 +168,6 @@ describe('adr-frontmatter', () => {
     expect(violations.some((v) => /empty required key 'files'/.test(v.message))).toBe(true);
   });
 
-  // Every governing ADR declares a concise description.
   it('fails when description: is absent', async () => {
     // ARRANGE
     const files = passingFiles();
@@ -233,8 +228,6 @@ describe('adr-size-budget', () => {
 
   it('counts astral rule markers as one character each', async () => {
     // ARRANGE
-    // 11_999 code points + one 📜 (two UTF-16 units) is 12_000 by wc -m and
-    // 12_001 by String.length — the budget must agree with wc -m.
     const files = passingFiles();
     files[ADR_PATH] = 'a'.repeat(11_999) + '\u{1F4DC}';
     const { ctx, violations } = makeCtx(files);
@@ -267,14 +260,10 @@ describe('adr-required-sections', () => {
   });
 });
 
-// ---- Shape-grammar (§5) and companion rules-file (§6) rules ----
-
 const TEST_PATH = '.archgate/adrs/GEN-001-adr.rules.test.ts';
 
-// A companion rules file whose single rule key is what the marker tests reference.
 const DEMO_RULES = "export default { rules: { 'demo-rule': { async check() {} } } };";
 
-// Build an ADR from a custom Decision and Do's/Don'ts body; the other sections are trivial.
 function adrWith(decision: string, dosDonts: string): string {
   return `${FM}
 

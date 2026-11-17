@@ -1,28 +1,21 @@
-// Item navigation: a <nav> links to every item and stays in view, at least half shown, while the reader scrolls
-// from the top of the page through each item to the end.
 import type { Page } from '@playwright/test';
 import type { Check } from '../grader/check.ts';
 import { shownShare, type Rect, type Viewport } from '../grader/viewport.pure.ts';
 
 interface Position {
-  /** Where the reader has scrolled to, in words: `item "store"`, the top or the end of the page. */
   readonly at: string;
   readonly nav: Rect;
 }
 
 interface Observation {
   readonly viewport: Viewport;
-  /** Items no link in the navigation leads into. */
   readonly unlinked: readonly string[];
-  /** The navigation's box at each scroll position; null when the page has no item navigation. */
   readonly positions: readonly Position[] | null;
 }
 
 const NAVS = 'nav, [role="navigation"]';
-/** Below this share of the navigation in view, the reader has lost it. */
 const MIN_SHOWN = 0.5;
 
-/** Runs in the page: the navigation linking into the most items (its index among NAVS), and the items it misses. */
 function navigation(navs: string): { index: number; unlinked: string[] } {
   const items = [...document.querySelectorAll('[data-item]')];
   const reached = (nav: Element) =>
@@ -41,7 +34,6 @@ function navigation(navs: string): { index: number; unlinked: string[] } {
   };
 }
 
-/** Scrolls without smooth behaviour, so the measurement sees where the scroll ends. */
 async function scrollTo(page: Page, target: number | 'end'): Promise<void> {
   await page.evaluate((to) => {
     if (to === 'end') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });

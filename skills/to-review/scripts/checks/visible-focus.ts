@@ -1,5 +1,3 @@
-// Visible focus: every control Tab reaches looks different while focused, by a new outline, shadow, border,
-// background or underline. The browser's own focus ring counts; removing it without a replacement fails.
 import type { Page } from '@playwright/test';
 import type { Check } from '../grader/check.ts';
 import { describeElement, type ElementFacts } from '../grader/element.pure.ts';
@@ -9,7 +7,6 @@ interface FocusStyle {
   readonly outlineStyle: string;
   readonly outlineWidth: number;
   readonly outlineColor: string;
-  /** The outline colour's alpha, 0 to 1. */
   readonly outlineAlpha: number;
   readonly boxShadow: string;
   readonly border: string;
@@ -24,9 +21,7 @@ interface Reached {
 }
 
 interface Observation {
-  /** The visible controls a keyboard user could reach. */
   readonly controls: number;
-  /** Each control Tab reached, in Tab order. */
   readonly reached: readonly Reached[];
 }
 
@@ -40,7 +35,6 @@ const CONTROLS = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(', ');
 
-/** Runs in the page: the control's facts and the styles a focus indicator changes. */
 function read(kit: Kit, { selector, index }: { selector: string; index: number }): Omit<Reached, 'before'> {
   const element = document.querySelectorAll(selector)[index];
   const style = getComputedStyle(element);
@@ -64,7 +58,6 @@ const readAt = (page: Page, index: number) => inPage(page, read, { selector: CON
 const focusedIndex = (page: Page): Promise<number> =>
   page.evaluate((selector) => [...document.querySelectorAll(selector)].indexOf(document.activeElement!), CONTROLS);
 
-/** Presses Tab until focus leaves the controls or returns to one already seen, reading each control as it is focused. */
 async function tabThrough(page: Page, before: ReadonlyMap<number, FocusStyle>): Promise<Reached[]> {
   const reached: Reached[] = [];
   const seen = new Set<number>();
@@ -80,7 +73,6 @@ async function tabThrough(page: Page, before: ReadonlyMap<number, FocusStyle>): 
   return reached;
 }
 
-/** An outline counts when it has a style, a pixel of width and a colour that is not transparent; `auto` is the browser's ring. */
 const outlineShown = ({ outlineStyle, outlineWidth, outlineAlpha }: FocusStyle): boolean =>
   outlineStyle !== 'none' && outlineWidth >= 1 && (outlineAlpha > 0 || outlineStyle === 'auto');
 

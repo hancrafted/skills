@@ -1,7 +1,3 @@
-// Failure never costs input or tells a false success. With a comment typed, a denied clipboard, a refused download
-// and, on a decide page, a cancelled Reset all each leave the field and its draft intact, and each failure reports
-// something other than that control's success message. A failed copy or save also shows the prompt for copying by
-// hand. An explain page has no Reset all, because it has no picks or Next action to restore.
 import type { Page } from '@playwright/test';
 import type { Check } from '../grader/check.ts';
 import { controlProblem } from '../grader/feedback.pure.ts';
@@ -24,37 +20,28 @@ import {
   typeComment,
 } from '../grader/feedback.ts';
 
-/** What one failure left behind. */
 export interface FailedPath {
   readonly fieldKept: boolean;
   readonly draftKept: boolean;
-  /** The status the failure reported; '' when it reported nothing. */
   readonly status: string;
-  /** Whether the prompt is shown for copying by hand. */
   readonly fallback: boolean;
 }
 
 export interface FailuresObservation {
   readonly controls: {
-    /** Without a comment field there is no input to keep; export and explain-controls report it. */
     readonly comment: boolean;
     readonly copy: number;
     readonly save: number;
-    /** null on an explain page. */
     readonly resetAll: number | null;
     readonly status: number;
   };
-  /** Whether typing the comment stored a draft under a key naming the page id. */
   readonly draftStored: boolean;
-  /** Each path also records the status its success reported, to tell a failure apart from a false success. */
   readonly copy: FailedPath & { readonly success: string };
   readonly save: FailedPath & { readonly success: string; readonly downloaded: boolean };
-  /** null on an explain page. */
   readonly reset:
     (FailedPath & { readonly success: string; readonly asked: boolean; readonly clearedOnConfirm: boolean }) | null;
 }
 
-/** Clears the status, runs the failing action, and records what it left behind. */
 async function afterFailure(page: Page, pageId: string, fail: () => Promise<unknown>): Promise<FailedPath> {
   await restoreComment(page);
   await clearStatus(page);
@@ -67,7 +54,6 @@ async function afterFailure(page: Page, pageId: string, fail: () => Promise<unkn
   };
 }
 
-/** Runs the action that should succeed and returns the status it reported. */
 async function afterSuccess(page: Page, succeed: () => Promise<unknown>): Promise<string> {
   await restoreComment(page);
   await clearStatus(page);
@@ -87,7 +73,6 @@ async function copyPath(page: Page, pageId: string): Promise<Observed['copy']> {
 async function savePath(page: Page, pageId: string): Promise<Observed['save']> {
   const success = await afterSuccess(page, () => save(page));
   await breakSave(page);
-  // A download starts on the click itself, so listening while the status settles is enough; no timeout to wait out.
   let downloaded = false;
   const onDownload = (): void => void (downloaded = true);
   page.on('download', onDownload);
@@ -119,7 +104,6 @@ const BLANK: FailedPath & { success: string } = {
   success: '',
 };
 
-/** What a page without the controls to exercise yields; `judge` then reports only the missing controls. */
 const unexercised = (decide: boolean): Observed => ({
   draftStored: false,
   copy: BLANK,
@@ -136,7 +120,6 @@ function controlProblems({ controls }: FailuresObservation): string[] {
   ];
 }
 
-/** A failure may stay silent (when `silentAllowed`), but never repeat its success message. */
 function statusProblems(
   name: string,
   { status, success }: { status: string; success: string },
@@ -146,7 +129,6 @@ function statusProblems(
   return status === success ? [`${name} reported the success message "${success}"`] : [];
 }
 
-/** What a failure of `name` must not do: lose input, or report nothing or success. */
 function pathProblems(name: string, path: FailedPath & { success: string }, silentAllowed = false): string[] {
   return [
     ...(path.fieldKept ? [] : [`after ${name} the comment field lost its text`]),

@@ -1,8 +1,5 @@
 /// <reference path="../rules.d.ts" />
 
-// Sibling test for GEN-002-adr-symlink-claude-rules.rules.ts — pass and fail path
-// for runtime ADR entries and canonical root instructions.
-
 import { describe, expect, it } from 'vitest';
 import ruleSet from './GEN-002-adr-symlink-claude-rules.rules';
 
@@ -24,8 +21,6 @@ function globToRegExp(pattern: string): RegExp {
   return new RegExp(`^${escaped}$`);
 }
 
-// RuleContext lists symlinks and reads in-project targets. Unspecified targets
-// are unreadable; the ADR-entry rule only needs their names.
 function makeCtx(files: Record<string, string>, opts?: { symlinks?: string[]; targets?: Record<string, string> }) {
   const violations: Reported[] = [];
   const symlinks = opts?.symlinks ?? [];
@@ -73,10 +68,6 @@ function passingFiles(): Record<string, string> {
   return { [ADR_PATH]: SCOPED_ADR };
 }
 
-// Every message the rule can emit, named here so an assertion below reads as a
-// claim about the rule rather than a regex a reader has to decode. Joining the
-// messages before matching keeps the failure output rich: it prints what the
-// rule DID say, which `.some(...)` collapsed to a bare `false`.
 const NO_SYMLINK = /no runtime symlink/;
 const UNSCOPED_ENTRY = /a runtime entry exists/;
 const ORPHAN_ENTRY = /has no backing ADR/;

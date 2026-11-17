@@ -1,16 +1,9 @@
 /// <reference path="../rules.d.ts" />
 
-// ARCH-001 — Dependency Admission Bar: the mechanical half of the record.
-// Every dependencies/devDependencies entry in package.json must be either a
-// tilde range (~x.y.z) or an exact pin (x.y.z) — nothing else. The four-signal
-// admission bar (stars, contributors, downloads, recency) is deliberately not
-// checked here: every signal is a live network fact and this check path is
-// hermetic, so that half stays a review duty (ARCH-001 §4), permanently.
-// Self-contained by design: archgate forbids imports between rules files.
+// decision: ARCH-001 §1.1
 const PACKAGE_JSON = 'package.json';
 const DEP_FIELDS = ['dependencies', 'devDependencies'] as const;
 
-// Semver core plus optional prerelease/build metadata, reused by both forms.
 const SEMVER_CORE = String.raw`\d+\.\d+\.\d+(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?`;
 const EXACT_RE = new RegExp(`^${SEMVER_CORE}$`);
 const TILDE_RE = new RegExp(`^~${SEMVER_CORE}$`);
@@ -30,7 +23,7 @@ export default {
         try {
           raw = await ctx.readFile(PACKAGE_JSON);
         } catch {
-          return; // no package.json in scope — nothing for this rule to check
+          return;
         }
         let pkg: Record<string, unknown>;
         try {

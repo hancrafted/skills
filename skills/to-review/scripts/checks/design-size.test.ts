@@ -11,7 +11,6 @@ interface Visual {
   rect: Rect;
   options: { id: string; rect: Rect }[];
 }
-/** A visual declaring a 1920 px design width, rendered at `width`, with a 300 px rail beside it. */
 const visual = (width: number, overrides: Partial<Visual> = {}): Visual => ({
   item: 'store',
   design: '1920',
@@ -91,8 +90,8 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
-  it('subtracts the rail and three gutters from the screen when the design width is larger', () => {
-    // ARRANGE: 2560 - 0 - 300 - 3 * 48 = 2116, so 2115 is one pixel short.
+  it('subtracts the rail and three gutters from the screen when the design width is larger: 2560 - 0 - 300 - 3 * 48 = 2116, so 2115 is one pixel short', () => {
+    // ARRANGE
     const loaded = observation([visual(2115, { design: '3840' })]);
     const expected = [
       'item "store": its visual declares a design width of 3840px but renders 2115px wide at 2560 × 1440 with the navigation collapsed; let it grow to at least 2116px',
@@ -105,8 +104,8 @@ describe('edge cases', () => {
     expect(problems).toEqual(expected);
   });
 
-  it('subtracts a navigation that stays beside the content', () => {
-    // ARRANGE: 2560 - 232 - 300 - 144 = 1884, below the design width of 1920.
+  it('subtracts a navigation that stays beside the content: 2560 - 232 - 300 - 144 = 1884, below the design width of 1920', () => {
+    // ARRANGE
     const loaded = observation(
       [visual(1884, { rect: rect(264, 1884), options: [{ id: 'a', rect: rect(2172, 300) }] })],
       {
