@@ -174,7 +174,7 @@ The page carries these attributes; everything else on it is yours to shape.
 
 - `<html>`: `data-page-id`, a lowercase slug stable across revisions; `data-revision`, a positive integer from 1; `data-mode`, `decide` or `explain`; `data-offline="partial"` only on the [diagram fallback](references/diagrams.md#fallback-without-a-browser-tool).
 - Each item: `data-item`, a stable id unique on the page; `data-fidelity`, `diagram`, `wireframe`, `mock` or `prototype`; `data-depth`, `simple`, `detailed` or `both`. In `decide`, its reset button carries `data-reset` and clears only that item.
-- Each Option, inside its item: `data-option`, a stable id unique in its item; `data-recommended`, `true` or `false`.
+- Each Option, inside its item: `data-option`, a stable id unique in its item; `data-recommended`, `true` or `false`; `data-before` and `data-after` on the before and after visuals of an Option that changes something existing.
 - Each `<script type="text/x-mermaid">`: `data-diagram`, a unique name; the script holds the diagram's source.
 - Each `both` item's depth toggle: `data-depth-toggle`, exactly one per `both` item, on the control that reveals the detailed layer; none elsewhere.
 - Once per page: `data-reflection` on the reflection block, in `decide` above the Next action; `data-copy-prompt` on Copy as prompt; `data-save` on Save, which downloads the feedback file.
