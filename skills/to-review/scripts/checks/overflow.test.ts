@@ -17,7 +17,7 @@ const box = (id: string, overrides: object) => ({
 describe('success cases', () => {
   it('passes a page as wide as its viewport with no overflowing box', () => {
     // ARRANGE
-    const observation = { page: PAGE, boxes: [] };
+    const observation = { page: PAGE, boxes: [], brokenWords: [] };
 
     // ACT
     const problems = check.judge(observation);
@@ -31,7 +31,7 @@ describe('success cases', () => {
     const boxes = [box('code', { overflowX: 'auto', scrollWidth: 900 })];
 
     // ACT
-    const problems = check.judge({ page: PAGE, boxes });
+    const problems = check.judge({ page: PAGE, boxes, brokenWords: [] });
 
     // ASSERT
     expect(problems).toEqual([]);
@@ -41,7 +41,7 @@ describe('success cases', () => {
 describe('failure cases', () => {
   it('fails a page that scrolls sideways', () => {
     // ARRANGE
-    const observation = { page: { scrollWidth: 1700, clientWidth: 1440 }, boxes: [] };
+    const observation = { page: { scrollWidth: 1700, clientWidth: 1440 }, boxes: [], brokenWords: [] };
     const expected = ['the page scrolls sideways: its content is 1700px wide in a 1440px viewport'];
 
     // ACT
@@ -60,14 +60,28 @@ describe('failure cases', () => {
       box('d', { scrollHeight: 70 }),
     ];
     const expected = [
-      'p#a in item "store" hides 120px of its content sideways; let it wrap',
-      'p#b in item "store" spills 50px of its content past its box sideways; let it wrap',
+      'p#a in item "store" hides 120px of its content sideways; wrap at word boundaries by giving the column room or shortening the text',
+      'p#b in item "store" spills 50px of its content past its box sideways; wrap at word boundaries by giving the column room or shortening the text',
       'p#c in item "store" hides 50px of its content below its box; let the box grow',
       'p#d in item "store" spills 30px of its content below its box; let the box grow',
     ];
 
     // ACT
-    const problems = check.judge({ page: PAGE, boxes });
+    const problems = check.judge({ page: PAGE, boxes, brokenWords: [] });
+
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
+  it('fails a word that spans two line boxes and names the word and its element', () => {
+    // ARRANGE
+    const brokenWords = [{ facts: { tag: 'code', id: '', item: 'store', text: 'learnings.md' }, word: 'learnings.md' }];
+    const expected = [
+      'code "learnings.md" in item "store" breaks the word "learnings.md" across two lines; wrap at word boundaries by giving the column room or shortening the text',
+    ];
+
+    // ACT
+    const problems = check.judge({ page: PAGE, boxes: [], brokenWords });
 
     // ASSERT
     expect(problems).toEqual(expected);
@@ -80,6 +94,7 @@ describe('edge cases', () => {
     const observation = {
       page: { scrollWidth: 1441, clientWidth: 1440 },
       boxes: [box('a', { overflowX: 'hidden', scrollWidth: 301, scrollHeight: 41 })],
+      brokenWords: [],
     };
 
     // ACT

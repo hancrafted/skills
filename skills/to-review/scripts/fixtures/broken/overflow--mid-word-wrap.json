@@ -1,0 +1,10 @@
+{
+  "base": "valid-decide.html",
+  "defect": "A narrow inline code box breaks a path in the explored files in the middle of a word, one piece per line, without any sideways spill.",
+  "replace": [
+    {
+      "find": "</style>",
+      "with": "code { display: inline-block; max-width: 5ch; overflow-wrap: anywhere; }\n</style>"
+    }
+  ]
+}
