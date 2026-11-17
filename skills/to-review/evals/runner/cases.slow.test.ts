@@ -47,7 +47,7 @@ describe('success cases', () => {
     expect({ id, evalId, mode, prompt, inputs }).toEqual(expected);
   });
 
-  it('loads both approved cases with their frozen inputs', () => {
+  it('loads all three cases with their frozen inputs', () => {
     // ARRANGE
     const expected = [
       {
@@ -73,10 +73,16 @@ describe('success cases', () => {
           'episode-spec/calibration.md',
         ],
       },
+      {
+        id: 'fortify-round',
+        mode: 'decide',
+        prompt: 'fortify-round/prompt.md',
+        inputs: ['fortify-round/candidates.md', 'fortify-round/calibration.md'],
+      },
     ];
 
     // ACT
-    const loaded = ['architecture-round', 'episode-spec']
+    const loaded = ['architecture-round', 'episode-spec', 'fortify-round']
       .map(loadCase)
       .map(({ id, mode, prompt, inputs }) => ({ id, mode, prompt, inputs }));
 
@@ -84,12 +90,12 @@ describe('success cases', () => {
     expect(loaded).toEqual(expected);
   });
 
-  it('asks diagram fidelity for architecture-round and mock fidelity for episode-spec', () => {
+  it('asks diagram fidelity for architecture-round and fortify-round and mock fidelity for episode-spec', () => {
     // ARRANGE
-    const expected = [{ fidelity: 'diagram' }, { fidelity: 'mock' }];
+    const expected = [{ fidelity: 'diagram' }, { fidelity: 'mock' }, { fidelity: 'diagram' }];
 
     // ACT
-    const asked = ['architecture-round', 'episode-spec'].map((id) => loadCase(id).asked);
+    const asked = ['architecture-round', 'episode-spec', 'fortify-round'].map((id) => loadCase(id).asked);
 
     // ASSERT
     expect(asked).toEqual(expected);
@@ -97,7 +103,7 @@ describe('success cases', () => {
 
   it("draws every case's checklist and probe keys verbatim from what its run sees", () => {
     // ARRANGE
-    const expectedIds = ['architecture-round', 'episode-spec'];
+    const expectedIds = ['architecture-round', 'episode-spec', 'fortify-round'];
     const keyed = readManifest().cases.filter((entry) => qualityKeys(entry.id) !== null);
 
     // ACT
@@ -107,17 +113,21 @@ describe('success cases', () => {
     expect(keyed.map((entry) => entry.id)).toEqual(expectedIds);
     expect(problems).toEqual([]);
   });
-  it('gives both approved cases their frozen reference pages', () => {
+  it('gives all three cases their frozen reference pages', () => {
     // ARRANGE
-    const ids = ['architecture-round', 'episode-spec'];
-    const expected = ['architecture-round/reference.html', 'episode-spec/reference.html'];
+    const ids = ['architecture-round', 'episode-spec', 'fortify-round'];
+    const expected = [
+      'architecture-round/reference.html',
+      'episode-spec/reference.html',
+      'fortify-round/reference.html',
+    ];
 
     // ACT
     const references = ids.map(referenceOf);
 
     // ASSERT
     expect(references).toEqual(expected);
-    expect(references.map((file) => existsSync(path.join(CASES, file!)))).toEqual([true, true]);
+    expect(references.map((file) => existsSync(path.join(CASES, file!)))).toEqual([true, true, true]);
   });
 });
 
@@ -227,7 +237,7 @@ describe('edge cases', () => {
 
   it('refuses a case the manifest does not list', () => {
     // ARRANGE
-    const expected = 'no eval case "nope"; cases: architecture-round, episode-spec';
+    const expected = 'no eval case "nope"; cases: architecture-round, episode-spec, fortify-round';
 
     // ACT
     const load = () => loadCase('nope');

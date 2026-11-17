@@ -4,7 +4,7 @@ The eval harness runs frozen cases headless, once per arm, grades each run and s
 
 ## Open item
 
-Re-run both cases against the references; paid runs need Han's go-ahead.
+Re-run all three cases against the references; paid runs need Han's go-ahead.
 
 ## Local validation
 
@@ -22,7 +22,7 @@ node evals/run.ts --case architecture-round --runs 1
 
 `--case` (repeatable; default every case in the manifest), `--arm` (repeatable; default `with_skill` and `without_skill`), `--runs` (default 1), `--model`, `--parallel` (default 2) and `--timeout-minutes` (default 30) are optional. Each run is a full agent session that spends real tokens, about $3 to $6 and 15 to 25 minutes, so run the smallest set that answers the question: one case at `--runs 1` to try a change, the benchmark only to compare versions.
 
-The benchmark is both cases × both arms at k = 3, 12 sessions:
+The benchmark is all three cases × both arms at k = 3, 18 sessions:
 
 ```sh
 node evals/run.ts --runs 3 --parallel 4
@@ -133,15 +133,16 @@ A run that lacks an assertion, for example because its judge failed, counts as f
 
 ## Cases
 
-| Case                 | Mode     | Input                                                                                                            |
-| -------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
-| `architecture-round` | `decide` | Ten code-level decisions from an architecture round, for a reader who judges principles, benefit and cost.       |
-| `episode-spec`       | `decide` | An Episode's Title slide and four Slides with their mock Options, for a reviewer who picks one Option per Slide. |
+| Case                 | Mode     | Input                                                                                                                     |
+| -------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `architecture-round` | `decide` | Ten code-level decisions from an architecture round, for a reader who judges principles, benefit and cost.                |
+| `episode-spec`       | `decide` | An Episode's Title slide and four Slides with their mock Options, for a reviewer who picks one Option per Slide.          |
+| `fortify-round`      | `decide` | Seven harness-hardening candidates (four quick wins, three architectural), for an engineer who picks at most one of each. |
 
 `cases/manifest.json` lists each case's prompt, attachments, mode, calibration answers, `checklist` and `probe`, its provenance, and the sha256 of every frozen file. A run refuses a case whose hashes no longer match, and `runner/cases.slow.test.ts` checks those files in the slow lane. A run sees the prompt, attachments and calibration answers, never the checklist or probe.
 
 A case's `checklist.json` holds 3 to 12 `items`, one per rule the person set, each `{ "id", "question", "source" }`, where the question is answerable yes or no from the page. Its `probe.json` holds `questions`, each `{ "id", "question", "choices": { "a": "…" }, "answer": ["a"], "source" }`; `unknown` is offered on every question, so no choice takes that id. A `source` is `{ "file", "quote" }`: a verbatim quote from the prompt, an attachment or the calibration answers, because a key comes from what the run itself sees and never from a generated page. A checklist item may instead cite a rule a person set, `{ "session", "round", "quote" }`, with the quote held in the case's provenance-only `rounds.md`; `episode-spec` does this because its calibration states none of the page's rules. `runner/cases.slow.test.ts` checks every key's source and choices.
 
-A case may name a `reference`: a page a person judged good, frozen beside the case, hashed with its other files and never shown to a run (`referenceOf` in `runner/cases.ts` reads it). Both references are Han-approved, byte-exact baselines. Their source provenance lives in the manifest. A baseline's approval does not imply that every mechanical check passes it.
+A case may name a `reference`: a page a person judged good, frozen beside the case, hashed with its other files and never shown to a run (`referenceOf` in `runner/cases.ts` reads it). The `architecture-round` and `episode-spec` references are Han-approved, byte-exact baselines; the `fortify-round` reference is a byte-exact baseline with a known defect (`comment-in-view`), kept over weaker pages but not judged great. Their source provenance lives in the manifest. A baseline's approval does not imply that every mechanical check passes it.
 
 To change a case, freeze a new one. Append it to the manifest: a case's eval id is its position there, and earlier iterations keep theirs. A case without a mode and `calibration.md` cannot run headless.
