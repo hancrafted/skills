@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { check } from './overflow.ts';
+import { check, WRAP_REMEDY } from './overflow.ts';
 
 const PAGE = { scrollWidth: 1440, clientWidth: 1440 };
 const facts = (id: string) => ({ tag: 'p', id, item: 'store', text: '' });
@@ -60,8 +60,8 @@ describe('failure cases', () => {
       box('d', { scrollHeight: 70 }),
     ];
     const expected = [
-      'p#a in item "store" hides 120px of its content sideways; wrap at word boundaries by giving the column room or shortening the text',
-      'p#b in item "store" spills 50px of its content past its box sideways; wrap at word boundaries by giving the column room or shortening the text',
+      `p#a in item "store" hides 120px of its content sideways; ${WRAP_REMEDY}`,
+      `p#b in item "store" spills 50px of its content past its box sideways; ${WRAP_REMEDY}`,
       'p#c in item "store" hides 50px of its content below its box; let the box grow',
       'p#d in item "store" spills 30px of its content below its box; let the box grow',
     ];
@@ -77,7 +77,7 @@ describe('failure cases', () => {
     // ARRANGE
     const brokenWords = [{ facts: { tag: 'code', id: '', item: 'store', text: 'learnings.md' }, word: 'learnings.md' }];
     const expected = [
-      'code "learnings.md" in item "store" breaks the word "learnings.md" across two lines; wrap at word boundaries by giving the column room or shortening the text',
+      `code "learnings.md" in item "store" breaks the word "learnings.md" across two lines; ${WRAP_REMEDY}`,
     ];
 
     // ACT

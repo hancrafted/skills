@@ -9,14 +9,13 @@ interface Item {
   id: string;
   left: number;
   column: Rect | null;
-  options: { id: string; rect: Rect; visual?: Rect | null }[];
-  ownVisuals?: boolean;
+  options: { id: string; rect: Rect; visual: Rect | null }[];
 }
 const item = (id: string, overrides: Partial<Item> = {}): Item => ({
   id,
   left: 32,
   column: rect(48, 1020),
-  options: [{ id: 'a', rect: rect(1092, 300) }],
+  options: [{ id: 'a', rect: rect(1092, 300), visual: null }],
   ...overrides,
 });
 const observation = (overrides: { navigation?: NavigationState; nav?: Rect | null; items?: Item[] } = {}) => ({
@@ -71,7 +70,6 @@ describe('failure cases', () => {
     // ARRANGE
     const sectioned = item('fortify', {
       column: null,
-      ownVisuals: true,
       options: [{ id: 'bare', rect: rect(48, 1020), visual: rect(48, 640) }],
     });
     const expected = [
@@ -80,6 +78,27 @@ describe('failure cases', () => {
 
     // ACT
     const problems = check.judge(observation({ items: [sectioned] }));
+
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
+  it('checks a mixed item: Options with a visual by width, the others by the rail rule', () => {
+    // ARRANGE
+    const mixed = item('fortify', {
+      column: rect(48, 1020),
+      options: [
+        { id: 'bare', rect: rect(48, 1020), visual: rect(48, 640) },
+        { id: 'plain', rect: rect(48, 1020), visual: null },
+      ],
+    });
+    const expected = [
+      'item "fortify": option "bare" has a visual 640px wide with the navigation collapsed; keep at least 1000px',
+      'item "fortify": option "plain" sits under the content column, not in a rail beside it; put the Options in a rail to its right',
+    ];
+
+    // ACT
+    const problems = check.judge(observation({ items: [mixed] }));
 
     // ASSERT
     expect(problems).toEqual(expected);
@@ -115,7 +134,9 @@ describe('failure cases', () => {
 
   it('fails Options that sit under the content instead of in a rail beside it', () => {
     // ARRANGE
-    const loaded = observation({ items: [item('store', { options: [{ id: 'redis', rect: rect(48, 1020) }] })] });
+    const loaded = observation({
+      items: [item('store', { options: [{ id: 'redis', rect: rect(48, 1020), visual: null }] })],
+    });
     const expected = [
       'item "store": option "redis" sits under the content column, not in a rail beside it; put the Options in a rail to its right',
     ];
@@ -133,7 +154,6 @@ describe('edge cases', () => {
     // ARRANGE
     const sectioned = item('fortify', {
       column: null,
-      ownVisuals: true,
       options: [
         { id: 'bare', rect: rect(48, 1020), visual: rect(48, 1000) },
         { id: 'phase', rect: rect(48, 1020), visual: rect(48, 1020) },

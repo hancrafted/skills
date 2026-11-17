@@ -54,10 +54,11 @@ describe('checklist judge', () => {
 
       // ASSERT
       expect(checklist.map(({ id }) => id)).toEqual(expected);
-      expect(checklist[0].question).toBe('Can a cold reader say, per item, what it is and what changes?');
-      expect(checklist[2].question).toBe('With every collapsible closed, can a reader pick each item?');
-      expect(checklist[3].question).toBe('Does every item say what changes for the reader overall?');
-      expect(checklist[7].question).toContain('reflection block ask only open questions');
+      const question = (id: string) => checklist.find((item) => item.id === id)?.question;
+      expect(question('bar cold-reader')).toBe('Can a cold reader say, per item, what it is and what changes?');
+      expect(question('bar closed-pick')).toBe('With every collapsible closed, can a reader pick each item?');
+      expect(question('bar consequence')).toBe('Does every item say what changes for the reader overall?');
+      expect(question('bar open-reflection')).toContain('reflection block ask only open questions');
     });
 
     it('passes a yes and quotes its evidence', () => {
