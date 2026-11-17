@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en" data-page-id="drive-fortify-v3-sonnet" data-revision="1" data-mode="decide">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drive Fortify picks</title>
+<style>
+:root{--background:#fafaf7;--foreground:#1d1d1b;--card:#fff;--border:#8a8a84;--muted:#ecece6;--muted-foreground:#55554f;--accent:#1a5fb4;--ring:#1a5fb4;--good:#1a7f37;--bad:#b42318;--gutter:2rem}
+:root.dark{--background:#16171a;--foreground:#ececea;--card:#202226;--border:#8b8d93;--muted:#2a2c31;--muted-foreground:#a9abb0;--accent:#7db1ff;--ring:#7db1ff}
+body{margin:0;background:var(--background);color:var(--foreground);font:16px/1.5 system-ui,sans-serif}
+header.top{padding:24px var(--gutter) 8px}h1{margin:0 0 8px;font-size:1.6rem}h2{font-size:1.2rem;margin:0 0 8px}
+.layout{display:grid;grid-template-columns:1fr;gap:24px}
+html[data-nav=open] .layout{grid-template-columns:14rem 1fr}
+@media(max-width:112.49rem){html[data-nav=open] .layout{grid-template-columns:1fr}}
+[data-page-nav]{padding:16px;font-size:.9rem}[data-page-nav] ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+[data-page-nav] a{color:var(--foreground)}
+main{padding:0 var(--gutter) 48px;max-width:2000px;min-width:0}
+.item{display:grid;grid-template-columns:minmax(0,1fr) 24rem;gap:24px;margin:0 0 48px;align-items:start}
+@media(max-width:1100px){.item{grid-template-columns:1fr}}
+.main{position:sticky;top:var(--toolbar-h,61px);background:var(--background);padding-top:8px;max-height:none}
+.rail{position:sticky;top:calc(var(--toolbar-h,61px) + 8px);display:grid;gap:12px}
+@media(max-width:1100px){.main,.rail{position:static}}
+.visual{background:var(--card);border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:16px;box-shadow:0 2px 12px color-mix(in oklch,var(--foreground) 10%,transparent);max-width:var(--preview-width,100%)}
+.visual svg{width:100%;height:auto}.st{fill:var(--foreground);font-size:13px}.sb{fill:var(--accent)}
+.lead{margin:0 0 12px}.meta{color:var(--muted-foreground);font-size:.875rem}
+.pick{display:flex;flex-wrap:wrap;gap:2px;padding:2px;border:1px solid var(--border);border-radius:12px;background:var(--muted);margin:0 0 8px}
+.pick legend{font-size:.8rem;padding:0 4px;color:var(--muted-foreground)}
+.seg{position:relative;flex:1 1 auto}.seg input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.seg span{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:4px 12px;border-radius:8px;font-weight:500;font-size:.85rem;text-align:center;box-sizing:border-box}
+.seg input:checked+span{background:var(--foreground);color:var(--background);font-weight:700}
+.seg input:focus-visible+span{outline:2px solid var(--ring);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tool,button.act{font:inherit;font-size:.85rem;min-height:44px;padding:4px 16px;border-radius:10px;border:1px solid var(--border);background:transparent;color:inherit;cursor:pointer}
+.tool:hover,button.act:hover{background:color-mix(in oklch,var(--foreground) 6%,transparent)}.tool:active{background:color-mix(in oklch,var(--foreground) 12%,transparent)}
+button.primary{background:var(--accent);color:var(--background);border-color:transparent}
+button:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+textarea,select{width:100%;box-sizing:border-box;font:inherit;border:1px solid var(--border);border-radius:10px;background:var(--card);color:inherit;padding:8px}
+label{display:grid;gap:4px;font-size:.85rem}
+.card{background:var(--card);border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:16px;margin:12px 0;display:grid;gap:8px}
+.card h4{margin:0}.card ul{margin:0;padding-left:20px}.card p{margin:0}.why{font-weight:600}
+.ctx{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 24px}.ctx details{flex:1 1 18rem;border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:8px 16px;background:var(--card)}
+.review{border:1px solid var(--border);border-radius:12px;padding:24px;background:var(--card);display:grid;gap:16px}
+.lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.lenses p{margin:0;font-size:.85rem}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media(max-width:832px){.lenses,.two{grid-template-columns:1fr}}
+.jump{position:fixed;right:16px;bottom:16px;width:48px;height:48px;border-radius:50%;overflow:hidden;border:1px solid var(--border);background:var(--card);display:grid;grid-template-rows:1fr 1fr;z-index:30}
+.jump button{all:unset;display:grid;place-items:center;min-height:24px;min-width:24px;cursor:pointer}.jump button:focus-visible{outline:2px solid var(--ring);outline-offset:-2px}
+.jump svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+pre{white-space:pre-wrap;background:var(--muted);padding:12px;border-radius:10px;font-size:.8rem;max-height:14rem;overflow:auto}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+.opt{background:var(--card);border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:12px;padding:24px;margin:0 0 24px;display:grid;gap:12px}
+.opt h3{margin:0;font-size:1.25rem}.opt h4{margin:12px 0 0;font-size:1rem}.opt p{margin:0}.plain{font-size:1.05rem}
+.opthead .meta{margin:0 0 4px}
+.recbadge{font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--accent);color:var(--background);vertical-align:middle}
+code{font-size:.85em;background:var(--muted);padding:1px 5px;border-radius:5px}
+.analogy{border:1px dashed color-mix(in oklch,var(--border) 70%,transparent);border-radius:10px;padding:8px 16px}.analogy summary{cursor:pointer;font-weight:600}.analogy p{margin:8px 0 0}
+.evid{list-style:none;padding:0;margin:0;display:grid;gap:8px}.evid li{display:flex;gap:8px;align-items:baseline}
+.chip{flex:none;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:8px;border:1px solid currentColor}
+.chip.ev{color:var(--good)}.chip.prop{color:var(--accent)}.chip.unk{color:var(--muted-foreground)}
+.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:0}
+.arrow{align-self:center;font-size:1.5rem;color:var(--muted-foreground)}
+.pane{border:1px solid color-mix(in oklch,var(--border) 60%,transparent);border-radius:10px;padding:12px;background:var(--background)}
+.pane h5{margin:0 0 8px;font-size:.85rem}.pane.before{border-left:4px solid var(--bad)}.pane.after{border-left:4px solid var(--good)}
+.term{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.85rem}
+.term li{padding-left:22px;position:relative}.term li::before{position:absolute;left:0;font-weight:700}
+.term li.ok::before{content:"\2713";color:var(--good)}.term li.bad::before{content:"\2717";color:var(--bad)}.term li.note::before{content:"\2022";color:var(--muted-foreground)}
+.facts{display:grid;gap:8px;margin:0}.facts div{display:grid;grid-template-columns:6rem 1fr;gap:8px}.facts dt{font-weight:700;font-size:.85rem}.facts dd{margin:0}
+.optact{display:flex;gap:8px}.pickit[aria-pressed=true]{background:var(--foreground);color:var(--background)}
+@media(max-width:1300px){.ba{grid-template-columns:1fr}.arrow{transform:none;text-align:center;padding:0}}
+.item{grid-template-columns:minmax(0,1fr) 18rem}@media(max-width:1100px){.item{grid-template-columns:minmax(0,1fr) 18rem}.rail{position:sticky!important;top:calc(var(--toolbar-h,61px) + 8px)!important}}.main{position:static;min-width:0}.opt{min-width:0}.opt *{min-width:0}
+.stick{padding:0}
+.stick .visual{box-shadow:0 2px 12px color-mix(in oklch,var(--foreground) 10%,transparent)}
+code,.term li,.evid li,.facts dd{overflow-wrap:anywhere}
+.seg code{background:transparent;color:inherit}
+@media(min-width:1101px){html[data-nav=open] [data-page-nav]{position:sticky;top:var(--toolbar-h,61px);align-self:start;max-height:calc(100vh - var(--toolbar-h,61px));overflow:auto}}
+.ba{padding:8px}.term{font-size:.8rem}.ba .pane{min-width:0}
+
+.rec{margin:0 0 16px;font-weight:600}.hint{margin:0 0 16px;color:var(--muted-foreground);font-size:.875rem}
+.opt{gap:12px;padding:24px}.opt h3{font-size:1.2rem}.prob{margin:0;font-size:1.05rem}.prop{margin:0;font-weight:600}
+.term li.chg{font-weight:700;background:color-mix(in oklch,var(--accent) 16%,transparent);border-radius:6px;padding-top:2px;padding-bottom:2px}
+.term li.chg::before{content:"\2192";color:var(--accent)}
+details.sub{border-top:1px solid color-mix(in oklch,var(--border) 60%,transparent);padding:8px 0}details.sub>summary{cursor:pointer;font-size:.875rem;color:var(--muted-foreground)}details.sub p,details.sub ul{margin:8px 0 0;font-size:.9rem}details.sub ul{padding-left:20px}
+.item>.main{grid-column:1;grid-row:1}.item>.rail{grid-column:2;grid-row:1}.minav{position:sticky;top:var(--toolbar-h,61px);z-index:10;display:flex;gap:24px;padding:8px var(--gutter);background:var(--background);border-bottom:1px solid color-mix(in oklch,var(--border) 60%,transparent);font-size:.9rem}.minav a{color:var(--foreground)}.pick .seg{flex:1 1 40%}.pick .seg span{min-height:44px;font-size:.8rem;padding:2px 6px}.rail textarea{rows:3}.subs{display:grid;gap:0}.rowsub{display:flex;flex-wrap:wrap;gap:0 24px}.rowsub>details{flex:1 1 14rem}
+</style>
+
+<!-- navOpenWidth: the window width from which the navigation opens beside the page; toolbarHeight: the bar's height in px
+     before the script measures it; fitMargin: the px kept above and below a fixed design size; fitRoomMin: the least room
+     in px a fixed design size is scaled into. The dropdown rule below (max-width) is navOpenWidth less 1 px, in rem. -->
+<script type="application/json" data-toolbar-config>
+  { "navOpenWidth": 1800, "toolbarHeight": 61, "fitMargin": 16, "fitRoomMin": 240 }
+</script>
+<style data-toolbar-style>
+  .dh-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+    padding: 0.5rem var(--gutter, 2rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    background: color-mix(in oklch, var(--card, Canvas) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+  }
+  .dh-toolbar > * {
+    flex: none;
+  }
+  /* A tool is a quiet outline; hover and pressed tint it, and an open one is filled. */
+  .dh-tool {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-height: 2.75rem;
+    padding: 0.3rem 1rem;
+    border-radius: 0.625rem;
+    border: 1px solid color-mix(in oklch, var(--border, GrayText) 70%, transparent);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .dh-tool:hover {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 6%, transparent);
+  }
+  .dh-tool:active {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 12%, transparent);
+  }
+  .dh-tool[aria-expanded='true'] {
+    background: var(--foreground, CanvasText);
+    color: var(--background, Canvas);
+    border-color: transparent;
+  }
+  /* One segmented bar, one selection: a track with a raised, filled thumb under the selected segment. */
+  .dh-seg {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 0.75rem;
+    background: color-mix(in oklch, var(--muted, GrayText) 80%, var(--background, Canvas));
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--border, GrayText) 50%, transparent);
+  }
+  .dh-seg button {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-height: 2.5rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 0.5rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .dh-seg button:hover {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 7%, transparent);
+  }
+  .dh-seg button:active {
+    background: color-mix(in oklch, var(--foreground, CanvasText) 13%, transparent);
+  }
+  .dh-seg button[aria-checked='true'] {
+    background: var(--foreground, CanvasText);
+    color: var(--background, Canvas);
+    font-weight: 600;
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground, CanvasText) 25%, transparent);
+  }
+  .dh-size {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground, GrayText);
+    white-space: nowrap;
+  }
+  .dh-size[hidden] {
+    display: none;
+  }
+  /* The slot for more tools, and the theme switch, sit at the end of the row. */
+  .dh-toolbar-end {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .dh-toolbar button:focus-visible {
+    outline: 2px solid var(--ring, Highlight);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .dh-tool,
+    .dh-seg button {
+      transition:
+        background-color 120ms ease,
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+    }
+  }
+  /* The navigation is a dropdown: hidden when closed, floating under the toolbar below navOpenWidth when open. */
+  html[data-nav='closed'] [data-page-nav] {
+    display: none;
+  }
+  @media (max-width: 112.49rem) {
+    html[data-nav='open'] [data-page-nav] {
+      display: block;
+      position: fixed;
+      z-index: 15;
+      top: var(--toolbar-h);
+      bottom: 0;
+      left: 0;
+      width: 17rem;
+      max-height: none;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 1rem;
+      background: var(--card, Canvas);
+      border-right: 1px solid color-mix(in oklch, var(--border, GrayText) 60%, transparent);
+      box-shadow: 0 0 2rem color-mix(in oklch, var(--foreground, CanvasText) 18%, transparent);
+    }
+  }
+  @media print {
+    .dh-toolbar {
+      display: none;
+    }
+  }
+</style>
+<script>
+  // The theme and the navigation, applied before first paint. Storage may be blocked: every call is guarded.
+  (() => {
+    const root = document.documentElement;
+    const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+    root.style.setProperty('--toolbar-h', config.toolbarHeight + 'px');
+    const read = (key) => {
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    };
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => {
+      const choice = read('decision-page-theme') || 'auto';
+      root.classList.toggle('dark', choice === 'dark' || (choice === 'auto' && media.matches));
+      root.dataset.theme = choice;
+    };
+    apply();
+    media.addEventListener('change', apply);
+    // Open on a wide screen, collapsed below navOpenWidth, where the content wants every pixel.
+    root.dataset.nav = innerWidth >= config.navOpenWidth ? 'open' : 'closed';
+  })();
+</script>
+
+
+</head>
+<body>
+
+<div class="dh-toolbar" role="toolbar" aria-label="Page tools" data-toolbar>
+  <button type="button" class="dh-tool" data-nav-toggle aria-controls="page-nav" aria-expanded="false">Outline</button>
+  <div class="dh-seg" role="radiogroup" aria-label="Preview size" data-presets></div>
+  <output class="dh-size" data-preview-size data-measure="[data-visual]" aria-live="polite"></output>
+  <div class="dh-toolbar-end" data-toolbar-end></div>
+  <button type="button" class="dh-tool" data-theme-toggle>Theme: Auto</button>
+</div>
+<!-- A preset is a label, a width in px and, for a vertical one, a height; one without a width is the full column. -->
+<script type="application/json" data-toolbar-presets>[{"id":"fit","label":"Fit","title":"Fit, the full column"},{"id":"laptop","label":"Laptop","width":1440},{"id":"tablet","label":"Tablet","width":1024}]</script>
+<header class="top"><h1>Drive Fortify: what do we harden next?</h1>
+<p>Pick one quick win and one architectural ticket, or none. Highlighted lines are what changes.</p></header>
+<nav class="minav" aria-label="Sections"><a href="#quick-win">Quick win</a><a href="#architectural">Architectural</a><a href="#review">Before you approve</a></nav>
+<div class="layout"><nav id="page-nav" data-page-nav aria-label="Items"><ul><li><a href="#quick-win">Quick win</a></li><li><a href="#architectural">Architectural</a></li><li><a href="#review">Before you approve</a></li></ul></nav>
+<main><div class="ctx" id="context"><details><summary>Files and links read</summary><p>.scratch/drive/fortify-feedback.md, fortify-redraw.brief.md, fortify-redraw-v3.brief.md, fortify-evidence.md, decisions.md, fortify-decision.html, fortify-decision.opus.html; vitest.slow.config.mts and docs/drive/binding.yml (worktree feat-drive). Enforcers are agent proposals.</p></details>
+<details><summary>Not on this page</summary><p>Resume after quota reset, spec drift, guard merge tests (fixed), plugin hook on core.hooksPath, Decision-doc guard false blocks, two deferred entries. No smell reached count 3; no open fortify ticket.</p></details></div>
+<section class="item" id="quick-win" data-item="quick-win" data-fidelity="diagram" data-depth="simple">
+<aside class="rail"><div class="row1"><fieldset class="pick"><legend>Pick for Quick win</legend><label class="seg"><input type="radio" name="pick-quick-win" value="qw-stuck-teardown"><span>Name blocker</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="qw-wt-new-rollback"><span>Undo wt:new</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="qw-core-bare"><span>Check bare</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="qw-stale-binding" checked aria-label="qw-stale-binding, recommended"><span>Check the Binding <span aria-hidden="true">&#9733;</span></span></label><label class="seg"><input type="radio" name="pick-quick-win" value="none"><span>None</span></label><label class="seg"><input type="radio" name="pick-quick-win" value="redesign"><span>&#8635; Redesign</span></label></fieldset><button type="button" class="tool" data-reset>Reset pick</button></div><label>Comment on this item<textarea rows="3" data-comment="quick-win"></textarea></label></aside><div class="main"><h2>Quick win: harden one failure (15 to 30 min)</h2>
+<p class="rec">Recommended: Fail when the Binding names a missing skill. It happened today, the cause is known and the test is exact.</p>
+<article class="opt" id="qw-stuck-teardown" data-option="qw-stuck-teardown" data-recommended="false">
+<h3>Make <code>wt:done</code> name the process blocking it</h3>
+<p class="prob">A slow test hung 7+ minutes in a worktree, though a 60 s test timeout already exists. <code>wt:done</code> refused to tear down; cause of the hang unknown.</p>
+<details class="sub"><summary>Analogy</summary><p>A hotel door that will not lock but never says which guest is still inside.</p><p class="meta">Where it breaks down: The hang itself stays unexplained; this only fixes the cleanup.</p></details>
+<p class="prop">Apply fail fast with actionable errors so that a stuck teardown names its blocker and finishes.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="bad">Test hangs past the 60 s limit</li><li class="bad"><code>wt:done</code> refuses, names no process</li><li class="bad">Orchestrator hunts and kills it by hand</li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="note">Test hangs past the 60 s limit</li><li class="chg"><code>wt:done</code> names the PID and ends the tree</li><li class="chg">Teardown completes</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> Observed failure 3 in <code>decisions.md</code>: vitest slow run hung 7+ minutes inside a Subagent worktree; <code>wt:done</code> refused; the Orchestrator killed the process tree by hand.</li><li><b>Evidence.</b> <code>vitest.slow.config.mts</code> sets <code>testTimeout: 60_000</code> since 2026-11-13, so the timeout did not stop this hang.</li><li><b>Unknown.</b> Which test hung, why the timeout did not fire, the date and the minutes lost.</li><li><b>Weak.</b> One incident, no cause. A different hang would still happen.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>When a process runs inside the worktree, <code>wt:done</code> prints its PID and command and, with a flag, ends it, then tears down.</p><p><b>Enforcer:</b> <code>test:slow</code> test that starts a background process in a temp worktree and asserts <code>wt:done</code> names and ends it (deterministic). Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>15 to 30 min of one Subagent. Risk: ending a process the person still wants.</p><p>Two-way: revert the commit.</p></details>
+<details class="sub"><summary>Impact</summary><p>The Orchestrator no longer hunts for the process by hand. Hangs themselves still happen.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Make <code>wt:done</code> name the process blocking it<textarea rows="3" data-comment="quick-win/qw-stuck-teardown"></textarea></label></details></div>
+</article><article class="opt" id="qw-wt-new-rollback" data-option="qw-wt-new-rollback" data-recommended="false">
+<h3>Make <code>wt:new</code> undo itself when it fails</h3>
+<p class="prob">When <code>npm ci</code> fails, <code>wt:new</code> leaves its branch and folder behind. A rerun stops with "branch already exists".</p>
+<details class="sub"><summary>Analogy</summary><p>Moving house with boxes half unpacked: you can neither go back nor start over cleanly.</p><p class="meta">Where it breaks down: A rollback only removes what the command itself created.</p></details>
+<p class="prop">Apply all-or-nothing setup (+ idempotency) so that a failed <code>wt:new</code> leaves nothing and reruns cleanly.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="note">Branch created, worktree made</li><li class="bad"><code>npm ci</code> fails; branch and folder stay</li><li class="bad">Rerun: "branch already exists"; fix by hand</li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="note">Branch created, worktree made</li><li class="chg"><code>npm ci</code> fails; rollback removes both</li><li class="chg">Rerun starts clean</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> Observed failure 1 in <code>decisions.md</code>: the first <code>wt:new -- decisions/drive</code> ended in a Node stack trace; the rerun said "branch already exists"; <code>npm ci</code> was rerun by hand in the half-made worktree.</li><li><b>Unknown.</b> What made the install fail, and the minutes lost.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>Wrap the steps of <code>wt:new</code> in a rollback that removes only what this call created.</p><p><b>Enforcer:</b> <code>test:slow</code> test that injects an install failure and asserts no branch or folder remains (deterministic). Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>15 to 30 min. More code to keep; the failure cause stays unexplained.</p><p>Two-way: revert the commit.</p></details>
+<details class="sub"><summary>Impact</summary><p>A failed setup is retried with one command, with no manual cleanup.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Make <code>wt:new</code> undo itself when it fails<textarea rows="3" data-comment="quick-win/qw-wt-new-rollback"></textarea></label></details></div>
+</article><article class="opt" id="qw-core-bare" data-option="qw-core-bare" data-recommended="false">
+<h3>Fail preflight when main is marked bare</h3>
+<p class="prob">The git setting <code>core.bare=true</code> makes git treat a folder as storage only. It was found set on the real main checkout; cause unknown.</p>
+<details class="sub"><summary>Analogy</summary><p>A shop sign flipped from "Open" to "Warehouse only": the goods are inside, customers are turned away.</p><p class="meta">Where it breaks down: The sign is visible; this setting is invisible until something fails.</p></details>
+<p class="prop">Apply shift left (+ detect drift) so that <code>npm run preflight</code> reports it before work starts.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="bad">Setting flips to true, cause unknown</li><li class="bad">Git behaves oddly mid-run</li><li class="note">Found and reset by hand</li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="note">Setting flips to true, cause unknown</li><li class="chg"><code>preflight</code> fails: "core.bare=true"</li><li class="chg">Reset before anyone builds on it</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> Observed failure 2 in <code>decisions.md</code>: mid-run the main checkout was found with <code>core.bare=true</code>; a Subagent reset it to false.</li><li><b>Unknown.</b> The cause (a test may have leaked into the real repo), the date, and the cost.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>One check in <code>npm run preflight</code>: fail when <code>core.bare</code> is true in a checkout that has working files.</p><p><b>Enforcer:</b> the preflight check plus a test with a temp repo (deterministic). It detects; it does not stop the leak. Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>15 to 30 min. Low risk; the root cause stays open.</p><p>Two-way: delete the check.</p></details>
+<details class="sub"><summary>Impact</summary><p>The Operator hears about it at the start of a run, not mid-run.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Fail preflight when main is marked bare<textarea rows="3" data-comment="quick-win/qw-core-bare"></textarea></label></details></div>
+</article><article class="opt" id="qw-stale-binding" data-option="qw-stale-binding" data-recommended="true">
+<h3>Fail when the Binding names a missing skill <span class="recbadge">Recommended</span></h3>
+<p class="prob">On 2026-11-17 <code>main</code> renamed <code>to-decision-html</code> to <code>to-review</code>. <code>binding.yml</code> kept the old name and no check failed.</p>
+<details class="sub"><summary>Analogy</summary><p>A speed-dial button for a disconnected number: it looks fine until you call.</p><p class="meta">Where it breaks down: A dead speed-dial fails on the call; a stale Binding fails silently.</p></details>
+<p class="prop">Apply fail fast (+ validate config against reality) so that a stale skill name fails the moment it appears.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="bad"><code>main</code> renames the skill</li><li class="bad"><code>binding.yml</code> keeps the old name; all green</li><li class="note">Found by hand during merge <code>283abde8</code></li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="note"><code>main</code> renames the skill</li><li class="chg">Test fails: "to-decision-html not installed"</li><li class="chg">Fix is one line, found in CI</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> 2026-11-17: <code>main</code> renamed the installed skill; <code>docs/drive/binding.yml</code> still named the old one; the Orchestrator found it by hand while merging <code>main</code> into <code>feat/drive</code> (merge <code>283abde8</code>). Source: Orchestrator, this session.</li><li><b>Unknown.</b> How long it would have gone unnoticed.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>A test, or a <code>drive setup</code> check, that fails when a skill named in the Binding is not installed.</p><p><b>Enforcer:</b> test-runner test or <code>drive setup</code> check (deterministic). Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>15 to 30 min. Risk: a skill installed only on some machines fails the check there.</p><p>Two-way: delete the test.</p></details>
+<details class="sub"><summary>Impact</summary><p>A rename on main breaks the merge visibly, so nobody finds it by hand.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Fail when the Binding names a missing skill<textarea rows="3" data-comment="quick-win/qw-stale-binding"></textarea></label></details></div>
+</article></div></section>
+<section class="item" id="architectural" data-item="architectural" data-fidelity="diagram" data-depth="simple">
+<aside class="rail"><div class="row1"><fieldset class="pick"><legend>Pick for Architectural</legend><label class="seg"><input type="radio" name="pick-architectural" value="ar-phase-announce" checked aria-label="ar-phase-announce, recommended"><span>Phase note <span aria-hidden="true">&#9733;</span></span></label><label class="seg"><input type="radio" name="pick-architectural" value="ar-subagent-stop"><span>Subagent merged</span></label><label class="seg"><input type="radio" name="pick-architectural" value="ar-file-overlap"><span>File overlap</span></label><label class="seg"><input type="radio" name="pick-architectural" value="none"><span>None</span></label><label class="seg"><input type="radio" name="pick-architectural" value="redesign"><span>&#8635; Redesign</span></label></fieldset><button type="button" class="tool" data-reset>Reset pick</button></div><label>Comment on this item<textarea rows="3" data-comment="architectural"></textarea></label></aside><div class="main"><h2>Architectural: which ticket becomes the <code>fortify</code> ticket?</h2>
+<p class="rec">Recommended: Require a phase note before wt:new. It is the only failure the Operator corrected twice.</p>
+<article class="opt" id="ar-phase-announce" data-option="ar-phase-announce" data-recommended="true">
+<h3>Require a phase note before <code>wt:new</code> <span class="recbadge">Recommended</span></h3>
+<p class="prob">The Operator twice had to ask which phase, branch and decisions the Orchestrator was in. A prose rule to announce each phase exists; nothing fails when it is skipped.</p>
+<details class="sub"><summary>Analogy</summary><p>A pilot's callout: takeoff does not start until it is made.</p><p class="meta">Where it breaks down: The hook proves the note was written, not that anyone read it.</p></details>
+<p class="prop">Apply deterministic enforcement (+ make invalid states unrepresentable) so that <code>wt:new</code> cannot run without a fresh phase marker.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="bad">Orchestrator runs <code>wt:new</code> unannounced</li><li class="bad">Operator interrupts: "are we implementing?"</li><li class="note">Prose rule exists, no failure state</li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="chg"><code>drive status</code> prints phase, branch, decision points; writes a marker</li><li class="chg">Hook lets <code>wt:new</code> run only with a fresh marker</li><li class="note">No marker: blocked, "run drive status first"</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> Two Operator corrections in <code>decisions.md</code> (stopped <code>wt:new -- decisions/drive</code> and asked if this was implementation; asked whether the session could run to the end and for a review guide), verbatim in <code>learnings.md</code>, count 1, proposed.</li><li><b>Evidence.</b> Review round Q46 added the prose rule to announce each phase. A mechanical check adds a failure state; prose has none.</li><li><b>Unknown.</b> Minutes lost per interruption.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>New <code>drive status</code> command plus a PreToolUse hook on <code>wt:new</code> that requires its fresh marker.</p><p><b>Enforcer:</b> the hook, plus a test for <code>drive status</code> (deterministic). Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>One ticket: command, hook, tests. Friction on every <code>wt:new</code>.</p><p>Two-way: remove the hook; the marker is harmless.</p></details>
+<details class="sub"><summary>Impact</summary><p>The Operator stops being the one who asks which phase this is. It is the only failure the Operator corrected twice.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Require a phase note before <code>wt:new</code><textarea rows="3" data-comment="architectural/ar-phase-announce"></textarea></label></details></div>
+</article><article class="opt" id="ar-subagent-stop" data-option="ar-subagent-stop" data-recommended="false">
+<h3>Block a Subagent from stopping before merge</h3>
+<p class="prob">Twice a Subagent stopped ("waiting on monitor") before merging its Task branch. The Orchestrator had to message it to finish.</p>
+<details class="sub"><summary>Analogy</summary><p>A cashier cannot clock out until the till is counted.</p><p class="meta">Where it breaks down: A Subagent with a real question must still be allowed to stop.</p></details>
+<p class="prop">Apply definition of done as a machine check so that a Subagent cannot stop with an unmerged Task branch.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="bad">Subagent says "waiting on monitor", stops</li><li class="bad">Work sits unmerged on its branch</li><li class="note">Orchestrator sends a message to resume</li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="note">Subagent tries to stop</li><li class="chg"><code>SubagentStop</code> hook finds branch unmerged, blocks with reason</li><li class="chg">Subagent merges, then stops</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> Observed failure 4 in <code>decisions.md</code>: twice a Subagent stopped before committing and merging and needed a SendMessage to finish the last steps.</li><li><b>Unknown.</b> Which Subagents, and the time lost.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>A <code>SubagentStop</code> hook checks the Task branch is merged into the Integration branch, with an escape when the Subagent reports a real blocker.</p><p><b>Enforcer:</b> the hook, tested (deterministic). Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>One ticket. Risk: a loop if the Subagent cannot finish; the escape is part of the work.</p><p>Two-way: remove the hook.</p></details>
+<details class="sub"><summary>Impact</summary><p>The Orchestrator stops chasing stopped Subagents.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Block a Subagent from stopping before merge<textarea rows="3" data-comment="architectural/ar-subagent-stop"></textarea></label></details></div>
+</article><article class="opt" id="ar-file-overlap" data-option="ar-file-overlap" data-recommended="false">
+<h3>Refuse parallel tickets that edit the same file</h3>
+<p class="prob">Tickets #667 and #668 both edited <code>learnings.md</code>. Rules were relayed by hand and one sync conflicted.</p>
+<details class="sub"><summary>Analogy</summary><p>Booking a meeting room: check the calendar before inviting, not after two groups walk in.</p><p class="meta">Where it breaks down: Only declared files are checked; an undeclared edit slips through.</p></details>
+<p class="prop">Apply shift left (+ declared interfaces) so that dispatch refuses overlapping tickets before they run.</p>
+<div class="visual ba" data-visual><div class="pane before"><h5>Before</h5><ul class="term"><li class="bad">#667 and #668 dispatched in parallel</li><li class="bad">Both edit <code>learnings.md</code></li><li class="bad">Relayed by hand; one sync conflicts</li></ul></div><div class="arrow" aria-hidden="true">&rarr;</div><div class="pane after"><h5>After</h5><ul class="term"><li class="chg">Each ticket declares its files</li><li class="chg">Dispatch refuses: "#667, #668 both edit learnings.md"</li><li class="chg">Serialise or split first</li></ul></div></div>
+<div class="subs"><details class="sub"><summary>Evidence</summary><ul><li><b>Evidence.</b> Observed failure 7 in <code>decisions.md</code>: parallel tickets and fix Subagents shared <code>learnings.md</code> and <code>binding.yml</code>; relayed by SendMessage; one sync conflicted.</li><li><b>Unknown.</b> Time cost of the relay and the conflict.</li></ul></details>
+<details class="sub"><summary>The change and its Enforcer</summary><p>A dispatch check that fails when two parallel tickets declare the same file.</p><p><b>Enforcer:</b> new dispatch check, tested (deterministic). Agent proposal.</p></details>
+<details class="sub"><summary>Cost and door</summary><p>One ticket. Relies on tickets declaring files honestly.</p><p>Two-way: remove the check.</p></details>
+<details class="sub"><summary>Impact</summary><p>Conflicts surface at planning, where they cost one sentence.</p></details>
+<details class="sub"><summary>Comment on this option</summary><label>Comment on Refuse parallel tickets that edit the same file<textarea rows="3" data-comment="architectural/ar-file-overlap"></textarea></label></details></div>
+</article></div></section>
+<section id="review" data-reflection class="review"><h2>Before you approve</h2><div class="lenses"><p><b>Operations.</b> Does a hook or check stop real work?</p><p><b>Security.</b> Does a new hook widen what an agent may run?</p><p><b>Information architecture.</b> Does the fix live in the skill or in docs/drive/?</p><p><b>Accessibility.</b> Can the Operator read the new output at a glance?</p></div>
+<div class="two"><label>General comment<textarea rows="4" data-general></textarea></label>
+<div data-next-action><label>Next action<select id="next"><option value="fortify">Dispatch the quick win and file the architectural ticket</option><option value="revise">Revise this page</option><option value="stop">Stop</option></select></label>
+<label>Instructions<textarea rows="2" id="nextText">(recommended by agent) Dispatch the quick win as one task, file the architectural pick labelled fortify, update learnings.md.</textarea></label>
+<p>Save accepts the selected Next action, as does sending the copied prompt.</p></div></div>
+<div><button type="button" class="act primary" data-copy-prompt>Copy as prompt</button> <button type="button" class="act" data-save>Save</button> <button type="button" class="act" data-reset-all>Reset all</button>
+<p role="status" id="status"></p><label>Reply composer<pre id="composer" tabindex="0"></pre></label></div>
+<!-- Reply composer pattern after html-effectiveness unknowns/03-design-directions.html: Apache-2.0, Copyright 2026 Anthropic PBC. -->
+</section></main></div>
+<div class="jump"><button type="button" aria-label="Scroll to top" id="up"><svg viewBox="0 0 16 16"><path d="M3 10l5-5 5 5"/></svg></button><button type="button" aria-label="Scroll to bottom" id="down"><svg viewBox="0 0 16 16"><path d="M3 6l5 5 5-5"/></svg></button></div>
+
+<script>
+  (() => {
+    const root = document.documentElement;
+    const config = JSON.parse(document.querySelector('script[data-toolbar-config]').textContent);
+    const bar = document.querySelector('[data-toolbar]');
+    const write = (key, value) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // Without storage the choice lasts until the page closes.
+      }
+    };
+    const size = bar.querySelector('[data-preview-size]');
+    const presets = JSON.parse(document.querySelector('script[data-toolbar-presets]')?.textContent || '[]');
+    const sizeOf = ({ width, height }) => (height ? width + ' × ' + height + ' px' : width + ' px');
+    // A preset with a width and a height has a fixed design size.
+    const isFixed = (preset) => Boolean(preset?.width && preset.height);
+    const current = () => presets.find((preset) => preset.id === root.dataset.preset);
+
+    // The size the previews take now, shown only while it fits on the row.
+    const fit = () => {
+      size.hidden = false;
+      if (bar.scrollWidth > bar.clientWidth) size.hidden = true;
+    };
+    const report = () => {
+      const target = [...document.querySelectorAll(size.dataset.measure || '[data-visual]')].find(
+        (candidate) => candidate.offsetParent !== null,
+      );
+      const preset = current();
+      const shown = target ? Math.round(target.getBoundingClientRect().width) : 0;
+      size.value = !target
+        ? ''
+        : isFixed(preset)
+          ? 'Showing ' + sizeOf(preset) + ' at ' + Math.round((shown / preset.width) * 100) + '%'
+          : 'Showing ' + shown + ' px wide';
+      fit();
+    };
+
+    // A fixed design size scales down uniformly so the whole frame fits the viewport below the toolbar, between a
+    // margin above and below; the page applies --preview-scale (SKILL.md step 4).
+    const scale = () => {
+      const preset = current();
+      if (!isFixed(preset)) {
+        root.style.removeProperty('--preview-scale');
+        return;
+      }
+      const room = Math.max(innerHeight - bar.offsetHeight - 2 * config.fitMargin, config.fitRoomMin);
+      root.style.setProperty('--preview-scale', Math.min(1, room / preset.height).toFixed(4));
+    };
+
+    // The sticky parts of the page sit below the toolbar, whose height is --toolbar-h.
+    const measure = () => {
+      root.style.setProperty('--toolbar-h', bar.offsetHeight + 'px');
+      scale();
+    };
+    if (typeof ResizeObserver === 'function') new ResizeObserver(measure).observe(bar);
+    measure();
+    addEventListener('resize', () => {
+      scale();
+      report();
+    });
+
+    // The presets: one segmented bar, one selection. A preset with a width sets --preview-width and data-preset on <html>.
+    const group = bar.querySelector('[data-presets]');
+    const segments = presets.map((preset) => {
+      const name = preset.title || preset.label + ', ' + sizeOf(preset);
+      const segment = document.createElement('button');
+      segment.type = 'button';
+      segment.dataset.preset = preset.id;
+      segment.setAttribute('role', 'radio');
+      segment.setAttribute('aria-label', name);
+      segment.title = name;
+      segment.textContent = preset.label;
+      group.append(segment);
+      return segment;
+    });
+    const choose = (at, focus) => {
+      const preset = presets[at];
+      if (preset.width) {
+        root.style.setProperty('--preview-width', preset.width + 'px');
+        root.dataset.preset = preset.id;
+      } else {
+        root.style.removeProperty('--preview-width');
+        delete root.dataset.preset;
+      }
+      if (isFixed(preset)) {
+        root.style.setProperty('--preview-height', preset.height + 'px');
+        root.dataset.previewFixed = '';
+      } else {
+        root.style.removeProperty('--preview-height');
+        delete root.dataset.previewFixed;
+      }
+      scale();
+      segments.forEach((segment, other) => {
+        segment.setAttribute('aria-checked', String(other === at));
+        segment.tabIndex = other === at ? 0 : -1;
+      });
+      if (focus) segments[at].focus();
+      report();
+    };
+    segments.forEach((segment, at) => {
+      segment.addEventListener('click', () => choose(at, false));
+      segment.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+        const to = event.key === 'Home' ? 0 : event.key === 'End' ? segments.length - 1 : undefined;
+        if (step === undefined && to === undefined) return;
+        event.preventDefault();
+        choose(to ?? (at + step + segments.length) % segments.length, true);
+      });
+    });
+    const start = Math.max(
+      0,
+      presets.findIndex((preset) => !preset.width),
+    );
+    segments.forEach((segment, at) => {
+      segment.setAttribute('aria-checked', String(at === start));
+      segment.tabIndex = at === start ? 0 : -1;
+    });
+
+    // The navigation: open in the page's grid on a wide screen, a dropdown under the toolbar below navOpenWidth.
+    const toggle = bar.querySelector('[data-nav-toggle]');
+    const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+    const sync = () => toggle.setAttribute('aria-expanded', String(root.dataset.nav === 'open'));
+    const close = () => {
+      root.dataset.nav = 'closed';
+      sync();
+      report();
+    };
+    toggle.addEventListener('click', () => {
+      root.dataset.nav = root.dataset.nav === 'open' ? 'closed' : 'open';
+      sync();
+      report();
+    });
+    panel?.addEventListener('click', (event) => {
+      if (event.target.closest('a') && innerWidth < config.navOpenWidth) close();
+    });
+    addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || root.dataset.nav !== 'open' || innerWidth >= config.navOpenWidth) return;
+      close();
+      toggle.focus();
+    });
+    sync();
+
+    // The theme: follow the system, or force light or dark.
+    const theme = bar.querySelector('[data-theme-toggle]');
+    const choices = ['auto', 'light', 'dark'];
+    const label = () =>
+      (theme.textContent = 'Theme: ' + (root.dataset.theme[0].toUpperCase() + root.dataset.theme.slice(1)));
+    theme.addEventListener('click', () => {
+      const next = choices[(choices.indexOf(root.dataset.theme) + 1) % choices.length];
+      write('decision-page-theme', next);
+      root.dataset.theme = next;
+      root.classList.toggle(
+        'dark',
+        next === 'dark' || (next === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches),
+      );
+      label();
+    });
+    label();
+
+    addEventListener('DOMContentLoaded', report);
+    addEventListener('load', report);
+  })();
+</script>
+
+<script>
+(()=>{
+const id='drive-fortify-v3-sonnet',rev=1,$=(s,r=document)=>[...r.querySelectorAll(s)],st=document.getElementById('status'),box=document.getElementById('composer');
+const key='decision-draft-'+id+'-r'+rev;const get=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}};
+const put=()=>{try{localStorage.setItem(key,JSON.stringify(draft()))}catch{}};
+const draft=()=>({picks:Object.fromEntries($('.item').map(i=>[i.dataset.item,($('input:checked',i)[0]||{}).value||null])),comments:Object.fromEntries($('[data-comment]').map(t=>[t.dataset.comment,t.value])),general:$('[data-general]')[0].value,next:document.getElementById('next').value,nextText:document.getElementById('nextText').value});
+const defaults=()=>$('.item').forEach(i=>{const r=$('[data-recommended=true]',i)[0];$('input[type=radio]',i).forEach(x=>x.checked=r&&x.value===r.dataset.option)});
+const text=()=>{const d=draft();const j={page:id,revision:rev,mode:'decide',path:location.pathname,destination:id+'-r'+rev+'-feedback.md',nextAction:{action:d.next,instructions:d.nextText,approvedRevision:rev},generalComment:d.general,items:$('.item').map(i=>{const p=d.picks[i.dataset.item];return {id:i.dataset.item,response:p===null?'skipped':p,comment:d.comments[i.dataset.item],options:Object.fromEntries($('[data-option]',i).map(o=>[o.dataset.option,d.comments[i.dataset.item+'/'+o.dataset.option]]))}})};
+return '# Decision page '+id+' revision '+rev+' (decide)\n\nSave this text verbatim to '+j.destination+'. Stop if the page revision differs. Sending it accepts the Next action.\n\n```json\n'+JSON.stringify(j,null,2)+'\n```\n'};
+const sync=()=>{box.textContent=text();put();marks()};
+const marks=()=>$('[data-pick]').forEach(b=>{const on=($('input:checked',b.closest('.item'))[0]||{}).value===b.dataset.pick;b.setAttribute('aria-pressed',String(on));b.textContent=on?'Picked':'Pick this one'});
+
+const saved=get();$('[data-comment]').forEach(t=>t.value=saved.comments?.[t.dataset.comment]||'');
+if(saved.picks)$('.item').forEach(i=>{const p=saved.picks[i.dataset.item];if(p!==undefined)$('input[type=radio]',i).forEach(x=>x.checked=x.value===p)});
+if(saved.general)$('[data-general]')[0].value=saved.general;if(saved.next)document.getElementById('next').value=saved.next;if(saved.nextText!==undefined)document.getElementById('nextText').value=saved.nextText;
+$('[data-pick]').forEach(b=>b.addEventListener('click',()=>{const i=b.closest('.item');const x=$('input[type=radio]',i).find(r=>r.value===b.dataset.pick);if(x){x.checked=true;sync()}}));
+document.addEventListener('input',sync);document.addEventListener('change',sync);sync();
+$('[data-depth-toggle]').forEach(b=>b.addEventListener('click',()=>{const d=b.parentElement.querySelector('.detail');d.hidden=!d.hidden;b.setAttribute('aria-expanded',String(!d.hidden))}));
+$('[data-reset]').forEach(b=>b.addEventListener('click',()=>{const i=b.closest('.item');const r=$('[data-recommended=true]',i)[0];$('input[type=radio]',i).forEach(x=>x.checked=!!r&&x.value===r.dataset.option);sync()}));
+document.querySelector('[data-reset-all]').addEventListener('click',()=>{if(!confirm('Reset every pick and comment?')){st.textContent='Reset cancelled; nothing changed.';return}defaults();$('textarea[data-comment],[data-general]').forEach(t=>t.value='');document.getElementById('next').value='fortify';st.textContent='Everything reset.';sync()});
+document.getElementById('next').addEventListener('change',()=>{document.getElementById('nextText').value='';sync()});
+document.querySelector('[data-copy-prompt]').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text());st.textContent='Copied'}catch{st.textContent='Copy was denied; select the reply composer text and copy it by hand.'}});
+document.querySelector('[data-save]').addEventListener('click',()=>{let a;try{a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text()],{type:'text/markdown'}));}catch{st.textContent='Save failed; copy the reply composer text by hand.';return}a.download=id+'-r'+rev+'-feedback.md';try{a.click();st.textContent='Download started: '+a.download+'. Then say "saved feedback".'}catch{st.textContent='Save failed; copy the reply composer text by hand.'}});
+document.getElementById('up').onclick=()=>scrollTo({top:0});document.getElementById('down').onclick=()=>scrollTo({top:document.body.scrollHeight});
+})();
+</script></body></html>
