@@ -84,15 +84,23 @@ async function waitingOnBusyBase(lines: string[]): Promise<void> {
 }
 const MODULE = path.join(import.meta.dirname, 'worktree-merge.ts');
 const LOCK = path.join(import.meta.dirname, 'lock.fixture.ts');
-function mergeInChild(branch: string, cwd: string): Promise<{ code: number | null; output: string }> {
+function mergeInChild(
+  branch: string,
+  cwd: string,
+  onOutput: (output: string) => void = () => undefined,
+): Promise<{ code: number | null; output: string }> {
   const code = `import { mergeIntoBase } from ${JSON.stringify(MODULE)}; import { withLock } from ${JSON.stringify(LOCK)}; console.log(await mergeIntoBase(process.argv[1], 'base', { cwd: process.argv[2], log: console.log, withLock }));`;
   return new Promise((resolve) => {
     const child = spawn(process.execPath, ['--input-type=module', '-e', code, branch, cwd], {
       encoding: 'utf8',
     } as never);
     let output = '';
-    child.stdout.on('data', (chunk) => (output += chunk));
-    child.stderr.on('data', (chunk) => (output += chunk));
+    const collect = (chunk: Buffer) => {
+      output += chunk;
+      onOutput(output);
+    };
+    child.stdout.on('data', collect);
+    child.stderr.on('data', collect);
     child.on('close', (exit) => resolve({ code: exit, output }));
   });
 }
@@ -220,10 +228,11 @@ describe('edge cases', () => {
       // ARRANGE
       const { main } = fixture();
       let child: Promise<{ code: number | null; output: string }> | undefined;
+      let childOutput = '';
       // ACT
       await withMergeLock('base', merging(main), async () => {
-        child = mergeInChild('work', main);
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        child = mergeInChild('work', main, (output) => (childOutput = output));
+        await vi.waitFor(() => expect(childOutput).toMatch(/waiting for another merge into base/), { timeout: 10_000 });
         // ASSERT
         expect(() => git(main, 'merge-base', '--is-ancestor', 'work', 'base')).toThrow();
       });

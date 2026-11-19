@@ -1,7 +1,7 @@
 ---
 name: drive
 description: Use when a grill starts, when a spec or its tickets are to be implemented, or when asked to drive or orchestrate, work on an integration branch or delegate to subagents. Runs a Workflow as its Orchestrator - grill and decide with the Operator, write Decision docs, delegate execution to Subagents on Task branches, merge into one Integration branch, review, then Fortify the repo's harness.
-compatibility: git, and Node.js 22.18 or later for the drive CLI in scripts/ (it runs TypeScript directly).
+compatibility: git, and Node.js 22.18 or later for the drive CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
   version: '1.0.0'
 ---
