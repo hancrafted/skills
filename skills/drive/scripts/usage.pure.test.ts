@@ -26,6 +26,19 @@ describe('success cases', () => {
   });
 });
 
+describe('failure cases', () => {
+  describe('DRIVE_USAGE', () => {
+    it('advertises no --help flag, which the CLI rejects as an unknown group', () => {
+      // ARRANGE
+      const helpFlag = '--help';
+      // ACT
+      const advertised = DRIVE_USAGE.includes(helpFlag);
+      // ASSERT
+      expect(advertised).toBe(false);
+    });
+  });
+});
+
 describe('edge cases', () => {
   describe('DRIVE_USAGE', () => {
     it('is one line, so the unknown-group error that carries it is one line', () => {
