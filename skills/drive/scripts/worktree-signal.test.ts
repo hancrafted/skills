@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, onTestFinished } from 'vitest';
 import { signalProcess } from './worktree-signal.ts';
 
 const PID_ABOVE_EVERY_PLATFORM_MAXIMUM = 4_194_305;
@@ -8,6 +8,7 @@ describe('success cases', () => {
   it('sends the signal to the pid', async () => {
     // ARRANGE
     const child = spawn('sleep', ['30']);
+    onTestFinished(() => void child.kill('SIGKILL'));
     if (child.pid === undefined) throw new Error('sleep did not start');
     const exitSignal = new Promise<NodeJS.Signals | null>((resolve) =>
       child.once('exit', (_code, signal) => resolve(signal)),

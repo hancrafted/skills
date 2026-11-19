@@ -11,7 +11,8 @@ All notable changes to the drive skill are documented in this file. The format f
 - The drive skill, ported from `hancrafted/content-library` at `b35c8ef` with its behaviour unchanged: `SKILL.md`, the
   Drive glossary, `references/`, `catalog/`, `markdown-harness.config.yaml` and the `drive` CLI in `scripts/` with its
   tests.
-- Install it with `npx skills add hancrafted/skills --skill drive`.
+- Install it with `npx skills add hancrafted/skills --skill drive`. The consuming repo provides the `yaml` npm package, which
+  the scripts import at runtime, and `@hancrafted/markdown-harness` for `check:docs`.
 
 ### Changed
 

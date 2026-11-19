@@ -47,7 +47,7 @@ You never edit the store yourself. A correction never waits for Fortify: log it 
 
 3. **The decision page.** Build a `/to-review` page of the evidence on `top` (`docs/drive/review.md` supplies the calibration) so the Operator picks among the options: [dispatch.md](dispatch.md) "A decision page".
 
-4. **One architectural ticket.** File the recommended architectural option on the tracker its Target names ([Where an option goes](#where-an-option-goes)), labelled `fortify`; create the label first when the tracker lacks it. At most one `fortify` ticket is open at a time: when one is open, keep it and leave the new recommendation's failure mode `proposed`, first in line for the next Fortify. The ticket body leads with any smell and holds the quick wins; the Operator picks one when triaging. The recommended failure mode becomes `status: ticket` with its URL.
+4. **One architectural ticket.** File the recommended architectural option as a ticket labelled `fortify`, creating the label when the tracker lacks it: on the source repo's tracker when its Target is the installed skill, otherwise on this repo's tracker ([Where an option goes](#where-an-option-goes)). At most one `fortify` ticket is open at a time: when one is open, keep it and leave the new recommendation's failure mode `proposed`, first in line for the next Fortify. The ticket body leads with any smell and holds the quick wins; the Operator picks one when triaging. The recommended failure mode becomes `status: ticket` with its URL.
 
 5. **Land it.** Push the Fortify branch with `drive push`, open its PR to the base branch and notify the Operator through the Binding's notify port.
 
@@ -57,17 +57,19 @@ _Done when:_ the record is `engaged`, every option is a failure-mode file or a r
 
 Each option has one target; the target decides where its fix lands (Decision record 0004 §4). Name it in the option's **Target** field.
 
-| Target                                                         | Route                                                                                                                                             |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Project context: `docs/drive/*`, the repo's own Enforcers      | A branch in this repo, from the base branch                                                                                                       |
-| The skill, installed (`skills/drive` is not in this repo)      | An issue on the repo `skills-lock.json` names as the source of `skills.drive.source` (`owner/repo`), filed with `gh issue create --repo <source>` |
-| The skill, authored here (`skills/drive/` exists in this repo) | A branch in this repo, from the base branch                                                                                                       |
+First tell the skill's copy apart: `skills/drive/SKILL.md` is a real file in this repo, so the skill is authored here; a symlink in `.agents/skills/` or `.claude/skills/` pointing to `skills/drive/` changes nothing. Otherwise the skill is installed here, and nobody edits it here.
 
-Tell the installed copy from the authored one by the path: a repo that installed the skill holds it under `.agents/skills/` or `.claude/skills/` and never edits it. When the lock lacks `drive` or its `source`, the target is unknown: ask the Operator, and do not guess a repo.
+| Target                                                    | Route                                                                                                                        |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Project context: `docs/drive/*`, the repo's own Enforcers | A branch in this repo, from the base branch                                                                                  |
+| The skill, authored here                                  | A branch in this repo, from the base branch                                                                                  |
+| The skill, installed                                      | An issue on the repo that is the `source` of `drive` in `skills-lock.json` (`owner/repo`): `gh issue create --repo <source>` |
 
-A failure mode lives where its fix lives (Decision record 0004 §5). Records stay in this repo whatever the target. For a failure mode about the skill itself, installed:
+When the lock lacks `drive` or its `source`, the target is unknown: ask the Operator for the repo.
 
-1. File the upstream issue first: title the failure mode, body its evidence lines and the Enforcer proposed, labelled `fortify` when the source repo has that label.
+A failure mode lives where its fix lives (Decision record 0004 §5). Records stay in this repo whatever the target. For a failure mode about the installed skill:
+
+1. File the upstream issue first: title the failure mode, body its evidence lines and the Enforcer proposed. Label it `fortify`, creating the label when the source repo lacks it.
 2. Set the local failure-mode file to `status: ticket` with `ticket:` the issue's URL, so recurrences are still counted here by `drive learnings list`.
 
 ## The options

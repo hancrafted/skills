@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync,
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { DRIVE_USAGE } from './usage.pure.ts';
 function dropGitVariablesACommitHookExports(): void {
   for (const name of Object.keys(process.env)) if (name.startsWith('GIT_')) delete process.env[name];
 }
@@ -273,6 +274,17 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('drive with a group it does not route', () => {
+    it('exits non-zero and prints the usage naming every group', () => {
+      // ARRANGE
+      const expected = `✖ unknown group '--help'; usage: ${DRIVE_USAGE}\n`;
+      // ACT
+      const result = spawnSync(process.execPath, [CLI, '--help'], { encoding: 'utf8', cwd: import.meta.dirname });
+      // ASSERT
+      expect(result.status).not.toBe(0);
+      expect(result.stderr).toBe(expected);
+    });
+  });
   describe('drive worktree', () => {
     it('reports a failing preflight, exits non-zero and leaves the worktree in place', () => {
       // ARRANGE
