@@ -47,11 +47,28 @@ You never edit the store yourself. A correction never waits for Fortify: log it 
 
 3. **The decision page.** Build a `/to-review` page of the evidence on `top` (`docs/drive/review.md` supplies the calibration) so the Operator picks among the options: [dispatch.md](dispatch.md) "A decision page".
 
-4. **One architectural ticket.** File the recommended architectural option on the tracker, labelled `fortify`; create the label first when the tracker lacks it. At most one `fortify` ticket is open at a time: when one is open, keep it and leave the new recommendation's failure mode `proposed`, first in line for the next Fortify. The ticket body leads with any smell and holds the quick wins; the Operator picks one when triaging. The recommended failure mode becomes `status: ticket` with its URL.
+4. **One architectural ticket.** File the recommended architectural option on the tracker its Target names ([Where an option goes](#where-an-option-goes)), labelled `fortify`; create the label first when the tracker lacks it. At most one `fortify` ticket is open at a time: when one is open, keep it and leave the new recommendation's failure mode `proposed`, first in line for the next Fortify. The ticket body leads with any smell and holds the quick wins; the Operator picks one when triaging. The recommended failure mode becomes `status: ticket` with its URL.
 
 5. **Land it.** Push the Fortify branch with `drive push`, open its PR to the base branch and notify the Operator through the Binding's notify port.
 
 _Done when:_ the record is `engaged`, every option is a failure-mode file or a recorded finding, at most one `fortify` ticket is open and it is the recommended architectural option, and the Fortify PR is open.
+
+## Where an option goes
+
+Each option has one target; the target decides where its fix lands (Decision record 0004 §4). Name it in the option's **Target** field.
+
+| Target                                                         | Route                                                                                                                                             |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Project context: `docs/drive/*`, the repo's own Enforcers      | A branch in this repo, from the base branch                                                                                                       |
+| The skill, installed (`skills/drive` is not in this repo)      | An issue on the repo `skills-lock.json` names as the source of `skills.drive.source` (`owner/repo`), filed with `gh issue create --repo <source>` |
+| The skill, authored here (`skills/drive/` exists in this repo) | A branch in this repo, from the base branch                                                                                                       |
+
+Tell the installed copy from the authored one by the path: a repo that installed the skill holds it under `.agents/skills/` or `.claude/skills/` and never edits it. When the lock lacks `drive` or its `source`, the target is unknown: ask the Operator, and do not guess a repo.
+
+A failure mode lives where its fix lives (Decision record 0004 §5). Records stay in this repo whatever the target. For a failure mode about the skill itself, installed:
+
+1. File the upstream issue first: title the failure mode, body its evidence lines and the Enforcer proposed, labelled `fortify` when the source repo has that label.
+2. Set the local failure-mode file to `status: ticket` with `ticket:` the issue's URL, so recurrences are still counted here by `drive learnings list`.
 
 ## The options
 
@@ -65,6 +82,7 @@ The evidence file lists the options, the most consequential first:
 | Field          | What it holds                                                                                                     |
 | -------------- | ----------------------------------------------------------------------------------------------------------------- |
 | Name           | the problem in plain words a cold reader grasps, never a code identifier                                          |
+| Target         | where its fix lands, per [Where an option goes](#where-an-option-goes)                                            |
 | Failure mode   | one narrow line a check can decide: what went wrong, not a theme (the failure-mode file's title)                  |
 | What happened  | when, what failed and what it cost, from the correction lines, failure-mode files and records and review findings |
 | Existing state | what the current code and config already hold toward the fix, checked, with file and date                         |
