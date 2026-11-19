@@ -17,7 +17,7 @@ An ADR records a **Discipline**: one lasting constraint on how code is written, 
 
 ADRs get loaded into agent context on every matching Read. Long ones bury the rule; low-level detail (signatures, constants, lint selectors) goes stale on the next refactor; links to other ADRs and issues drag readers elsewhere and rot when those move. Code, tests and rules already hold the detail — the ADR holds the decision.
 
-Altitude test: if the next feature could make the record wrong, it's too low. Feature- and contract-shaped reasoning goes in a design-ADR under `docs/adr/`.
+Altitude test: if the next feature could make the record wrong, it's too low. Feature- and contract-shaped reasoning goes in a Decision record in `docs/decision-records/`.
 
 ## Decision
 
@@ -25,7 +25,7 @@ Altitude test: if the next feature could make the record wrong, it's too low. Fe
 
 1. Decision MUST state the rule and its reason, not the mechanism. Signatures, timings, selectors live in code, tests, rules.
 2. Prose MUST be terse; grammar MAY be dropped. Examples beat paragraphs — `~1.2.3` admits patch releases.
-3. An ADR MUST stand alone: no Archgate ADR links/IDs or issue links. Design-ADRs (`docs/adr/`), external docs and repo research files MAY be cited.
+3. An ADR MUST stand alone: no Archgate ADR links/IDs or issue links. Decision records (`docs/decision-records/`), external docs and research files MAY be cited.
 4. Name a file or symbol only where a rule or reviewer checks it.
 
 ### 2. Layout (📜 Rule: `adr-governed-files`)
@@ -69,7 +69,7 @@ Altitude test: if the next feature could make the record wrong, it's too low. Fe
 ### Don'ts
 
 1. **DON'T** spell out mechanism — no `createUrlState(window)`, `150 ms`, `NewExpression[...]`. (Decision 1)
-2. **DON'T** link another Archgate ADR or an issue; cite a design-ADR by its repository path. (Decision 1)
+2. **DON'T** link another Archgate ADR or an issue; cite a Decision record by its repository path. (Decision 1)
 3. **DON'T** split one Discipline's prose to dodge the budget; cut words first. (Decision 4, 📜 Rule: `adr-size-budget`)
 4. **DON'T** mark a rule twice on one side, or name one that doesn't exist. (Decision 4, 📜 Rule: `adr-rule-mentions`)
 5. **DON'T** ship a rule at `warning` or `info`. (Decision 5, 📜 Rule: `adr-error-tier`)
