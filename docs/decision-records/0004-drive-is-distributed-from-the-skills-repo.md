@@ -12,14 +12,14 @@ The Operator approved this on 2026-11-19, in the drive-to-skills grill. `/drive`
 
 1. **This repo owns the source.** `skills/drive/` here is the only copy that is edited. Every other repo, content-library included, installs it with `npx skills add hancrafted/skills --skill drive`, pinned in its `skills-lock.json`, and never edits the installed copy.
 2. **The skill ships; the project state stays.** `SKILL.md`, the Drive glossary, `references/`, `catalog/` and `scripts/` with their tests ship. `docs/drive/` (Binding, project config, Profiles, Enforcers, review calibration, learnings) stays in each consuming repo, and so do project hooks and lock modules named in `project.yml`.
-3. **Drive's design records live here.** 0001 to 0003 moved from content-library Decision records 0027, 0028 and 0030; content-library keeps a pointer for each. They sit in `docs/adr/`, at the repo level, outside the skill folder, so no consumer receives them.
+3. **Drive's design records live here.** Decision records 0001 to 0003 moved from content-library Decision records 0027, 0028 and 0030; content-library keeps a pointer for each. They sit in `docs/decision-records/`, at the repo level, outside the skill folder, so no consumer receives them.
 4. **Fortify routes each option by its target.**
    - Project context (`docs/drive/*`, the repo's own Enforcers): a branch in that repo.
    - The skill, installed: an issue on the repo `skills-lock.json` names as its source.
    - The skill, authored in `skills/` (as here): a branch in this repo.
 5. **A failure mode lives where its fix lives.** Records, the evidence, stay in the repo whose Workflow wrote them. A failure mode about drive itself is an issue on this repo; the consumer's failure-mode file carries `status: ticket` and the issue's URL, so recurrences are still counted locally.
 6. **Drive's code meets this repo's gate on arrival.** The port brings tests to `ARCH-003-testing`'s three suite blocks and AAA marks, `yaml` to `ARCH-001-dependency-admission-bar`'s tilde range, scripts to the dependency-cruiser rules (`pure-no-node-io`, `no-cross-skill-scripts`) and names to `GEN-007-naming`. Fixtures name no content-library facts.
-7. **Two releases.** `1.0.0` is the port: today's behaviour, passing this repo's gate, run by this repo and content-library. `2.0.0` is setup v2 (0005 to 0007). Both consumers reach `2.0.0` through its own migration path.
+7. **Two releases.** `1.0.0` is the port: today's behaviour, passing this repo's gate, run by this repo and content-library. `2.0.0` is setup v2 (Decision records 0005 to 0007). Both consumers reach `2.0.0` through its own migration path.
 
 ## Considered options
 
