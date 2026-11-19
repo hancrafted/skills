@@ -6,7 +6,7 @@ status: accepted
 
 # Drive setup is a scan, an interview and an apply
 
-The Operator approved this on 2026-11-19, in the drive-to-skills grill. Drive should run in any TypeScript repo after one install and one `/drive`. Today's setup seeds `docs/drive/` but leaves the wiring, the missing skills, the lock and the grilling format to the Operator, and it knows Matt Pocock's skills only. This record extends 0001, _Workflow phases are ports bound per project_. Terms: [Drive glossary](../../skills/drive/GLOSSARY.md).
+The Operator approved this on 2026-11-19, in the drive-to-skills grill. Drive should run in any TypeScript repo after one install and one `/drive`. Today's setup seeds `docs/drive/` but leaves the wiring, the missing skills, the lock and the grilling format to the Operator, and it knows Matt Pocock's skills only. This record extends Decision record 0001, _Workflow phases are ports bound per project_. Terms: [Drive glossary](../../skills/drive/GLOSSARY.md).
 
 ## Decisions
 
