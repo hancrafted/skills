@@ -6,3 +6,4 @@ playwright-report/
 test-results/
 fast-suite.json
 skills/to-review/evals/workspace/
+.scratch/

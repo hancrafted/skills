@@ -8,6 +8,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest watch",
+    "drive": "node skills/drive/scripts/drive.ts",
     "knip": "knip",
     "prepare": "husky",
     "lint": "eslint . && npm run lint:boundaries",
@@ -19,7 +20,7 @@
     "lint-staged": "lint-staged",
     "test:slow": "vitest run --config vitest.slow.config.mts",
     "review:prove": "node skills/to-review/scripts/prove.ts",
-    "check:docs": "npm run check:skills",
+    "check:docs": "npm run check:skills && mh check --root docs/drive/learnings --config skills/drive/markdown-harness.config.yaml && node skills/drive/scripts/drive.ts learnings check",
     "check:skills": "mh check --root skills --config skills/markdown-harness.config.yaml && for c in skills/*/markdown-harness.config.yaml; do test ! -e \"$c\" || mh check --root \"$(dirname \"$c\")\" --config \"$c\" || exit 1; done"
   },
   "devDependencies": {
