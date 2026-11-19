@@ -12,24 +12,75 @@ notify:
 phases:
   define:
     model: mid
-    skills: [] # none bound: the Orchestrator does this phase inline
+    skills:
+      - grill-me
+      - grill-with-docs
+      - grilling
+      - research
   reason:
     model: top
     skills:
       - to-review
+      - codebase-design
+      - domain-modeling
+      - grill-with-docs
+      - handoff
+      - improve-codebase-architecture
+      - prototype
+      - to-spec
+      - to-tickets
+      - wayfinder
   implement:
     model: mid
     skills:
       - commit
+      - diagnosing-bugs
+      - implement
+      - tdd
   verify:
     model: top
-    skills: [] # none bound: the Orchestrator does this phase inline
+    skills:
+      - code-review
+      - improve-codebase-architecture
+      - pr
   evolve:
     model: mid
     skills:
       - cleanup
       - to-review
+      - improve-codebase-architecture
+      - retro
+      - writing-for-agents
 seen:
   - cleanup
   - commit
   - to-review
+  - agents
+  - ask-matt
+  - code-review
+  - codebase-design
+  - diagnosing-bugs
+  - domain-modeling
+  - grill-me
+  - grill-with-docs
+  - grilling
+  - handoff
+  - implement
+  - implement-spec
+  - improve-codebase-architecture
+  - pr
+  - prototype
+  - research
+  - retro
+  - scripts
+  - setup-matt-pocock-skills
+  - tdd
+  - teach
+  - to-questionnaire
+  - to-spec
+  - to-tickets
+  - triage
+  - wait-what
+  - wayfinder
+  - wizard
+  - writing-for-agents
