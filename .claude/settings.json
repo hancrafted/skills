@@ -1,5 +1,29 @@
 {
   "enabledPlugins": {
     "mattpocock-skills@claude-plugins-official": true
+  },
+  "hooks": {
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/skills/drive/scripts/claude-adapter.ts\" start",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/skills/drive/scripts/claude-adapter.ts\" stop",
+            "async": true
+          }
+        ]
+      }
+    ]
   }
 }

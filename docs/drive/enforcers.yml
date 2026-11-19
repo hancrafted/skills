@@ -1,0 +1,40 @@
+# The Enforcers `drive setup` detected, for Fortify to choose from (see the Drive glossary).
+# Generated: every run rewrites this file. To change what Fortify may pick, change the repo, then re-run setup.
+
+enforcers:
+  - kind: adr-checker
+    name: archgate
+    command: archgate check
+  - kind: check
+    name: check:docs
+    command: npm run check:docs
+  - kind: check
+    name: check:skills
+    command: npm run check:skills
+  - kind: formatter
+    name: format:check
+    command: npm run format:check
+  - kind: linter
+    name: lint
+    command: npm run lint
+  - kind: linter
+    name: lint:boundaries
+    command: npm run lint:boundaries
+  - kind: test-runner
+    name: test
+    command: npm run test
+  - kind: test-runner
+    name: test:slow
+    command: npm run test:slow
+  - kind: type-checker
+    name: typecheck
+    command: npm run typecheck
+  - kind: hook
+    name: .husky/commit-msg
+    command: .husky/commit-msg
+  - kind: hook
+    name: .husky/pre-commit
+    command: .husky/pre-commit
+  - kind: hook
+    name: .husky/pre-push
+    command: .husky/pre-push

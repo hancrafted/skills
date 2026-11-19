@@ -1,1 +1,2 @@
+node skills/drive/scripts/drive.ts guard
 npm run verify:commit

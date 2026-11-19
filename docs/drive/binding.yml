@@ -1,0 +1,35 @@
+# The Binding (drive Decision record 0001, hancrafted/skills): which skills serve each DRIVE phase (n:m), the model tier each phase's Subagents run on,
+# and the agent type every agent uses. `drive setup` seeds it and adds newly installed skills; you own every edit.
+# `skills` and `model` (a tier, mid or top, mapped to models in project.yml) per phase are yours to change;
+# `seen` lists the skills setup has already offered, so one you
+# remove here is not added back.
+# `notify.adapter` (push-notification | none) names how the Orchestrator reaches you at the Decision gate;
+# the CLI sends nothing.
+
+agentType: general-purpose
+notify:
+  adapter: push-notification
+phases:
+  define:
+    model: mid
+    skills: [] # none bound: the Orchestrator does this phase inline
+  reason:
+    model: top
+    skills:
+      - to-review
+  implement:
+    model: mid
+    skills:
+      - commit
+  verify:
+    model: top
+    skills: [] # none bound: the Orchestrator does this phase inline
+  evolve:
+    model: mid
+    skills:
+      - cleanup
+      - to-review
+seen:
+  - cleanup
+  - commit
+  - to-review
