@@ -1,12 +1,10 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { bumpRepo, cacheDirOf, checkoutsAt, existsAtPin, linkIntoWorktree, syncRepo } from './git-cache.ts';
-import { indexPathsOf, parseIndex, replaceCommits } from './references.pure.ts';
+import { indexPathsOf, isUnder, parseIndex, replaceCommits } from './references.pure.ts';
 
 const INDEX_PATH = 'docs/agents/reference-repos.md';
 const SHORT_COMMIT_LENGTH = 7;
-
-const isUnder = (relativePath: string, folder: string) => path.posix.normalize(relativePath).startsWith(`${folder}/`);
 
 const flags = process.argv.slice(2);
 const checkouts = checkoutsAt(process.cwd());

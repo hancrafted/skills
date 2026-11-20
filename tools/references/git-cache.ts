@@ -40,7 +40,14 @@ function fetchCommit(cacheDir: string, commit: string) {
   git(cacheDir, 'fetch', '-q', '--depth', '1', 'origin', commit);
 }
 
+function sparseSetDiffers(cacheDir: string, pin: RepoPin): boolean {
+  const enabled = git(cacheDir, 'config', '--bool', '--default', 'false', 'core.sparseCheckout') === 'true';
+  if (!pin.subfolder) return enabled;
+  return !enabled || git(cacheDir, 'sparse-checkout', 'list') !== pin.subfolder;
+}
+
 function applySparse(cacheDir: string, pin: RepoPin) {
+  if (!sparseSetDiffers(cacheDir, pin)) return;
   if (pin.subfolder) git(cacheDir, 'sparse-checkout', 'set', pin.subfolder);
   else git(cacheDir, 'sparse-checkout', 'disable');
 }
