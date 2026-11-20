@@ -14,4 +14,117 @@ repos:
 
 # Reference repos
 
-Stub: ticket #88 writes the index body. See [the decision record](../decision-records/0001-reference-repos-are-advisory-prior-art.md).
+Advisory prior art: these repos sharpen options and recommendations and never decide. A Decision record, an Archgate ADR or `writing-for-agents` wins any disagreement; surface the disagreement. See [the decision record](../decision-records/0001-reference-repos-are-advisory-prior-art.md). Pins live in the front matter above.
+
+## Use
+
+1. Run `npm run refs` when `.references/` is missing or lacks a repo. It fills the cache and symlinks `.references` into the worktree.
+2. Offline: read the pinned file with `gh api repos/<owner>/<repo>/contents/<path>?ref=<sha>` and say you did.
+3. Grep the cache; open only the paths below.
+4. Cite as `name@sha7:path` (name from the front matter, first 7 characters of its commit), for example `agent-skills@8c99fa3:scripts/lib/skill-lint.js`.
+5. Edit this map only with `npm run refs -- --bump`, in the same commit as the pin move. `npm run refs -- --check` verifies every `.references/<name>/<path>` below.
+
+Repos: `agent-skills` (addyosmani), `mattpocock-skills` (mattpocock), `cursor-plugins` (cursor/plugins, `pstack/` only).
+
+## Harness
+
+### Write (author a skill)
+
+Strongest: `agent-skills` for the required anatomy; `mattpocock-skills` for a small, composable catalog; `cursor-plugins` for deleting prose.
+
+- `.references/agent-skills/docs/skill-anatomy.md`
+- `.references/agent-skills/CONTRIBUTING.md`
+- `.references/mattpocock-skills/skills/productivity/writing-for-agents/SKILL.md`
+- `.references/mattpocock-skills/skills/productivity/writing-for-agents/SKILL-MECHANICS.md`
+- `.references/cursor-plugins/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md`
+- `.references/cursor-plugins/pstack/skills/principle-minimize-reader-load/SKILL.md`
+
+### Eval (does a skill work)
+
+Strongest: `agent-skills`, with three tiers (structural, trigger ranking, behavioral). `cursor-plugins` for blinded manual experiments.
+
+- `.references/agent-skills/evals/README.md`
+- `.references/agent-skills/scripts/run-evals.js`
+- `.references/agent-skills/evals/cases/test-driven-development.json`
+- `.references/agent-skills/evals/skill-impact.md`
+- `.references/cursor-plugins/pstack/skills/poteto-mode/playbooks/eval.md`
+- `.references/cursor-plugins/pstack/skills/arena/SKILL.md`
+
+### Govern (lint, scope, drift)
+
+Strongest: `agent-skills` for skill lint and link checks; `mattpocock-skills` for installer-parity frontmatter checks and written scope limits.
+
+- `.references/agent-skills/scripts/lib/skill-lint.js`
+- `.references/agent-skills/scripts/validate-skills.js`
+- `.references/agent-skills/scripts/validate-reference-links.js`
+- `.references/mattpocock-skills/scripts/check-frontmatter.mjs`
+- `.references/mattpocock-skills/.out-of-scope/new-skills.md`
+- `.references/mattpocock-skills/.out-of-scope/frozen-misc-skills.md`
+- `.references/mattpocock-skills/SCOPE.md`
+
+### Test (tests for a skill's scripts and hooks)
+
+Strongest: `agent-skills` for script tests beside each script and hook test suites; `cursor-plugins` for tests inside a skill's `scripts/`.
+
+- `.references/agent-skills/scripts/lib/skill-lint-test.js`
+- `.references/agent-skills/hooks/session-start-test.sh`
+- `.references/agent-skills/hooks/sdd-cache-test.sh`
+- `.references/cursor-plugins/pstack/skills/statechart/scripts/test/config-fuzz.test.ts`
+- `.references/cursor-plugins/pstack/skills/statechart/scripts/test/differential.test.ts`
+
+### Ship (manifests, versions, release, install)
+
+Strongest: `mattpocock-skills` for changesets releases and plugin version sync; `agent-skills` for a real install test in CI and multi-host manifests.
+
+- `.references/mattpocock-skills/.github/workflows/release.yml`
+- `.references/mattpocock-skills/scripts/sync-plugin-version.mjs`
+- `.references/mattpocock-skills/.changeset/config.json`
+- `.references/mattpocock-skills/.claude-plugin/plugin.json`
+- `.references/agent-skills/.github/workflows/test-plugin-install.yml`
+- `.references/agent-skills/scripts/validate-versions.js`
+- `.references/agent-skills/.claude-plugin/marketplace.json`
+- `.references/cursor-plugins/pstack/.cursor-plugin/plugin.json`
+
+## Skill content
+
+Topic, then the paths to open.
+
+- Grilling, interviewing:
+  - `.references/mattpocock-skills/skills/productivity/grilling/SKILL.md`
+  - `.references/mattpocock-skills/skills/engineering/grill-with-docs/SKILL.md`
+- Spec and ticket breakdown:
+  - `.references/mattpocock-skills/skills/engineering/to-spec/SKILL.md`
+  - `.references/mattpocock-skills/skills/engineering/to-tickets/SKILL.md`
+- Mapping big work, orchestration:
+  - `.references/mattpocock-skills/skills/engineering/wayfinder/SKILL.md`
+  - `.references/agent-skills/references/orchestration-patterns.md`
+- Implementing:
+  - `.references/mattpocock-skills/skills/engineering/implement/SKILL.md`
+  - `.references/mattpocock-skills/skills/engineering/implement-spec/SKILL.md`
+- TDD:
+  - `.references/mattpocock-skills/skills/engineering/tdd/SKILL.md`
+  - `.references/agent-skills/skills/test-driven-development/SKILL.md`
+- Debugging:
+  - `.references/mattpocock-skills/skills/engineering/diagnosing-bugs/SKILL.md`
+  - `.references/agent-skills/skills/debugging-and-error-recovery/SKILL.md`
+- Code review:
+  - `.references/mattpocock-skills/skills/engineering/code-review/SKILL.md`
+  - `.references/agent-skills/skills/code-review-and-quality/SKILL.md`
+- Architecture, module design:
+  - `.references/mattpocock-skills/skills/engineering/codebase-design/SKILL.md`
+  - `.references/mattpocock-skills/skills/engineering/improve-codebase-architecture/SKILL.md`
+- Domain language, ADRs:
+  - `.references/mattpocock-skills/skills/engineering/domain-modeling/SKILL.md`
+  - `.references/agent-skills/skills/documentation-and-adrs/SKILL.md`
+- PRs, git, shipping:
+  - `.references/mattpocock-skills/skills/engineering/pr/SKILL.md`
+  - `.references/agent-skills/skills/git-workflow-and-versioning/SKILL.md`
+- Research:
+  - `.references/mattpocock-skills/skills/engineering/research/SKILL.md`
+  - `.references/agent-skills/skills/source-driven-development/SKILL.md`
+- Handoff, context management:
+  - `.references/mattpocock-skills/skills/productivity/handoff/SKILL.md`
+  - `.references/agent-skills/skills/context-engineering/SKILL.md`
+- Verification skills, principles:
+  - `.references/cursor-plugins/pstack/skills/create-verification-skill/SKILL.md`
+  - `.references/cursor-plugins/pstack/skills/principle-prove-it-works/SKILL.md`

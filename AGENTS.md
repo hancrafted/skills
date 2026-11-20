@@ -32,3 +32,7 @@ The five canonical triage roles, each label string equal to its name. See `docs/
 ### Domain docs
 
 Multi-context, one context per skill: `GLOSSARY-MAP.md` at the root lists each skill's glossary (inside the skill) and its Decision records (`docs/decision-records/<skill>/`). When an engineering skill says "ADR", it means a **Decision record**: it goes in `docs/decision-records/<skill>/`, or `docs/decision-records/` when it spans the repo, with `type: decision-record` front matter. Archgate ADRs in `.archgate/adrs/` are separate, and engineering skills never write them. See `docs/agents/domain.md`.
+
+### Reference repos
+
+Before recommending an answer on how this repo builds, evals, governs, tests or ships skills (skill harness), or on a skill's content, check the index and cite what you used as `name@sha7:path`. See `docs/agents/reference-repos.md`.
