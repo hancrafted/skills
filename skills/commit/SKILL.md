@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Author a commit message and commit it — Conventional Commits header, Keep a Changelog body, Source trailer, enforced by a commit-time husky gate if setup (--setup-husky). Use before every `git commit`, whether a human or an agent initiates it, including a run split across commits.
+description: Author a commit message and commit it — Conventional Commits header, Keep a Changelog body, Source trailer, enforced by a commit-time husky gate if setup (--setup-husky). Use when about to `git commit`, whether a human or an agent initiates it, including a run split across commits.
 ---
 
 Author a commit by running the steps in order. With `--setup-husky`, wire the husky commit-msg hook

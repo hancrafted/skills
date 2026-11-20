@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { runPlan, type Exec, type Plan } from './verify.pure.ts';
+import { COMMIT_PLAN, runPlan, VERIFY_PLAN, type Exec, type Plan } from './verify.pure.ts';
 
 function fakeExec(codes: Readonly<Record<string, number>> = {}, outputs: Readonly<Record<string, string>> = {}) {
   const log: string[] = [];
@@ -95,6 +95,18 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  it('checks skill frontmatter at every commit and in the full verify', () => {
+    // ARRANGE
+    const expectedCommand = 'npm run -s check:skills';
+    const commands = (plan: Plan) => plan.phases.flat().map((step) => step.command);
+    // ACT
+    const commitCommands = commands(COMMIT_PLAN);
+    const verifyCommands = commands(VERIFY_PLAN);
+    // ASSERT
+    expect(commitCommands).toContain(expectedCommand);
+    expect(verifyCommands.some((command) => command.includes('check:docs'))).toBe(true);
+  });
+
   it('reports a step that cannot start as failed, with the reason, while the rest of its phase finishes', async () => {
     // ARRANGE
     const { exec: inner, log } = fakeExec();
