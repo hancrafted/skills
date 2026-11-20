@@ -3,29 +3,50 @@ name: commit
 description: Author a commit message and commit it — Conventional Commits header, Keep a Changelog body, Source trailer, enforced by a commit-time husky gate if setup (--setup-husky). Use when about to `git commit`, whether a human or an agent initiates it, including a run split across commits.
 ---
 
-Author a commit by running the steps in order. With `--setup-husky`, wire the husky commit-msg hook
-into this repository instead, and stop.
+# Commit
 
-## Authoring a commit
+## Overview
 
-Run the steps in order. A split run repeats steps 2 to 6 once per commit.
+Author a commit message that satisfies the three-condition gate, then commit it locally with every hook running. With `--setup-husky`, wire the husky commit-msg hook into this repository instead, and stop. The commit stays in the local clone: pushing is the human's act.
 
-**1. Read the argument.** It names the staging sets and the commit count —
+## When to Use
+
+- About to run `git commit`, whether a human or an agent initiates it, including a run split across commits.
+- `/commit --setup-husky` to wire the gate into a repository's hooks.
+- NOT for: pushing, amending a commit someone else pushed, or judging whether a change is good.
+
+## Human gates
+
+- Before resolving `Source:` on a bare `/commit` that finds nothing in the prompt, the conversation or the branch name: nothing in the run says what caused the change, so ask.
+
+## Author a commit
+
+Run the steps in order. A split run repeats steps 2 to 6 once per commit. There is no approval stop in this run: the commit is local and reversible, so `git reset` and `git commit --amend` are the review mechanism, and the human reviews a real commit with `git show` rather than a proposal.
+
+### 1. Read the argument
+
+The argument names the staging sets and the commit count —
 `/commit stage /folder1 and /folder3 into 2 commits`. A bare `/commit` means you
 decide both. An argument overrides a pre-existing index, being the more explicit
 of the two signals.
-_Done when_ you can state the staging set of every commit you are about to make.
 
-**2. Read the change.** `git status`, `git diff --staged`, `git diff`. A
+_Done when:_ you can state the staging set of every commit you are about to make.
+
+### 2. Read the change
+
+`git status`, `git diff --staged`, `git diff`. A
 non-empty index is expressed intent: honour it. An empty index you fill
 yourself. Changes outside the staging sets stay uncommitted and get reported,
 rather than swept into the last commit. Report unstaged changes either way:
 pre-commit verification judges the working tree and not the staged snapshot, so
 a half-finished file that is _not_ in this commit can still fail it.
-_Done when_ the index holds exactly this commit's set, and you hold the list of
+
+_Done when:_ the index holds exactly this commit's set, and you hold the list of
 what you left out.
 
-**3. Resolve `Source:`.** Search the prompt, then the conversation context, then
+### 3. Resolve `Source:`
+
+Search the prompt, then the conversation context, then
 the worktree or branch name — in that order.
 
 | Invocation           | Nothing found                                                 |
@@ -40,20 +61,26 @@ expand using this repository's own tracker documentation plus the git remote.
 Where mechanical expansion is not possible, drop the hint and keep searching. A
 change with no ticket at all is a normal case rather than an error to escalate —
 a prose summary of the prompt is a valid value.
-_Done when_ you hold a canonical reference, a prose summary, or both.
 
-**4. Author the message, and write it to the draft.** Satisfy the three
+_Done when:_ you hold a canonical reference, a prose summary, or both.
+
+### 4. Author the message, and write it to the draft
+
+Satisfy the three
 conditions below. The draft is `"$(git rev-parse --absolute-git-dir)/COMMIT_DRAFT"`
 — inside git's own directory, so it needs no `.gitignore` entry, never reaches
 `git status`, and resolves the same from any subdirectory or worktree. Author and
 write together, so step 5 never reads a stale draft. A message carrying both
 backticks and apostrophes survives no `-m` quoting, which is why it goes in a
 file.
-_Done when_ the gate exits 0 against the draft. The gate ships with this skill,
+
+_Done when:_ the gate exits 0 against the draft. The gate ships with this skill,
 at `.agents/skills/commit/scripts/commit-msg` under the repository root, or
 `skills/commit/scripts/commit-msg` in a checkout of the skill's own repository.
 
-**5. Commit with `git commit -F <draft>`, letting every hook run.** Step 4's
+### 5. Commit with `git commit -F <draft>`, letting every hook run
+
+Step 4's
 gate run is fail-fast ergonomics covering only the commits this skill makes, so
 the repository's hooks remain the guarantee and `--setup-husky` still earns its
 keep. Run no tree verification of your own: a harness repository runs
@@ -61,24 +88,27 @@ keep. Run no tree verification of your own: a harness repository runs
 all, and relying on the hooks the repository has is the one rule that holds in
 both. That is the entire command — `git commit -F <draft>` and nothing else — so
 every hook fires exactly as it would for a human. **Never pass `--no-verify`.**
-_Done when_ git reports the commit, or names the condition that failed.
 
-**6. On rejection, repair the named cause and retry the same draft.** A
+_Done when:_ git reports the commit, or names the condition that failed.
+
+### 6. On rejection, repair the named cause and retry the same draft
+
+A
 rejection names a condition, not a wording problem, so fix that condition in
 place and re-run the same command. With step 4 already green, a rejection here
 comes from a tree check rather than from the message.
-_Done when_ the commit exists and
+
+_Done when:_ the commit exists and
 `git log -1 --format='%(trailers:key=Source,valueonly)'` prints a non-empty
 value.
 
-**7. Report, and stop.** The commit stays in the local clone: **pushing is the
-human's act**, and it is where a local mistake becomes permanent.
-_Done when_ every commit made and every change left uncommitted is named in the
-report.
+### 7. Report, and stop
 
-There is no approval stop anywhere in this run. The commit is local and
-reversible, so `git reset` and `git commit --amend` are the review mechanism,
-and the human reviews a real commit with `git show` rather than a proposal.
+The commit stays in the local clone: **pushing is the
+human's act**, and it is where a local mistake becomes permanent.
+
+_Done when:_ every commit made and every change left uncommitted is named in the
+report.
 
 ## The contract — three blocking conditions
 
@@ -157,7 +187,9 @@ Each condition answers to a published finding, and the case against widening the
 gate to judge prose is in [`assets/research.md`](assets/research.md). Read it
 before changing the contract.
 
-## `--setup-husky`
+## Wire the hook
+
+### 8. Run the husky setup
 
 Run one script and report what it changed:
 
@@ -175,10 +207,10 @@ Mechanics, the canonical hook body, the non-Node alternative, and troubleshootin
 live in [`assets/setup-husky.md`](assets/setup-husky.md). Consult it when a step
 surprises you.
 
-_Done when_ the script reports success, and `.husky/commit-msg` is staged for the
+_Done when:_ the script reports success, and `.husky/commit-msg` is staged for the
 user to commit.
 
-## Installing this skill
+## Install the skill
 
 ```sh
 npx skills add hancrafted/skills
@@ -188,3 +220,38 @@ Project scope — the default — because it is meant to be committed, and that 
 what lets the hook run for every clone and in CI. **Never `--copy`**: copy mode
 creates independent per-agent copies and destroys the single canonical path the
 hook depends on.
+
+## Common Rationalizations
+
+| Excuse                                                                     | Rebuttal                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The repository's hooks will catch a bad message, so I can skip the gate." | A repository without `--setup-husky` wiring enforces nothing. The gate costs about 0.08 s against about 8 s for a tree verification, so run it against the draft every time (85389b3).                                     |
+| "The harness told me to add a `Co-Authored-By` for the model."             | Silence loses to an active instruction, which is why the body answers it: provenance is `Source:` alone. Strip the line and any "generated with" line (85389b3).                                                           |
+| "`Source: 78` or `GH-78` names the ticket well enough."                    | The gate rejects the numeric forms, hashless ones included. A branch name such as `feature/78-commit-skill` yields `78`; expand it to the full tracker URL (840e949).                                                      |
+| "`--no-verify`, or `-c core.hooksPath=`, just this once."                  | The command is `git commit -F <draft>` and nothing else. Both flags skip the hooks that are the guarantee (840e949).                                                                                                       |
+| "The gate passed, so the message is good."                                 | The gate checks shape only. Conventional-Commits-compliant security commits were rated poor 49.73% of the time against 30.53% for non-compliant ones, so write the why in prose yourself ([research](assets/research.md)). |
+| "I will pass the message with `-m`."                                       | A message with both backticks and apostrophes survives no `-m` quoting. Write the draft file and commit with `-F`.                                                                                                         |
+
+## Red Flags
+
+- The commit command carries anything besides `-F <draft>`: `--no-verify`, `-c core.hooksPath=`, `-m`.
+- A `Co-Authored-By` naming a model, or a "generated with" line, is in the message.
+- `Source:` holds `#123`, `78` or `GH-78`, or sits directly under a numbered item instead of in the last paragraph.
+- A `###` heading falls outside the six Keep a Changelog categories.
+- Changes outside the staging sets are staged into the commit, or never reported.
+- A `git push` follows the commit.
+- The gate was never run against the draft before `git commit`.
+
+## Verification
+
+- [ ] `sh skills/commit/scripts/commit-msg <draft>` exited 0 (`.agents/skills/commit/scripts/commit-msg` in an install).
+- [ ] `git commit -F <draft>` reported the commit, with no flag beyond `-F`.
+- [ ] `git log -1 --format='%(trailers:key=Source,valueonly)'` prints a non-empty value.
+- [ ] `git log -1 --format=%B` holds no `Co-Authored-By` for a model and no "generated with" line.
+- [ ] `git status --short` lists exactly the changes left out, and the report names them.
+
+### 9. Learn
+
+When the run had a human correction or a failed step and `/learnings` is available, ask "Record learnings from this run?" and on yes run `/learnings` for skill `commit`. A clean run asks nothing.
+
+_Done when:_ the question was asked and answered, or the run was clean and the step skipped.

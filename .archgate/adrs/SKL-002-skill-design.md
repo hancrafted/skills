@@ -3,10 +3,10 @@ type: adr
 id: SKL-002
 title: 'Skill Design'
 domain: skills
-rules: false
+rules: true
 files: ['skills/*/SKILL.md']
 paths: ['skills/**']
-description: 'How a skill under skills/ is shaped: engineering principles applied to agent instructions, shift-left workflows, declared human gates and one body frame adopted from Addy Osmani's skill anatomy.'
+description: "How a skill under skills/ is shaped: engineering principles applied to agent instructions, shift-left workflows, declared human gates and one body frame adopted from Addy Osmani's skill anatomy."
 ---
 
 # Skill Design
@@ -36,7 +36,7 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 2. Answers that hold across runs persist in the skill's home, so the next run asks nothing.
 3. Stops are declared up front: when, where and why the agent waits for approval.
 4. A fixed minimum of gates — irreversible or outward-facing — is written in `SKILL.md`; extra gates are calibrated at setup and stored in the skill's home.
-5. A skill with any gate has a `## Human gates` section: a non-empty list, every item one line reading `<trigger>: <reason>`, both parts filled — `Before deleting an unpushed branch: data loss.` (planned rule: `skill-human-gates-section`).
+5. A skill with any gate has a `## Human gates` section: a non-empty list, every item one line reading `<trigger>: <reason>`, both parts filled — `Before deleting an unpushed branch: data loss.` (📜 Rule: `skill-human-gates-section`).
 
 ### 3. One body frame
 
@@ -75,7 +75,7 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 2. **DO** read a home's `README.md`, not the skill that wrote it. (Decision 1)
 3. **DO** keep branch detail in `references/`, one link from `SKILL.md`. (Decision 1)
 4. **DO** ask every question in one batch before acting, and store answers that hold across runs. (Decision 2)
-5. **DO** list each gate as `<trigger>: <reason>` under `## Human gates`. (Decision 2, planned rule: `skill-human-gates-section`)
+5. **DO** list each gate as `<trigger>: <reason>` under `## Human gates`. (Decision 2, 📜 Rule: `skill-human-gates-section`)
 6. **DO** put irreversible and outward-facing gates in `SKILL.md`; leave the rest to setup. (Decision 2)
 7. **DO** end every step with `_Done when:_` and Verification with `### N. Learn`. (Decision 3)
 8. **DO** add a rationalization row when a learning shows the excuse. (Decision 3)
@@ -113,8 +113,8 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 ## Compliance and Enforcement
 
 1. **Frame:** a closed body-structure rule in `skills/markdown-harness.config.yaml` checks Decision 3.1 and the closing Learn step, with an `intent` per heading; `mh check` runs in the pre-commit gate.
-2. **Rule** (planned, `SKL-002-skill-design.rules.ts`, error): Decision 2.5 — when `## Human gates` exists, it is a non-empty list whose every item reads `<trigger>: <reason>`.
-3. **Review:** `archgate:reviewer` checks Decisions 1, 2.1–2.4 and 3.2–3.5 on every changed `SKILL.md`; until the rule ships, Decision 2.5 too.
+2. **Rule** `skill-human-gates-section` (archgate, error; `SKL-002-skill-design.rules.ts`): Decision 2.5 — when `## Human gates` exists, it is a non-empty list whose every item reads `<trigger>: <reason>`.
+3. **Review:** `archgate:reviewer` checks Decisions 1, 2.1–2.4 and 3.2–3.5 on every changed `SKILL.md`;.
 
 **Manual review duties:** principles, shift left, content inside the frame and prose; every stop in the body is listed under `## Human gates`.
 
