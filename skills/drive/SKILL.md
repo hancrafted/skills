@@ -23,7 +23,7 @@ Announce each phase and its branch changes before acting, and print `drive statu
 
 ## Entry check
 
-On every start or resume (a new session and a quota limit included), run `drive status <topic>`: it reads the topic folder, the branches, the PRs and the tickets, and names the phase and the next stop. Add what it does not read: the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet, tell the Operator which phase and the next stop. Before the gate, wait for confirmation; after it, notify the phase and next stop and continue.
+On every start or resume (a new session and a quota limit included), first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs and the tickets, and names the phase and the next stop. Add what it does not read: the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet, tell the Operator which phase and the next stop. Before the gate, wait for confirmation; after it, notify the phase and next stop and continue.
 
 ```mermaid
 flowchart TD

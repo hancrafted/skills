@@ -9,12 +9,12 @@ import {
   mergeDetected,
   readBinding,
   run,
-  type SeedOptions,
   updateBinding,
 } from '../core/index.ts';
-import { missingBindingSkills, parseSetupArgs } from './args.pure.ts';
+import { missingBindingSkills, parseSetupArgs, type SetupOptions } from './args.pure.ts';
 import { enforcerFacts, projectFacts } from './facts.ts';
 import { adapterHookNote, addAdapterHooks, SETTINGS_FILE } from './hooks.pure.ts';
+import { installLearnings, learningsStep } from './learnings.ts';
 import {
   addGuardToHook,
   addLearningsCheck,
@@ -87,19 +87,28 @@ export interface SetupResult {
   notes: string[];
 }
 
-export function setup(root: string, scriptsRoot: string, options: SeedOptions = {}): SetupResult {
-  const written: string[] = [];
-  const notes: string[] = [];
-  const write = (relative: string, text: string) => {
+export type SetupInput = SetupOptions & { install?: (root: string) => void };
+
+type Write = (relative: string, text: string) => void;
+
+function fileWriter(root: string, written: string[]): { write: Write; createdOnly: Write } {
+  const write: Write = (relative, text) => {
     const file = path.join(root, relative);
     if (read(file) === text) return;
     mkdirSync(path.dirname(file), { recursive: true });
     writeFileSync(file, text);
     written.push(relative);
   };
-  const createdOnly = (relative: string, text: string) => {
+  const createdOnly: Write = (relative, text) => {
     if (!existsSync(path.join(root, relative))) write(relative, text);
   };
+  return { write, createdOnly };
+}
+
+export function setup(root: string, scriptsRoot: string, options: SetupInput = {}): SetupResult {
+  const written: string[] = [];
+  const notes: string[] = [];
+  const { write, createdOnly } = fileWriter(root, written);
   const entry = driveEntry(root, scriptsRoot);
   const facts = projectFacts(root, entry);
   write(
@@ -111,6 +120,13 @@ export function setup(root: string, scriptsRoot: string, options: SeedOptions = 
   notes.push(...wire(root, { entry, baseBranch: facts.baseBranch }, write));
   createdOnly(`${DRIVE_FOLDER}/profiles.md`, PROFILES_STUB);
   createdOnly(`${DRIVE_FOLDER}/review.md`, REVIEW_STUB);
+  notes.push(
+    ...learningsStep(
+      root,
+      { approve: options.approveLearnings === true, install: options.install ?? installLearnings },
+      write,
+    ),
+  );
   return { written, notes };
 }
 

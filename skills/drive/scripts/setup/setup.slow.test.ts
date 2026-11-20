@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -51,6 +51,24 @@ const INSIDE = (root: string) => path.join(root, 'skills', 'drive', 'scripts');
 const ENTRY = 'skills/drive/scripts/drive.ts';
 const VENDOR = CATALOG.source;
 const text = (root: string, file: string) => readFileSync(path.join(root, file), 'utf8');
+
+const gitIn = (cwd: string, ...args: string[]): string =>
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd, encoding: 'utf8' }).trim();
+const installLearningsStub = (root: string) => {
+  mkdirSync(path.join(root, 'skills', 'learnings'), { recursive: true });
+  writeFileSync(path.join(root, 'skills', 'learnings', 'SKILL.md'), SKILL);
+};
+const OLD_RECORD = 'docs/drive/learnings/records/2026-01-01-x.md';
+const NEW_RECORD = 'docs/learnings/drive/records/2026-01-01-x.md';
+const oldStoreRepo = () => {
+  const root = repo({
+    [OLD_RECORD]: '---\ntype: record\n---\n# x\n',
+    'docs/drive/learnings/failure-modes/a.md': 'a',
+  });
+  gitIn(root, 'add', '-A');
+  gitIn(root, 'commit', '-q', '-m', 'seed');
+  return root;
+};
 
 describe('success cases', () => {
   describe('drive setup, spawned', () => {
@@ -202,6 +220,33 @@ describe('success cases', () => {
       expect(hook.at(lineBeforeTheGuard)).toBe('npm run check:staged');
     });
   });
+  describe('drive setup the learnings step', () => {
+    it('moves the old store with git mv, keeps its history and installs learnings once the Operator approves', () => {
+      // ARRANGE
+      const root = oldStoreRepo();
+      const history = 'move\nseed';
+      // ACT
+      const { notes } = setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      gitIn(root, 'add', '-A');
+      gitIn(root, 'commit', '-q', '-m', 'move');
+      // ASSERT
+      expect(existsSync(path.join(root, 'docs/drive/learnings'))).toBe(false);
+      expect(text(root, NEW_RECORD)).toContain('type: record');
+      expect(gitIn(root, 'log', '--follow', '--format=%s', '--', NEW_RECORD)).toBe(history);
+      expect(existsSync(path.join(root, 'skills/learnings/SKILL.md'))).toBe(true);
+      expect(text(root, 'docs/drive/README.md')).toMatch(/by: drive@\d+\.\d+\.\d+/);
+      expect(notes.join('\n')).toContain('docs/learnings/drive');
+    });
+    it('installs learnings in a repo without the old store when approved, and migrates nothing', () => {
+      // ARRANGE
+      const root = repo({});
+      // ACT
+      setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      // ASSERT
+      expect(existsSync(path.join(root, 'skills/learnings/SKILL.md'))).toBe(true);
+      expect(existsSync(path.join(root, 'docs/learnings'))).toBe(false);
+    });
+  });
 });
 
 describe('failure cases', () => {
@@ -256,6 +301,31 @@ describe('failure cases', () => {
       // ASSERT
       expect(stale).toEqual([expect.stringContaining("binds 'review-code'")]);
       expect(fixed).toEqual([]);
+    });
+  });
+  describe('drive setup the learnings step', () => {
+    it('moves nothing and installs nothing before the Operator approves, and says what approval does', () => {
+      // ARRANGE
+      const root = oldStoreRepo();
+      const installs: string[] = [];
+      // ACT
+      const { notes } = setup(root, INSIDE(root), { install: (target) => installs.push(target) });
+      // ASSERT
+      expect(existsSync(path.join(root, OLD_RECORD))).toBe(true);
+      expect(installs).toEqual([]);
+      expect(existsSync(path.join(root, 'docs/drive/README.md'))).toBe(false);
+      expect(notes.join('\n')).toContain('--approve-learnings');
+    });
+    it('refuses to overwrite a store already at the new place', () => {
+      // ARRANGE
+      const root = oldStoreRepo();
+      mkdirSync(path.join(root, 'docs/learnings/drive'), { recursive: true });
+      writeFileSync(path.join(root, 'docs/learnings/drive/x.md'), 'x');
+      const refusal = /docs\/learnings\/drive/;
+      // ACT
+      const migrate = () => setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      // ASSERT
+      expect(migrate).toThrow(refusal);
     });
   });
 });
@@ -387,6 +457,33 @@ describe('edge cases', () => {
       // ASSERT
       expect(written.filter((file) => file.startsWith('.husky') || file.startsWith('.github'))).toEqual([]);
       expect(notes.join('\n')).toMatch(/drive\.ts guard --against origin\/main/);
+    });
+  });
+  describe('drive setup the learnings step', () => {
+    it('leaves a repo without the old store untouched by the migration', () => {
+      // ARRANGE
+      const root = repo({ 'docs/other.md': 'x' });
+      installLearningsStub(root);
+      gitIn(root, 'add', '-A');
+      gitIn(root, 'commit', '-q', '-m', 'seed');
+      const installs: string[] = [];
+      // ACT
+      setup(root, INSIDE(root), { approveLearnings: true, install: (target) => installs.push(target) });
+      // ASSERT
+      expect(installs).toEqual([]);
+      expect(existsSync(path.join(root, 'docs/learnings'))).toBe(false);
+      expect(text(root, 'docs/other.md')).toBe('x');
+    });
+    it('rewrites only the version record when the README is from an older drive', () => {
+      // ARRANGE
+      const old = '---\ntype: readme\ngenerated:\n  by: drive@0.1.0\n  at: 2026-01-01\n---\n# Drive\n\nmine\n';
+      const root = repo({ 'docs/drive/README.md': old });
+      installLearningsStub(root);
+      // ACT
+      setup(root, INSIDE(root));
+      // ASSERT
+      expect(text(root, 'docs/drive/README.md')).not.toContain('drive@0.1.0');
+      expect(text(root, 'docs/drive/README.md')).toContain('mine');
     });
   });
 });
