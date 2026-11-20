@@ -28,7 +28,7 @@ describe('success cases', () => {
         '  afterRemove: [tidy]',
         'parallel: { default: 2, harnessCap: 8 }',
         'decisionDocs: [docs/words.md]',
-        'grill: { format: docs/agents/grilling-format.md }',
+        'grill: { format: docs/grilling.md }',
       ].join('\n');
       const expected = {
         worktree: {
@@ -47,7 +47,7 @@ describe('success cases', () => {
         parallel: { default: 2, harnessCap: 8 },
         models: {},
         decisionDocs: ['docs/words.md'],
-        grill: { format: 'docs/agents/grilling-format.md' },
+        grill: { format: 'docs/grilling.md' },
       };
       // ACT
       const config = parseConfig(text, ENTRY);

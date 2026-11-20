@@ -64,10 +64,10 @@ Existing comments were retired in one sweep; every authored code file is now gov
 1. Shape: `// <label>: <target>`, or `/* <label>: <target> */` in CSS. One target, on its own line, directly above the code; pointers may stack.
 2. Labels, closed:
 
-   | Label        | Target                                                                                                                   |
-   | ------------ | ------------------------------------------------------------------------------------------------------------------------ |
-   | `decision:`  | an Archgate ADR section, or a Decision record path under `docs/decision-records/`, with its skill folder when it has one |
-   | `tech-debt:` | an issue URL in this repo                                                                                                |
+   | Label        | Target                                             |
+   | ------------ | -------------------------------------------------- |
+   | `decision:`  | an Archgate ADR section, or a Decision record path |
+   | `tech-debt:` | an issue URL in this repo                          |
 
 3. An ADR section is `<ID> §<n>[.<m>]`: Decision anchor n, item m.
 4. Every target is checked offline; a missing one fails. An external URL fails: an outside fact goes to the commit body.

@@ -4,14 +4,6 @@ All notable changes to the drive skill are documented in this file. The format f
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the skill follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Changed
-
-- The `drive` CLI's scripts are deep modules, one folder each under `scripts/` with one `index.ts`;
-  `node scripts/drive.ts <command>` is unchanged. The Claude adapter moved to `scripts/harness/claude/adapter.ts`:
-  rerun `drive setup` and drop the old `claude-adapter.ts` hooks from `.claude/settings.json`.
-
 ## [1.0.0] - 2026-11-19
 
 ### Added
@@ -19,6 +11,8 @@ All notable changes to the drive skill are documented in this file. The format f
 - The drive skill, ported from `hancrafted/content-library` at `b35c8ef` with its behaviour unchanged: `SKILL.md`, the
   Drive glossary, `references/`, `catalog/`, `markdown-harness.config.yaml` and the `drive` CLI in `scripts/` with its
   tests.
+- The `drive` CLI's scripts are deep modules, one folder each under `scripts/` with one `index.ts`;
+  `node scripts/drive.ts <command>` is unchanged. The Claude adapter lives at `scripts/harness/claude/adapter.ts`.
 - Install it with `npx skills add hancrafted/skills --skill drive`. The consuming repo provides the `yaml` npm package, which
   the scripts import at runtime, and `@hancrafted/markdown-harness` for `check:docs`.
 
