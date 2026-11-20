@@ -8,7 +8,30 @@ metadata:
 
 # Drive
 
+## Overview
+
 You are the **Orchestrator** of one Workflow: the architect the Operator talks to. You grill, decide, plan, check reports, merge decisions, push and open PRs; Subagents do the execution. Reason by the architect's Profile in [references/profiles.md](references/profiles.md), extended by the project's `docs/drive/profiles.md`. The Workflow's words (Operator, Subagent, Binding, Fortify and the rest) each have one meaning, in [GLOSSARY.md](GLOSSARY.md): use them exactly. Explain the Workflow to the Operator in plain language.
+
+## When to Use
+
+- A grill starts: every grill starts /drive.
+- A spec or its tickets are to be implemented.
+- Asked to drive or orchestrate, to work on an integration branch, or to delegate to Subagents.
+- Handed a brief: you are its Subagent ([As a Subagent](#as-a-subagent)).
+- `/drive monitor <session-id>` to watch another session.
+- NOT for: a one-file edit with no Decision docs, spec or tickets; reviewing a PR you did not drive.
+
+## Human gates
+
+- Before starting with `/learnings` missing: drive cannot run without it, so tell the Operator how to install it.
+- Before the Decision gate passes: every impactful decision and blocker settles with the Operator, and nothing after it asks again.
+- On a conflict with the spec or a binding decision: the Operator owns both.
+- After CI stays red through two fix rounds: the fix loop has failed.
+- When a Subagent is blocked by something outside its brief: only the Operator can lift it.
+- Before merging the Integration branch's PR: the Operator contests triage and merges.
+- Before Fortify runs: the Operator decides once whether it costs a top-tier decision page now or is skipped.
+
+## As a Subagent
 
 **Handed a brief instead?** Then you are its Subagent, whichever provider runs you. Save a pasted brief verbatim to `.scratch/<topic>/<task>.brief.md` before starting (review agents read that file as the spec), reason by the implementer's Profile, finish as [references/worktrees.md](references/worktrees.md) "How a Subagent finishes" says, and report in the format of [references/dispatch.md](references/dispatch.md). The rest of this file is the Orchestrator's.
 
@@ -88,7 +111,9 @@ Each Workflow keeps its memory in `.scratch/<topic>/` (gitignored), so it surviv
 
 These names override any worktree path or branch a Handoff or another skill names, and the self-merge below replaces any skill's merger or per-ticket PR.
 
-## 1. Define (clarify)
+## Workflow
+
+### 1. Define (clarify)
 
 Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Read the file `grill.format` names in `project.yml` (`docs/agents/grilling-format.md`) and follow it: state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
 
@@ -96,7 +121,7 @@ Every grill starts /drive. Create the Integration branch first and push it empty
 
 _Done when:_ every requirement is a line in `decisions.md`, the pre-flight list is in it too, and the Operator agrees nothing is open.
 
-## 2. Reason (specify)
+### 2. Reason (specify)
 
 1. **Decision docs.** Write the Decision docs the Workflow changes yourself, in a `decisions/<topic>` worktree from the Integration branch. The paths are `decisionDocs` in `project.yml`; `drive guard` fails a commit that changes one on a branch outside `decisions/<topic>` (its Task branches included). A Workflow that changes no Decision doc says so in `decisions.md`. When the Operator asks to skip this path, push back: name the muddy term and ask for its exact wording.
 2. **Decision pages.** A page that settles open choices is a delegated task, [references/dispatch.md](references/dispatch.md) "A decision page", with `docs/drive/review.md` as the page skill's inputs.
@@ -127,7 +152,7 @@ _Done when:_ every requirement is a line in `decisions.md`, the pre-flight list 
 
 _Done when:_ the Operator passed the Decision gate (the Decision PR merged, or the chat approval given), the Integration branch holds the Decision docs, and every ticket is on the tracker with its Skills and Review after lines.
 
-## 3. Implement (codify)
+### 3. Implement (codify)
 
 The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
 
@@ -135,7 +160,7 @@ At an interrupt, notify the Operator through the Binding's notify port, say what
 
 _Done when:_ every ticket's task is merged and checked, or reverted with its reason logged in `decisions.md`.
 
-## 4. Verify
+### 4. Verify
 
 Push after every merge with `drive push`, in the background ([references/worktrees.md](references/worktrees.md) "push" holds its rules). The first push after the first merge is `drive push --spec <epic number>`: it opens the draft PR; later pushes omit `--spec`. Review at the planned checkpoints and before the PR is marked ready, triage every finding and log each verdict in `decisions.md` without asking, and hand the accepted ones to one fix Subagent: [references/review.md](references/review.md). CI red twice after a fix round is an interrupt.
 
@@ -145,7 +170,7 @@ Watch the PR in the background with `drive pr watch <number> --integration` and 
 
 _Done when:_ CI passes on the last push, every finding has a logged verdict with a reason, the record is committed, the Operator is notified and has the PR to merge.
 
-## 5. Evolve (fortify)
+### 5. Evolve (fortify)
 
 After the Operator merges the Integration branch's PR (exit 12) and the leftover tickets are closed, ask once: "Fortify now (a top-tier decision page) or skip?" Skip ends here once one small PR from the base branch has recorded `fortify: skipped` with the Operator's reason (the record is append-only after the merge; log the decision in `decisions.md`, the Operator may contest it); yes runs **Fortify** on a branch from the base branch: [references/fortify.md](references/fortify.md). It blocks nothing else.
 
@@ -153,9 +178,50 @@ _Done when:_ the record says `engaged` or `skipped`; when engaged, at most one `
 
 ## Monitor
 
+### 6. Monitor a session
+
 `/drive monitor <session-id>` watches another session, usually a grill the Operator runs elsewhere, and records what it learns for Fortify. It writes only `.scratch/<topic>/monitor.md` and nothing in the repo; the `<topic>` is the watched Workflow's: take it from `drive status` run in the watched session's branch, or ask the Operator when no branch tells it.
 
 1. **Start at once** on the default watch rules: Operator corrections, questions the Operator asks about a term, CI or PR state relayed in the session, tool failures and interrupts.
 2. **Calibrate without blocking.** Ask the Operator in one message what else to watch or ignore; keep watching while the answer is pending, and apply it when it arrives.
 3. **Loop.** On each tick run `drive transcript <session-id> --since-last`, which prints only what is new since the last run, and append each finding to `monitor.md` with the session's name, a time and the Operator's words verbatim.
 4. **End** when the session ends or the Operator says stop. At Verify the record folds each finding in with `(source: monitor)`.
+
+_Done when:_ the session ended or the Operator said stop, and `monitor.md` holds each finding with the session's name, a time and the Operator's words verbatim.
+
+## Common Rationalizations
+
+| Excuse                                                                    | Rebuttal                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "The Subagent's report ticks every criterion, so it checks out."          | #35 ticked "/writing-for-agents applied" without invoking the skill, and #32 ticked "records and failure-modes created" while git tracked only `README.md`. Check each criterion against the branch, not the report (drive-port review 1). |
+| "The Subagent says knip and a slow test failed, so the code is broken."   | On the Integration branch both passed: the failures came from the Subagent's worktree. Re-run on the Integration branch before logging a failure (drive-port, #35).                                                                        |
+| "The new boundary rule needs an exemption for one folder; note it later." | A Subagent merged the to-review exemption with no GEN-004 escalation, no `// tech-debt:` marker and an unlabelled #75. Escalate before building and fence the shortcut (drive-port review 2, finding 2).                                   |
+| "The review is rushing; write the Fortify record after `drive pr ready`." | The record is the PR's last commit and `drive pr ready` runs only after it. It was skipped once under the review-2 rush and written on a late branch (drive-port, Orchestrator correction).                                                |
+| "The PR body was true when I opened it."                                  | A rebase or a new commit makes it stale: the body once told the Operator to delete tracked files. Re-read it against the branch head before `drive pr ready` (drive-port review 2, finding 9).                                             |
+| "Decision records go in `docs/adr` by convention."                        | No convention decides it: `decisionDocs` in `project.yml` names the folder. The Operator had to correct a guessed folder to `docs/decision-records` (drive-port).                                                                          |
+| "#789 is the PR the Workflow waits on."                                   | It was the spec issue; the Integration PR was #813. Resolve each gate number with `gh pr view` before a ticket or the log names it (drive-port correction).                                                                                |
+
+## Red Flags
+
+- A Decision doc changes on a branch outside `decisions/<topic>`, or the Operator is asked to approve a Decision doc nobody wrote there.
+- A Subagent's report ticks a criterion with no command or path as evidence.
+- A check is called failing on a Subagent's say-so, with no re-run on the Integration branch.
+- A lint or boundary exemption is merged with no accepted escalation and no `// tech-debt:` marker.
+- `drive pr ready` is about to run with no Fortify record committed.
+- A test run appends entries to `.scratch/<topic>/drive.log.jsonl`.
+- The local base branch holds commits the Integration branch and origin lack.
+- You stop to ask the Operator after the gate for anything outside the three interrupts.
+
+## Verification
+
+- [ ] `node skills/drive/scripts/drive.ts status <topic>` names the phase just completed as done and the next stop.
+- [ ] `gh pr checks <number>` shows no failing check on the last push.
+- [ ] `.scratch/<topic>/decisions.md` holds a verdict with a reason for every review finding.
+- [ ] `learnings check` passes, and the Workflow's record is committed with `fortify: pending`, `engaged` or `skipped`.
+- [ ] `drive pr ready <number>` accepted the PR, which needs `.scratch/<topic>/review.md`.
+
+### 7. Learn
+
+Log each Operator correction in `decisions.md` the moment it is made. When the run had a correction or a failed step and `/learnings` is available, the Workflow's record carries it ([references/fortify.md](references/fortify.md) "The record"). For a run that wrote no record, such as a grill that changed nothing in the repo, ask "Record learnings from this run?" and on yes run `/learnings` for skill `drive`. A clean run asks nothing.
+
+_Done when:_ every correction is in the record, or the run was clean and the step skipped.

@@ -29,7 +29,7 @@ interface CheckReport {
 }
 
 export function checkRoot(root: string): CheckResult {
-  const run = spawnSync(MH, ['check', '--root', root, '--config', SKILLS_CONFIG], {
+  const run = spawnSync(MH, ['frontmatter', 'check', '--root', root, '--config', SKILLS_CONFIG], {
     encoding: 'utf8',
     timeout: 20_000,
   });
