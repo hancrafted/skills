@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { DECISIONS_PREFIX, fail, loadConfig, logPath, mainRootOf, parseLog, run } from '../core/index.ts';
-import { LEARNINGS_STORE, RECORDS_FOLDER } from '../learnings/index.ts';
 import {
   type Facts,
   fortifyOfRecord,
@@ -14,6 +13,8 @@ import {
   specOfDecisionBody,
   ticketsOfBodies,
 } from './status.pure.ts';
+
+const DRIVE_RECORDS_FOLDER = 'docs/learnings/drive/records';
 
 interface GhPr extends PrFact {
   headRefName: string;
@@ -53,7 +54,7 @@ function readLog(topic: string, cwd: string): { t?: string; cmd?: string }[] {
 }
 
 function fortifyOf(topic: string, ref: string, cwd: string) {
-  const folder = `${LEARNINGS_STORE}/${RECORDS_FOLDER}`;
+  const folder = DRIVE_RECORDS_FOLDER;
   const listed = run('git', ['ls-tree', '--name-only', ref, `${folder}/`], { cwd });
   const file = listed.status === 0 ? recordFileOf(listed.stdout.split('\n'), topic) : null;
   if (file === null) return null;

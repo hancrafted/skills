@@ -1,5 +1,9 @@
 import { parse } from 'yaml';
-import { DRIVE_FOLDER, isRecord, isText } from '../core/index.ts';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isText = (value: unknown): value is string => typeof value === 'string' && value !== '';
 
 export const FAILURE_MODE_STATUSES = ['proposed', 'ticket', 'fixed', 'wontfix'] as const;
 export type FailureModeStatus = (typeof FAILURE_MODE_STATUSES)[number];
@@ -38,6 +42,7 @@ export interface CitationRow {
 }
 
 export interface Store {
+  skill: string;
   modes: readonly FailureMode[];
   records: readonly LearningsRecord[];
   legacyFileExists: boolean;
@@ -45,10 +50,12 @@ export interface Store {
 
 export const FAILURE_MODES_FOLDER = 'failure-modes';
 export const RECORDS_FOLDER = 'records';
-export const LEARNINGS_STORE = `${DRIVE_FOLDER}/learnings`;
-export const LEGACY_LEARNINGS_FILE = `${DRIVE_FOLDER}/learnings.md`;
+export const LEARNINGS_HOME = 'docs/learnings';
+export const storeOf = (skill: string): string => `${LEARNINGS_HOME}/${skill}`;
+export const legacyLearningsFileOf = (skill: string): string => `docs/${skill}/learnings.md`;
 const BULLET_LABELS = ['**Evidence:**', '**Correction:**', '**Regressed:**'] as const;
 const REGRESSED_LABEL = '**Regressed:**';
+export const SMELL_COUNT = 3;
 
 function splitFrontMatter(text: string): { data: Record<string, unknown>; body: string } | null {
   const match = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(text);
@@ -151,7 +158,7 @@ export function renderRows(rows: readonly CitationRow[]): string {
   const header = `count  ${'status'.padEnd(8)}  failure mode`;
   const lines = rows.map(
     ({ slug, count, status, regressed }) =>
-      `${String(count).padStart(5)}  ${status.padEnd(8)}  ${slug}${regressed ? '  regressed' : ''}`,
+      `${String(count).padStart(5)}  ${status.padEnd(8)}  ${slug}${regressed ? '  regressed' : ''}${count >= SMELL_COUNT ? '  smell' : ''}`,
   );
   return [header, ...lines].join('\n');
 }
@@ -184,15 +191,16 @@ interface RecordContext {
   record: LearningsRecord;
   seen: Set<string>;
   bySlug: ReadonlyMap<string, FailureMode>;
+  skill: string;
 }
 
-function citationProblems({ record, seen, bySlug }: RecordContext, citation: Citation): string[] {
+function citationProblems({ record, seen, bySlug, skill }: RecordContext, citation: Citation): string[] {
   const where = `${RECORDS_FOLDER}/${record.file}: ## ${citation.slug}`;
   const problems: string[] = [];
   const mode = bySlug.get(citation.slug);
   if (mode === undefined)
     problems.push(
-      `${where} names no ${FAILURE_MODES_FOLDER}/${citation.slug}.md; cite an existing one (drive learnings similar "<failure>") or create it`,
+      `${where} names no ${FAILURE_MODES_FOLDER}/${citation.slug}.md; cite an existing one (learnings similar --skill ${skill} "<failure>") or create it`,
     );
   if (seen.has(citation.slug)) problems.push(`${where} appears twice; cite a failure mode once per record`);
   seen.add(citation.slug);
@@ -206,7 +214,7 @@ function citationProblems({ record, seen, bySlug }: RecordContext, citation: Cit
   return problems;
 }
 
-function recordProblems(record: LearningsRecord, bySlug: ReadonlyMap<string, FailureMode>): string[] {
+function recordProblems(record: LearningsRecord, bySlug: ReadonlyMap<string, FailureMode>, skill: string): string[] {
   const where = `${RECORDS_FOLDER}/${record.file}`;
   const problems: string[] = [];
   const expectedFile = `${record.date}-${record.workflow}.md`;
@@ -215,21 +223,21 @@ function recordProblems(record: LearningsRecord, bySlug: ReadonlyMap<string, Fai
     problems.push(`${where}: fortify skipped needs skip-reason`);
   if (record.fortify !== 'skipped' && record.skipReason !== null)
     problems.push(`${where}: skip-reason belongs only to fortify skipped`);
-  const context = { record, seen: new Set<string>(), bySlug };
+  const context = { record, seen: new Set<string>(), bySlug, skill };
   return [...problems, ...record.citations.flatMap((citation) => citationProblems(context, citation))];
 }
 
-export function storeProblems({ modes, records, legacyFileExists }: Store): string[] {
+export function storeProblems({ skill, modes, records, legacyFileExists }: Store): string[] {
   const legacy =
     legacyFileExists && modes.length > 0
       ? [
-          `${LEGACY_LEARNINGS_FILE} exists beside the learnings store: move its entries into ${RECORDS_FOLDER}/ and ${FAILURE_MODES_FOLDER}/, then delete it`,
+          `${legacyLearningsFileOf(skill)} exists beside the learnings store: move its entries into ${RECORDS_FOLDER}/ and ${FAILURE_MODES_FOLDER}/, then delete it`,
         ]
       : [];
   const bySlug = new Map(modes.map((mode) => [mode.slug, mode]));
   return [
     ...legacy,
     ...modes.flatMap(failureModeProblems),
-    ...records.flatMap((record) => recordProblems(record, bySlug)),
+    ...records.flatMap((record) => recordProblems(record, bySlug, skill)),
   ];
 }

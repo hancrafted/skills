@@ -59,7 +59,7 @@ Every project fact lives in `docs/drive/`; this skill knows none. Read it before
 
 - `binding.yml`: the **Binding**, each DRIVE phase's skills (`phases.<phase>.skills`), the Model tier its Subagents run on (`phases.<phase>.model`, `mid` or `top`), the agent type every agent uses (`agentType`) and the notify port (`notify.adapter`: `push-notification`, the harness's push notification, or `none`; absent means `push-notification`). A phase with no bound skill is done inline by you. Within a phase, pick a skill by its description.
 - `project.yml`: the project settings for worktrees (`worktree.*`), the parallel cap (`parallel.*`), the models behind each provider's tiers (`models`), the Decision docs' paths (`decisionDocs`) and the grill format (`grill.format`).
-- `profiles.md`: the project's rules for each Profile, and the kinds of live or scheduled things a change can touch. `learnings/`: the records and failure modes ([references/fortify.md](references/fortify.md)). `enforcers.yml`: the Enforcers Fortify picks from. `review.md`: the calibration answers for every decision page.
+- `profiles.md`: the project's rules for each Profile, and the kinds of live or scheduled things a change can touch. `enforcers.yml`: the Enforcers Fortify picks from. `review.md`: the calibration answers for every decision page. The records and failure modes are not here: they live in `docs/learnings/drive/`, owned by `/learnings` ([references/fortify.md](references/fortify.md)).
 
 No folder yet, or a skill installed since setup: run setup first, [references/setup.md](references/setup.md).
 

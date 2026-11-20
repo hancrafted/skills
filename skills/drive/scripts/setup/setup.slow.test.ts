@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -128,7 +128,6 @@ describe('success cases', () => {
       const expectedFiles = [
         'docs/drive/binding.yml',
         'docs/drive/enforcers.yml',
-        'docs/drive/learnings/README.md',
         'docs/drive/profiles.md',
         'docs/drive/project.yml',
         'docs/drive/review.md',
@@ -176,10 +175,10 @@ describe('success cases', () => {
     });
   });
   describe('drive setup the learnings check', () => {
-    it('wires the learnings check into check:docs once and seeds the store README', () => {
+    it('wires the learnings check into check:docs once', () => {
       // ARRANGE
       const root = bareRepo({ 'package.json': JSON.stringify({ scripts: { 'check:docs': 'mh check' } }) });
-      const expected = `mh check && mh check --root docs/drive/learnings --config skills/drive/markdown-harness.config.yaml && node ${ENTRY} learnings check`;
+      const expected = `mh check && mh check --root docs/learnings/drive --config skills/learnings/markdown-harness.config.yaml && node skills/learnings/scripts/learnings.ts check`;
       // ACT
       setup(root, INSIDE(root));
       const { written } = setup(root, INSIDE(root));
@@ -187,7 +186,6 @@ describe('success cases', () => {
       const scripts = (JSON.parse(text(root, 'package.json')) as { scripts: Record<string, string> }).scripts;
       expect(scripts['check:docs']).toBe(expected);
       expect(written).toEqual([]);
-      expect(text(root, 'docs/drive/learnings/README.md')).toContain('# Drive learnings');
     });
   });
   describe('drive setup the Decision-doc guard', () => {
@@ -225,7 +223,7 @@ describe('failure cases', () => {
       const { notes } = setup(root, SCRIPTS_ROOT);
       // ASSERT
       expect(text(root, 'package.json')).toBe(manifest);
-      expect(notes.join('\n')).toContain('learnings check');
+      expect(notes.join('\n')).toContain('learnings.ts check');
     });
   });
   describe('drive setup the Decision-doc guard', () => {
@@ -337,28 +335,6 @@ describe('edge cases', () => {
       expect(binding(root).agentType).toBe('mine');
       expect(binding(root).phases.verify.skills).toEqual(['code-review']);
       expect(parseConfig(text(root, 'docs/drive/project.yml'), ENTRY)).toMatchObject(handEdited);
-    });
-
-    it('creates the learnings store with its records and failure-modes folders', () => {
-      // ARRANGE
-      const root = bareRepo({});
-      // ACT
-      setup(root, SCRIPTS_ROOT);
-      // ASSERT
-      expect(existsSync(path.join(root, 'docs/drive/learnings/records'))).toBe(true);
-      expect(existsSync(path.join(root, 'docs/drive/learnings/failure-modes'))).toBe(true);
-    });
-
-    it('does not recreate learnings.md in a store that has failure modes', () => {
-      // ARRANGE
-      const root = bareRepo({
-        'docs/drive/learnings/failure-modes/stale-branch.md': '---\nstatus: open\n---\n# Stale branch\n',
-      });
-      // ACT
-      const { written } = setup(root, SCRIPTS_ROOT);
-      // ASSERT
-      expect(written).not.toContain('docs/drive/learnings.md');
-      expect(existsSync(path.join(root, 'docs/drive/learnings.md'))).toBe(false);
     });
 
     it('seeds notify once and keeps a notify the Operator changed', () => {

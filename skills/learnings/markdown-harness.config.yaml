@@ -1,7 +1,8 @@
-# The drive learnings store (hancrafted/skills docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md):
-# run with --root docs/drive/learnings, so folders are relative to it. `drive learnings check` holds what a field rule
-# cannot: every record H2 names a failure-mode file, a fixed failure mode cited after its fix carries a Regressed
-# bullet, status and skip fields agree, and no learnings.md sits beside a migrated store.
+# One skill's learnings store (hancrafted/skills docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md,
+# amended by 0008-learnings-move-to-the-learnings-skill.md): run once per skill with --root docs/learnings/<skill>, so
+# folders are relative to it. `learnings check` holds what a field rule cannot: every record H2 names a failure-mode
+# file, a fixed failure mode cited after its fix carries a Regressed bullet, status and skip fields agree, and no
+# learnings.md sits beside a migrated store.
 frontmatter:
   rules:
     - ruleId: drive-learnings-record
@@ -9,14 +10,21 @@ frontmatter:
       intent: 'A record is what one Workflow hit, written once at the end of Verify and never edited after its Fortify question, so Fortify counts recurrences from records instead of from a typed number. Fail if the file name is not <date>-<workflow>.md.'
       unknownKeys: forbidden
       fields:
+        type:
+          presence: required
+          allowed:
+            - {
+                value: record,
+                intent: 'Marks the file as a learnings record. A record is an append-only log, so it carries no stale_after.',
+              }
         workflow:
           presence: required
           pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
-          intent: 'The Workflow topic exactly as its .scratch/<topic>/ folder spells it, so the record traces back to its decisions log and transcripts.'
+          intent: 'The topic of the run, for a drive Workflow exactly as its .scratch/<topic>/ folder spells it, so the record traces back to its decisions log and transcripts.'
         date:
           presence: required
           pattern: '^\d{4}-\d{2}-\d{2}$'
-          intent: "The day the Workflow's Verify ended, YYYY-MM-DD. drive learnings compares it with each cited failure mode's fixed-on to find regressions."
+          intent: "The day the Workflow's Verify ended, YYYY-MM-DD. learnings compares it with each cited failure mode's fixed-on to find regressions."
         fortify:
           presence: required
           allowed:
@@ -36,9 +44,17 @@ frontmatter:
           intent: 'Required when fortify is skipped, absent when pending or engaged: the Operator''s reason, verbatim ("deadline 17:30", "skipp fortify").'
     - ruleId: drive-learnings-failure-mode
       folders: [failure-modes/]
-      intent: 'A failure mode is one narrow way a Workflow went wrong that a single Enforcer could catch; its file is the stable thing every record cites by file name, and it never holds a count. Search with `drive learnings similar "<failure>"` first and reuse a file whose Enforcer would also catch this case; create one only when none would.'
+      intent: 'A failure mode is one narrow way a Workflow went wrong that a single Enforcer could catch; its file is the stable thing every record cites by file name, and it never holds a count. Search with `learnings similar --skill <skill> "<failure>"` first and reuse a file whose Enforcer would also catch this case; create one only when none would.'
       unknownKeys: forbidden
       fields:
+        type:
+          presence: required
+          allowed:
+            - { value: failure-mode, intent: 'Marks the file as a learnings failure mode.' }
+        stale_after:
+          presence: required
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          intent: 'One month after the last write to this file, YYYY-MM-DD. Past it, review the failure mode before trusting its status, and set a new date when you do.'
         title:
           presence: required
           maxLength: 120
