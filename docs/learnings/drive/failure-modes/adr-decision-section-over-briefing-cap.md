@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: "An ADR's Decision section grows past archgate's briefing cap"
 enforcer: 'adr-checker: archgate, promote the briefing-length warning to an error for changed ADRs'
 status: proposed

@@ -1,4 +1,5 @@
 ---
+type: record
 workflow: drive-port
 date: '2026-11-20'
 fortify: skipped

@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'The PR body describes the branch as it was before its rebase'
 enforcer: "check: new refusal in `drive pr ready` when the body's Evidence SHA is not the branch head"
 status: proposed

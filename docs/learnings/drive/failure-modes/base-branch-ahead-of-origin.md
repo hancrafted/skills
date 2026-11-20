@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'The local base branch holds commits origin lacks while the Integration branch is reviewed'
 enforcer: 'check: new refusal in `drive pr ready` when the local base branch is ahead of its remote'
 status: proposed

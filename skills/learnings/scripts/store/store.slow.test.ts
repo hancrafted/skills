@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -272,6 +272,45 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  describe('record', () => {
+    it('writes the README with OKF generated front matter when it is missing, and leaves an existing one alone', () => {
+      // ARRANGE
+      const root = repo({});
+      const flags = [
+        'record',
+        '--skill',
+        SKILL,
+        '--topic',
+        'sweep',
+        '--failure',
+        'new-mode',
+        '--title',
+        'New mode',
+        '--enforcer',
+        'review: x',
+        '--evidence',
+        'e',
+      ];
+      const readme = path.join(root, 'docs/learnings/README.md');
+      // ACT
+      runLearnings(root, flags);
+      const written = readFileSync(readme, 'utf8');
+      const frontMatter = written.split('\n').slice(0, 6);
+      writeFileSync(readme, 'edited\n');
+      runLearnings(root, flags);
+      // ASSERT
+      expect(frontMatter).toEqual([
+        '---',
+        'type: readme',
+        'generated:',
+        '  by: learnings@0.1.0',
+        `  at: ${TODAY}`,
+        '---',
+      ]);
+      expect(readFileSync(readme, 'utf8')).toBe('edited\n');
+    });
+  });
+
   describe('drive learnings', () => {
     it('keeps a learnings.md legal while the store has no failure mode, so a repo mid-migration stays green', () => {
       // ARRANGE

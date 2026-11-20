@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: "The Orchestrator names a spec issue's number where the Integration PR is meant"
 enforcer: 'check: new `gh pr view` lookup of every PR number a ticket or Decision doc names as a gate, failing on an issue'
 status: proposed

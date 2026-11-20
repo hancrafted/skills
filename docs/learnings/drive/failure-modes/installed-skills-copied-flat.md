@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'Installed skills are committed flat into .agents/skills, so their files collide'
 enforcer: 'check: check:skills, new rule that every file under .agents/skills/ sits in a <name>/ folder holding a SKILL.md'
 status: proposed

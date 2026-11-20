@@ -113,7 +113,17 @@ export function offSkills(readme: string): string[] {
   return names;
 }
 
-export const LEARNINGS_README = `# Learnings
+export const LEARNINGS_VERSION = '0.1.0';
+const TEMPLATE_DATE = '2026-11-20';
+
+export const renderLearningsReadme = (date: string): string => `---
+type: readme
+generated:
+  by: learnings@${LEARNINGS_VERSION}
+  at: ${date}
+---
+
+# Learnings
 
 What went wrong in each skill's runs, kept so a skill that fails the same way three times can ask for a fix upstream. The \`learnings\` skill writes it; read this file, not the skill, to use the store.
 
@@ -126,3 +136,5 @@ The \`learnings\` skill's \`markdown-harness.config.yaml\` is the template for b
 
 Skills whose learning is turned off, one \`- <skill>\` bullet per line. \`learnings record\` refuses them. None yet.
 `;
+
+export const LEARNINGS_README = renderLearningsReadme(TEMPLATE_DATE);

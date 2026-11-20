@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'A test named after a pure module spawns the CLI'
 enforcer: 'adr-checker: archgate, new ARCH-003-testing rule that a *.pure.*test.ts never imports node:child_process'
 status: proposed

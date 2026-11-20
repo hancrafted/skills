@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'drive --help exits 1'
 enforcer: 'test-runner: test:slow, the `--help` case in drive.slow.test.ts asserting exit 0'
 status: ticket

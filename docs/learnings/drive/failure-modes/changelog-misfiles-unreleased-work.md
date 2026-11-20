@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'The CHANGELOG files shipping work under Unreleased beside a version that never shipped'
 enforcer: 'check: new CHANGELOG check that a version without a release tag has no Unreleased section above it'
 status: proposed

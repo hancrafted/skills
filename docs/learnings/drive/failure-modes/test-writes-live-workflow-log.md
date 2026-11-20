@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'A test run appends entries to the live Workflow log in .scratch'
 enforcer: 'test-runner: test:slow, new edge case asserting every .scratch/*/drive.log.jsonl is unchanged by the suite'
 status: proposed

@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: "A ported skill's text, fixtures or catalog still name the source repo's paths"
 enforcer: "check: check:skills, new denylist of the source repo's paths in the ported skill's folder"
 status: proposed

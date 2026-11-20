@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: "A review Subagent cannot start the code-review skill's parallel sub-agents"
 enforcer: 'review: the Orchestrator reads the review report for a missing Standards or Spec axis'
 status: ticket

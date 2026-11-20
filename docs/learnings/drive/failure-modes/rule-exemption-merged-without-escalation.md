@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'A rule exemption merges without a GEN-004 escalation or tech-debt marker'
 enforcer: 'adr-checker: archgate, new GEN-004 rule that an exemption in a lint or boundary config carries a // tech-debt: marker'
 status: proposed

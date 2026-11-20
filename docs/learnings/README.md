@@ -1,3 +1,10 @@
+---
+type: readme
+generated:
+  by: learnings@0.1.0
+  at: 2026-11-20
+---
+
 # Learnings
 
 What went wrong in each skill's runs, kept so a skill that fails the same way three times can ask for a fix upstream. The `learnings` skill writes it; read this file, not the skill, to use the store.

@@ -8,6 +8,7 @@ All notable changes to the learnings skill are documented in this file. The form
 
 ### Added
 
+- `learnings record` writes `docs/learnings/README.md` with OKF `generated: {by: learnings@0.1.0, at: <date>}` when it is missing.
 - The learnings skill: `learnings record|list|similar|check|file-upstream --skill <name>`, the learning loop drive
   had, generalised by skill. The store is `docs/learnings/<skill>/{records,failure-modes}/`, with the README contract
   at `docs/learnings/README.md`. Records carry `type`; failure modes carry `type` and `stale_after`.

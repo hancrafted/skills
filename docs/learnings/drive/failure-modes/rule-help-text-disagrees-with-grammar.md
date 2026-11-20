@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: "A rule's help text shows an example its own grammar has outgrown"
 enforcer: "test-runner: test, new case that every example in a rule's help text passes the rule's grammar"
 status: proposed

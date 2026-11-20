@@ -21,7 +21,7 @@ Author a commit message that satisfies the three-condition gate, then commit it 
 
 ## Author a commit
 
-Run the steps in order. A split run repeats steps 2 to 6 once per commit. There is no approval stop in this run: the commit is local and reversible, so `git reset` and `git commit --amend` are the review mechanism, and the human reviews a real commit with `git show` rather than a proposal.
+Run the steps in order. A split run repeats steps 2 to 6 once per commit. There is no approval stop besides the declared gate in this run: the commit is local and reversible, so `git reset` and `git commit --amend` are the review mechanism, and the human reviews a real commit with `git show` rather than a proposal.
 
 ### 1. Read the argument
 

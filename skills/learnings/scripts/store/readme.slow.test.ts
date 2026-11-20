@@ -21,8 +21,11 @@ describe('failure cases', () => {
     // ARRANGE
     const template = LEARNINGS_README;
     // ACT
-    const heading = template.split('\n')[0];
+    const lines = template.split('\n');
+    const heading = lines[lines.indexOf('---', 1) + 2];
+    const frontMatter = lines.slice(0, 5);
     // ASSERT
+    expect(frontMatter).toEqual(['---', 'type: readme', 'generated:', '  by: learnings@0.1.0', '  at: 2026-11-20']);
     expect(heading).toBe('# Learnings');
   });
 });

@@ -27,8 +27,6 @@ You are the **Orchestrator** of one Workflow: the architect the Operator talks t
 Homes this skill reads or writes:
 
 - `docs/drive/`: the skill home, written only by drive: setup answers, calibration and the version record in its `README.md`.
-- `docs/learnings/drive/`: the learnings store, written through `/learnings`, which owns it.
-- `docs/decision-records/`: the domain home of the project's Decision docs, bound by its `README.md`; the folder `docs/drive/project.yml` names wins.
 
 Context protocol (SKL-003), identical in every stateful skill:
 

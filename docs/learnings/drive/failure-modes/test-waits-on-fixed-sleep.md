@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'A test waits on a fixed sleep instead of the event it needs'
 enforcer: 'linter: lint, new rule against setTimeout sleeps in test files'
 status: proposed

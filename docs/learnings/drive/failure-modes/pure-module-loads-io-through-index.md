@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'A pure module loads Node I/O through a re-exporting index'
 enforcer: 'linter: lint:boundaries, new rule that a *.pure.ts imports only *.pure.ts modules or a pure index'
 status: ticket

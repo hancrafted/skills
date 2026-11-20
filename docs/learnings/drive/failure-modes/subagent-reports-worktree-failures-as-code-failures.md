@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'A Subagent reports check failures from its worktree setup as failures of the code'
 enforcer: 'check: new `drive worktree new` readiness check that runs the gate once on the fresh worktree before the Subagent starts'
 status: proposed

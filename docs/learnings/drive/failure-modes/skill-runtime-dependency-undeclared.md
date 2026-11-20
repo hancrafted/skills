@@ -1,4 +1,6 @@
 ---
+type: failure-mode
+stale_after: 2026-12-20
 title: 'An installed skill imports an npm package its SKILL.md does not declare'
 enforcer: "check: check:skills, new rule comparing bare imports under a skill's scripts/ with its compatibility field"
 status: proposed
