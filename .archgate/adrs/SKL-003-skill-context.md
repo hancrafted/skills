@@ -3,7 +3,7 @@ type: adr
 id: SKL-003
 title: 'Skill Context'
 domain: skills
-rules: false
+rules: true
 files: ['skills/*/SKILL.md']
 paths: ['skills/**']
 description: 'What a skill under skills/ leaves behind for future agents: stateless vs stateful skills, skill and domain homes with a README contract, OKF freshness and one context protocol.'
@@ -44,8 +44,8 @@ Without a declaration nobody can tell which skills shape future agents. Without 
 
 ### 4. One context protocol
 
-1. Every stateful skill MUST carry the same protocol block, byte-identical to one canonical copy: check the home README, run setup when it is missing, compare `stale_after` with today on read, migrate when `generated.by` differs (planned rule: `skill-context-protocol`).
-2. A stateful skill MUST have a `## Context` section naming every home it reads or writes (planned rule: `skill-context-section`).
+1. Every stateful skill MUST carry the same protocol block, byte-identical to one canonical copy: check the home README, run setup when it is missing, compare `stale_after` with today on read, migrate when `generated.by` differs (📜 Rule: `skill-context-protocol`).
+2. A stateful skill MUST have a `## Context` section naming every home it reads or writes (📜 Rule: `skill-context-section`).
 
 ## Do's and Don'ts
 
@@ -55,8 +55,8 @@ Without a declaration nobody can tell which skills shape future agents. Without 
 2. **DO** keep a skill's own setup, calibration and version record in `docs/<skill>/`. (Decision 2)
 3. **DO** run setup and write the README when a home has none. (Decision 2)
 4. **DO** set `stale_after` from the home README's interval on every write — `stale_after: 2026-12-20`. (Decision 3)
-5. **DO** copy the protocol block verbatim from the canonical copy. (Decision 4, planned rule: `skill-context-protocol`)
-6. **DO** name every home under `## Context` — `docs/drive/`, `docs/decision-records/`. (Decision 4, planned rule: `skill-context-section`)
+5. **DO** copy the protocol block verbatim from the canonical copy. (Decision 4, 📜 Rule: `skill-context-protocol`)
+6. **DO** name every home under `## Context` — `docs/drive/`, `docs/decision-records/`. (Decision 4, 📜 Rule: `skill-context-section`)
 
 ### Don'ts
 
@@ -89,8 +89,9 @@ Without a declaration nobody can tell which skills shape future agents. Without 
 
 ## Compliance and Enforcement
 
-1. **Planned rules** (`SKL-003-skill-context.rules.ts`, error, not yet built): a stateful skill carries the canonical protocol block unchanged and a `## Context` section.
-2. **Review:** `archgate:reviewer` checks Decisions 1–3 on every changed `SKILL.md`.
+1. **Rule** `skill-context-section` (archgate, error; `SKL-003-skill-context.rules.ts`): Decision 4.2 — a stateful skill has a `## Context` section that names a home.
+2. **Rule** `skill-context-protocol` (archgate, error; same file): Decision 4.1 — the `## Context` section carries the block of `docs/skills/context-protocol.md` byte for byte.
+3. **Review:** `archgate:reviewer` checks Decisions 1–3 on every changed `SKILL.md`.
 
 **Manual review duties:** a skill writing context declares the key; its writes land in a home and follow that home's README; produced files carry `type` and, unless append-only, `stale_after`.
 

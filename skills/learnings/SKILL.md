@@ -4,6 +4,7 @@ description: Use when a skill's last step asks "Record learnings from this run?"
 compatibility: git, gh for `file-upstream`, and Node.js 22.18 or later for the learnings CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
   version: '0.1.0'
+  state: stateful
 ---
 
 # Learnings
@@ -20,6 +21,19 @@ The store is `docs/learnings/<skill>/{records,failure-modes}/`. Its contract is 
 - Listing the failure modes a skill keeps hitting.
 - A repeated failure should be filed upstream.
 - NOT for: a clean run, which records nothing and asks nothing; a skill the README lists as off; fixing the failure itself.
+
+## Context
+
+Home this skill reads or writes:
+
+- `docs/learnings/`: the skill home, written only by learnings; its `README.md` is the store's contract and lists the skills whose learning is off.
+
+Context protocol (SKL-003), identical in every stateful skill:
+
+1. Before reading or writing a home, read its `README.md`: it is the home's contract.
+2. When the README is missing, setup has not run: run the skill's setup, ask its questions once and write the README.
+3. When reading a context file, compare its `stale_after` with today; review or refresh a stale file before relying on it.
+4. When the README's `generated.by` differs from this skill's version, migrate the home.
 
 ## Human gates
 

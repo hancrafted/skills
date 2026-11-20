@@ -3,7 +3,8 @@ name: drive
 description: Use when a grill starts, when a spec or its tickets are to be implemented, or when asked to drive or orchestrate, work on an integration branch or delegate to subagents. Runs a Workflow as its Orchestrator - grill and decide with the Operator, write Decision docs, delegate execution to Subagents on Task branches, merge into one Integration branch, review, then Fortify the repo's harness.
 compatibility: git, and Node.js 22.18 or later for the drive CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
-  version: '1.0.0'
+  version: '2.0.0'
+  state: stateful
 ---
 
 # Drive
@@ -20,6 +21,21 @@ You are the **Orchestrator** of one Workflow: the architect the Operator talks t
 - Handed a brief: you are its Subagent ([As a Subagent](#as-a-subagent)).
 - `/drive monitor <session-id>` to watch another session.
 - NOT for: a one-file edit with no Decision docs, spec or tickets; reviewing a PR you did not drive.
+
+## Context
+
+Homes this skill reads or writes:
+
+- `docs/drive/`: the skill home, written only by drive: setup answers, calibration and the version record in its `README.md`.
+- `docs/learnings/drive/`: the learnings store, written through `/learnings`, which owns it.
+- `docs/decision-records/`: the domain home of the project's Decision docs, bound by its `README.md`; the folder `docs/drive/project.yml` names wins.
+
+Context protocol (SKL-003), identical in every stateful skill:
+
+1. Before reading or writing a home, read its `README.md`: it is the home's contract.
+2. When the README is missing, setup has not run: run the skill's setup, ask its questions once and write the README.
+3. When reading a context file, compare its `stale_after` with today; review or refresh a stale file before relying on it.
+4. When the README's `generated.by` differs from this skill's version, migrate the home.
 
 ## Human gates
 
