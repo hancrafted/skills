@@ -25,7 +25,7 @@ Setup creates `docs/drive/learnings/{records,failure-modes}` and wires two check
 
 ## Model tiers
 
-Setup seeds each phase's `model` from `PHASE_TIERS` in `scripts/binding.pure.ts`: reason and verify `top`, the rest `mid`. `project.yml` maps each tier to a provider's model (`models: { claude: { mid: sonnet, top: opus } }`); add an entry for another provider and its harness resolves the tiers the same way. Change a phase's tier in `binding.yml` when experience shows its Subagents need more or less, and log why in a record under `docs/drive/learnings/records/`. The Orchestrator's own session override, when the Operator gives one, beats the Binding for that session.
+Setup seeds each phase's `model` from `PHASE_TIERS` in `scripts/core/binding.pure.ts`: reason and verify `top`, the rest `mid`. `project.yml` maps each tier to a provider's model (`models: { claude: { mid: sonnet, top: opus } }`); add an entry for another provider and its harness resolves the tiers the same way. Change a phase's tier in `binding.yml` when experience shows its Subagents need more or less, and log why in a record under `docs/drive/learnings/records/`. The Orchestrator's own session override, when the Operator gives one, beats the Binding for that session.
 
 ## The review file
 

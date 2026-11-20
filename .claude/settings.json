@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/skills/drive/scripts/claude-adapter.ts\" start",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/skills/drive/scripts/harness/claude/adapter.ts\" start",
             "async": true
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/skills/drive/scripts/claude-adapter.ts\" stop",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/skills/drive/scripts/harness/claude/adapter.ts\" stop",
             "async": true
           }
         ]

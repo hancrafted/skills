@@ -4,6 +4,14 @@ All notable changes to the drive skill are documented in this file. The format f
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the skill follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- The `drive` CLI's scripts are deep modules, one folder each under `scripts/` with one `index.ts`;
+  `node scripts/drive.ts <command>` is unchanged. The Claude adapter moved to `scripts/harness/claude/adapter.ts`:
+  rerun `drive setup` and drop the old `claude-adapter.ts` hooks from `.claude/settings.json`.
+
 ## [1.0.0] - 2026-11-19
 
 ### Added
@@ -16,5 +24,7 @@ All notable changes to the drive skill are documented in this file. The format f
 
 ### Changed
 
-- The seeded Binding header and the learnings-store config cite drive's Decision records 0001 and 0003 in
-  `hancrafted/skills`, not content-library's 0027 and 0030.
+- The seeded Binding header and the learnings-store config cite drive's Decision records
+  `docs/decision-records/drive/0001-workflow-phases-are-ports-bound-per-project.md` and
+  `docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md` in `hancrafted/skills`, not
+  content-library's 0027 and 0030.

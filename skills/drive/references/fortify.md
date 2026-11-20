@@ -55,7 +55,7 @@ _Done when:_ the record is `engaged`, every option is a failure-mode file or a r
 
 ## Where an option goes
 
-Each option has one target; the target decides where its fix lands (Decision record 0004 §4). Name it in the option's **Target** field.
+Each option has one target; the target decides where its fix lands (`docs/decision-records/drive/0004-drive-is-distributed-from-the-skills-repo.md` §4). Name it in the option's **Target** field.
 
 First tell the skill's copy apart: `skills/drive/SKILL.md` is a real file in this repo, so the skill is authored here; a symlink in `.agents/skills/` or `.claude/skills/` pointing to `skills/drive/` changes nothing. Otherwise the skill is installed here, and nobody edits it here.
 
@@ -67,7 +67,7 @@ First tell the skill's copy apart: `skills/drive/SKILL.md` is a real file in thi
 
 When the lock lacks `drive` or its `source`, the target is unknown: ask the Operator for the repo.
 
-A failure mode lives where its fix lives (Decision record 0004 §5). Records stay in this repo whatever the target. For a failure mode about the installed skill:
+A failure mode lives where its fix lives (`docs/decision-records/drive/0004-drive-is-distributed-from-the-skills-repo.md` §5). Records stay in this repo whatever the target. For a failure mode about the installed skill:
 
 1. File the upstream issue first: title the failure mode, body its evidence lines and the Enforcer proposed. Label it `fortify`, creating the label when the source repo lacks it.
 2. Set the local failure-mode file to `status: ticket` with `ticket:` the issue's URL, so recurrences are still counted here by `drive learnings list`.

@@ -1,6 +1,12 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "entry": [".archgate/adrs/*.rules.ts", "skills/*/scripts/*.ts", "skills/*/evals/*.ts"],
+  "entry": [
+    ".archgate/adrs/*.rules.ts",
+    "skills/*/scripts/*.ts",
+    "skills/*/scripts/**/index.ts",
+    "skills/drive/scripts/harness/claude/adapter.ts",
+    "skills/*/evals/*.ts"
+  ],
   "project": [
     "*.ts",
     "*.mts",
