@@ -1,6 +1,6 @@
 ---
 title: 'A path predicate fails on a trailing-slash input and has no fast test'
-enforcer: 'test: a pure unit test of the predicate in the pure module'
+enforcer: 'test-runner: new pure unit test of the predicate in the pure module'
 status: proposed
 ---
 

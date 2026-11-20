@@ -1,6 +1,6 @@
 ---
 title: "An agent's file search skips a gitignored or symlinked cache and reports it missing"
-enforcer: "test: a slow check that the index's presence test works with the agent's search tools"
+enforcer: 'test-runner: new slow test that the index presence test works with the agent search tools'
 status: proposed
 ---
 
