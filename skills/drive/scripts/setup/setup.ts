@@ -12,7 +12,6 @@ import {
   type SeedOptions,
   updateBinding,
 } from '../core/index.ts';
-import { FAILURE_MODES_FOLDER, LEARNINGS_STORE, RECORDS_FOLDER } from '../learnings/index.ts';
 import { missingBindingSkills, parseSetupArgs } from './args.pure.ts';
 import { enforcerFacts, projectFacts } from './facts.ts';
 import { adapterHookNote, addAdapterHooks, SETTINGS_FILE } from './hooks.pure.ts';
@@ -23,7 +22,6 @@ import {
   guardCiLine,
   guardCommand,
   guardHookLine,
-  LEARNINGS_README,
   learningsCheckCommand,
   learningsCheckNote,
   renderEnforcers,
@@ -112,9 +110,6 @@ export function setup(root: string, scriptsRoot: string, options: SeedOptions = 
   write(`${DRIVE_FOLDER}/enforcers.yml`, renderEnforcers(detectEnforcers(enforcerFacts(root))));
   notes.push(...wire(root, { entry, baseBranch: facts.baseBranch }, write));
   createdOnly(`${DRIVE_FOLDER}/profiles.md`, PROFILES_STUB);
-  createdOnly(`${LEARNINGS_STORE}/README.md`, LEARNINGS_README);
-  for (const folder of [RECORDS_FOLDER, FAILURE_MODES_FOLDER])
-    mkdirSync(path.join(root, LEARNINGS_STORE, folder), { recursive: true });
   createdOnly(`${DRIVE_FOLDER}/review.md`, REVIEW_STUB);
   return { written, notes };
 }

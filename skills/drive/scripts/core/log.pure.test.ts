@@ -25,8 +25,8 @@ describe('success cases', () => {
         topic: 'sweep',
       },
       { name: '--base alone', argv: ['worktree', 'sync', '--base', 'chore/other'], cwd: 'main', topic: 'other' },
-      { name: 'the cwd branch otherwise', argv: ['learnings', 'check'], cwd: 'chore/third--2-b', topic: 'third' },
-      { name: 'nothing on main without either', argv: ['learnings', 'check'], cwd: 'main', topic: null },
+      { name: 'the cwd branch otherwise', argv: ['status', 'sweep'], cwd: 'chore/third--2-b', topic: 'third' },
+      { name: 'nothing on main without either', argv: ['status', 'sweep'], cwd: 'main', topic: null },
       { name: 'a flag is no branch', argv: ['worktree', 'done', '--base', 'chore/sweep'], cwd: 'main', topic: 'sweep' },
     ])('reads $name', ({ argv, cwd, topic }) => {
       // ARRANGE
@@ -89,7 +89,7 @@ describe('edge cases', () => {
     it('derives the base of a task branch from its name and falls back to the configured base on an Integration branch', () => {
       // ARRANGE
       const facts = {
-        argv: ['learnings', 'check'],
+        argv: ['status', 'sweep'],
         base: 'main',
         exit: 0,
         lastError: '',

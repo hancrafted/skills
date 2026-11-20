@@ -3,13 +3,17 @@ import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { USAGE } from './args.pure.ts';
 import { learningsReport } from './learnings.ts';
+import type { Outcome } from './process.ts';
 const REPO_ROOT = path.resolve(import.meta.dirname, '../../../..');
 const MARKDOWN_HARNESS = path.join(REPO_ROOT, 'node_modules/.bin/mh');
 const CONFIG = path.join(import.meta.dirname, '..', '..', 'markdown-harness.config.yaml');
 const FIXED = 'push-exits-zero';
 const FAILURE_MODE = [
   '---',
+  'type: failure-mode',
+  'stale_after: 2026-12-20',
   'title: drive push exits 0 when the remote rejected the commit',
   "enforcer: 'test-runner: test'",
   'status: fixed',
@@ -31,6 +35,7 @@ const FAILURE_MODE = [
 ].join('\n');
 const VALID_RECORD = [
   '---',
+  'type: record',
   'workflow: sweep',
   'date: 2026-11-19',
   'fortify: skipped',
@@ -47,6 +52,7 @@ const VALID_RECORD = [
 ].join('\n');
 const INVALID_RECORD = [
   '---',
+  'type: record',
   'workflow: sweep',
   'date: 2026-11-19',
   'fortify: maybe',
@@ -87,13 +93,20 @@ const violationsOf = (report: CheckReport): string[] =>
     ),
   );
 
-const STORE = 'docs/drive/learnings';
+const STORE = 'docs/learnings/drive';
+const SKILL = 'drive';
+const TODAY = '2026-11-20';
+const NO_GH = (): Outcome => ({ status: 1, stdout: '', stderr: 'gh must not run' });
+const PORTS = { gh: NO_GH, today: TODAY };
+const runLearnings = (root: string, argv: readonly string[]) => learningsReport(root, argv, PORTS);
 const PROPOSED = 'guard-covers-husky-only';
 const FIXED_TITLE = 'drive push exits 0 when the remote rejected the commit';
 const PROPOSED_TITLE = 'Guard wiring covers husky only';
 const failureMode = (title: string, status: readonly string[]) =>
   [
     '---',
+    'type: failure-mode',
+    'stale_after: 2026-12-20',
     `title: ${title}`,
     "enforcer: 'test-runner: test'",
     ...status,
@@ -109,6 +122,7 @@ const failureMode = (title: string, status: readonly string[]) =>
 const recordFile = (workflow: string, date: string, body: readonly string[]) =>
   [
     '---',
+    'type: record',
     `workflow: ${workflow}`,
     `date: ${date}`,
     'fortify: engaged',
@@ -166,7 +180,7 @@ describe('success cases', () => {
         exit: 0,
       };
       // ACT
-      const report = learningsReport(root, []);
+      const report = runLearnings(root, ['list', '--skill', SKILL]);
       // ASSERT
       expect(report).toEqual(expected);
     });
@@ -179,7 +193,10 @@ describe('success cases', () => {
         { output: `✔ ${STORE}: 2 failure modes, 0 records`, exit: 0 },
       ];
       // ACT
-      const reports = [learningsReport(root, ['similar', 'push', 'hangs']), learningsReport(root, ['check'])];
+      const reports = [
+        runLearnings(root, ['similar', '--skill', SKILL, 'push', 'hangs']),
+        runLearnings(root, ['check', '--skill', SKILL]),
+      ];
       // ASSERT
       expect(reports).toEqual(expected);
     });
@@ -213,12 +230,12 @@ describe('failure cases', () => {
       const expected = {
         output: [
           '✖ docs/drive/learnings.md exists beside the learnings store: move its entries into records/ and failure-modes/, then delete it',
-          '✖ records/2026-11-19-sweep.md: ## made-up-mode names no failure-modes/made-up-mode.md; cite an existing one (drive learnings similar "<failure>") or create it',
+          `✖ ${STORE}/records/2026-11-19-sweep.md: ## made-up-mode names no failure-modes/made-up-mode.md; cite an existing one (learnings similar --skill ${SKILL} "<failure>") or create it`,
         ].join('\n'),
         exit: 1,
       };
       // ACT
-      const report = learningsReport(root, ['check']);
+      const report = runLearnings(root, ['check', '--skill', SKILL]);
       // ASSERT
       expect(report).toEqual(expected);
     });
@@ -227,11 +244,11 @@ describe('failure cases', () => {
       // ARRANGE
       const root = repo({ [`${STORE}/records/2026-11-19-sweep.md`]: '# no front matter\n' });
       const expected = [
-        { output: '✖ records/2026-11-19-sweep.md: no front matter', exit: 1 },
-        { output: 'usage: drive learnings [list | similar "<failure>" | check]', exit: 1 },
+        { output: `✖ ${STORE}/records/2026-11-19-sweep.md: no front matter`, exit: 1 },
+        { output: `✖ unknown verb "count"\n✖ ${USAGE}`, exit: 1 },
       ];
       // ACT
-      const reports = [learningsReport(root, ['check']), learningsReport(repo({}), ['count'])];
+      const reports = [runLearnings(root, ['check', '--skill', SKILL]), runLearnings(repo({}), ['count'])];
       // ASSERT
       expect(reports).toEqual(expected);
     });
@@ -261,7 +278,7 @@ describe('edge cases', () => {
       const root = repo({ 'docs/drive/learnings.md': '# Drive learnings\n' });
       const expected = { output: `✔ ${STORE}: 0 failure modes, 0 records`, exit: 0 };
       // ACT
-      const report = learningsReport(root, ['check']);
+      const report = runLearnings(root, ['check', '--skill', SKILL]);
       // ASSERT
       expect(report).toEqual(expected);
     });
@@ -271,7 +288,7 @@ describe('edge cases', () => {
       const root = repo(MODES);
       const expected = { output: 'no failure mode shares a word with "quota reset": create one', exit: 0 };
       // ACT
-      const report = learningsReport(root, ['similar', 'quota reset']);
+      const report = runLearnings(root, ['similar', '--skill', SKILL, 'quota reset']);
       // ASSERT
       expect(report).toEqual(expected);
     });

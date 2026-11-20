@@ -192,6 +192,7 @@ describe('success cases', () => {
     const problems = storeProblems({
       modes: MODES,
       records,
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT
@@ -200,16 +201,17 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
-  it('names a record H2 that has no failure-mode file, and points at drive learnings similar', () => {
+  it('names a record H2 that has no failure-mode file, and points at learnings similar --skill', () => {
     // ARRANGE
     const records = [record('2026-11-19', 'sweep', [evidence('no-such-mode')])];
     const expected = [
-      'records/2026-11-19-sweep.md: ## no-such-mode names no failure-modes/no-such-mode.md; cite an existing one (drive learnings similar "<failure>") or create it',
+      'records/2026-11-19-sweep.md: ## no-such-mode names no failure-modes/no-such-mode.md; cite an existing one (learnings similar --skill drive "<failure>") or create it',
     ];
     // ACT
     const problems = storeProblems({
       modes: MODES,
       records,
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT
@@ -225,6 +227,7 @@ describe('failure cases', () => {
     const problems = storeProblems({
       modes: MODES,
       records: [],
+      skill: 'drive',
       legacyFileExists: true,
     });
     // ASSERT
@@ -241,6 +244,7 @@ describe('failure cases', () => {
     const problems = storeProblems({
       modes: MODES,
       records,
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT
@@ -259,11 +263,13 @@ describe('failure cases', () => {
     const accepted = storeProblems({
       modes: MODES,
       records: [pending],
+      skill: 'drive',
       legacyFileExists: false,
     });
     const refused = storeProblems({
       modes: MODES,
       records: [withReason],
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT
@@ -304,6 +310,7 @@ describe('failure cases', () => {
     const problems = storeProblems({
       modes,
       records: [],
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT
@@ -331,6 +338,7 @@ describe('failure cases', () => {
     const problems = storeProblems({
       modes: MODES,
       records,
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT
@@ -366,6 +374,7 @@ describe('edge cases', () => {
     const problems = storeProblems({
       modes: [],
       records: [],
+      skill: 'drive',
       legacyFileExists: true,
     });
     // ASSERT
@@ -386,6 +395,7 @@ describe('edge cases', () => {
     const problems = storeProblems({
       modes: MODES,
       records,
+      skill: 'drive',
       legacyFileExists: false,
     });
     // ASSERT

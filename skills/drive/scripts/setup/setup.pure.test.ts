@@ -17,7 +17,7 @@ const FACTS = {
   driveEntry: 'skills/drive/scripts/drive.ts',
   decisionDocs: ['docs/decision-records/**'],
 };
-const COMMAND = 'mh check --root docs/drive/learnings --config x.yaml && node d.ts learnings check';
+const COMMAND = 'mh check --root docs/learnings/drive --config x.yaml && node l.ts check';
 
 describe('success cases', () => {
   describe('detectEnforcers', () => {
@@ -160,10 +160,10 @@ describe('success cases', () => {
     });
   });
   describe('learningsCheckCommand', () => {
-    it('runs mh over the learnings store with the config the skill ships, then the drive learnings check', () => {
+    it('runs mh over the learnings store with the config the skill ships, then the learnings check', () => {
       // ARRANGE
       const expected =
-        'mh check --root docs/drive/learnings --config skills/drive/markdown-harness.config.yaml && node skills/drive/scripts/drive.ts learnings check';
+        'mh check --root docs/learnings/drive --config skills/learnings/markdown-harness.config.yaml && node skills/learnings/scripts/learnings.ts check';
       // ACT
       const command = learningsCheckCommand('skills/drive/scripts/drive.ts');
       // ASSERT

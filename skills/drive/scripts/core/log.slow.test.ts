@@ -46,7 +46,7 @@ describe('success cases', () => {
       const root = repo('chore/sweep--1-a');
       // ACT
       node('drive.ts', ['nonsense'], { cwd: root });
-      node('drive.ts', ['learnings', 'check'], { cwd: root });
+      node('drive.ts', ['status', 'sweep'], { cwd: root });
       // ASSERT
       const [first, second] = logOf(root, 'sweep');
       expect(first).toMatchObject({
@@ -55,7 +55,7 @@ describe('success cases', () => {
         exit: 1,
       });
       expect((first as { result: string }).result).toContain("unknown group 'nonsense'");
-      expect(second).toMatchObject({ cmd: 'learnings check' });
+      expect(second).toMatchObject({ cmd: 'status sweep' });
     });
   });
   describe('claude adapter hook', () => {
@@ -124,7 +124,7 @@ describe('failure cases', () => {
       // ARRANGE
       const root = repo('main2');
       // ACT
-      const result = node('drive.ts', ['learnings', 'check'], { cwd: root });
+      const result = node('drive.ts', ['guard'], { cwd: root });
       // ASSERT
       expect(result.status).toBe(0);
       expect(() => readFileSync(path.join(root, '.scratch'))).toThrow();
