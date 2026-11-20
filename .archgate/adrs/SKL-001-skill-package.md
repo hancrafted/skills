@@ -29,7 +29,7 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 ### 2. The body loads cheaply
 
 1. `SKILL.md` is at most 500 lines (planned rule: `skill-size-budget`).
-2. Exactly one H1, the skill's title (planned rule: `skill-single-h1`).
+2. Exactly one H1, the skill's title; the body-frame rule in the skills config checks it.
 3. Links from `SKILL.md` go one level deep: `SKILL.md` → `references/setup.md`; a linked file never links on to another file of the skill (planned rule: `skill-links-one-level`).
 4. A reference file over 100 lines opens with a table of contents — a list linking its own headings, before its first H2 (planned rule: `skill-reference-toc`).
 
@@ -45,7 +45,7 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 1. **DO** front-load the description's trigger — `Use when the user asks to commit…`. (Decision 1)
 2. **DO** name the folder and the `name` key the same. (Decision 1, planned rule: `skill-name-matches-folder`)
 3. **DO** move branch detail into `references/` before the body nears 500 lines. (Decision 2, planned rule: `skill-size-budget`)
-4. **DO** keep one H1. (Decision 2, planned rule: `skill-single-h1`)
+4. **DO** keep one H1. (Decision 2)
 5. **DO** link every reference straight from `SKILL.md`. (Decision 2, planned rule: `skill-links-one-level`)
 6. **DO** open a long reference with its contents. (Decision 2, planned rule: `skill-reference-toc`)
 7. **DO** put new material in a known folder. (Decision 3, planned rule: `skill-allowed-layout`)

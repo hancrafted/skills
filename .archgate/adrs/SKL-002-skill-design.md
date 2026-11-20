@@ -6,7 +6,7 @@ domain: skills
 rules: false
 files: ['skills/*/SKILL.md']
 paths: ['skills/**']
-description: 'How a skill under skills/ is shaped: engineering principles applied to agent instructions, shift-left workflows, declared human gates and two body skeletons.'
+description: 'How a skill under skills/ is shaped: engineering principles applied to agent instructions, shift-left workflows, declared human gates and one body frame adopted from Addy Osmani's skill anatomy.'
 ---
 
 # Skill Design
@@ -17,7 +17,7 @@ What works for humans works for agents: a module with one job, a stable contract
 
 Agents also stall where a human must answer. A workflow that asks late, or stops without saying why, cannot run unattended. Asking early, keeping the answers and declaring every stop up front moves the human to the start — shift left.
 
-Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are excluded. Most of this needs judgement, so a reviewer checks it and it never blocks the gate. Only the shape of the human-gates list is mechanical.
+Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are excluded. Most of this needs judgement, so a reviewer checks it and it never blocks the gate. The body frame and the shape of the human-gates list are mechanical; what goes inside the frame is judged.
 
 ## Decision
 
@@ -38,56 +38,34 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 4. A fixed minimum of gates — irreversible or outward-facing — is written in `SKILL.md`; extra gates are calibrated at setup and stored in the skill's home.
 5. A skill with any gate has a `## Human gates` section: a non-empty list, every item one line reading `<trigger>: <reason>`, both parts filled — `Before deleting an unpushed branch: data loss.` (planned rule: `skill-human-gates-section`).
 
-### 3. Two body skeletons
+### 3. One body frame
 
-1. **Task skill:** one H1, an intro; H2 is a phase or topic, never a step; H3 `### N. <Step>` enumerates steps; each step ends `_Done when:_ …`; the last step is `### N. Learn`.
-2. **Reference skill:** one H1, an intro, topic H2s, no steps.
-3. Body shape is taught by these skeletons and judged by review; there are no markdown-harness body rules.
-4. Plain prose: one term per concept, imperative mood, no time-sensitive text — `before August 2025`.
-
-Task skill:
+1. Every skill follows Addy Osmani's skill anatomy, with fixed sections in this order and a free process middle:
 
 ```markdown
-# Cleanup
+# Title
 
-Removes merged branches and worktrees. Not for unmerged work.
+## Overview
 
-## Human gates
+## When to Use positive triggers and "NOT for …"
 
-- Before deleting a branch with unpushed commits: data loss.
+## Context stateful skills only
 
-## Gather
+## Human gates when the skill has gates
 
-### 1. Choose the mode
+## <process H2s> free names; ### N. Step under them
 
-… _Done when:_ the mode is named.
+## Common Rationalizations excuse | rebuttal table
 
-## Act
+## Red Flags observable signs of a violation
 
-### 2. Remove what was authorized
-
-… _Done when:_ every authorized item is gone.
-
-### 3. Learn
-
-If `/learnings` is available and the run had a correction or a failed step, ask "Record learnings from this run?". Otherwise skip. _Done when:_ asked or skipped.
+## Verification evidence checklist, then ### N. Learn
 ```
 
-Reference skill:
-
-```markdown
-# Commit
-
-Writes a Conventional Commits message with a Keep a Changelog body.
-
-## The message contract
-
-…
-
-## Setting up the gate
-
-…
-```
+2. Departures from the anatomy: Claude Code frontmatter keys stay allowed; no shared references at the repo root, every skill is self-contained; its bash script rules do not apply; fixed sections use its exact names.
+3. Inside the frame: each step ends `_Done when:_ …`; Verification items need evidence — test output, a command's exit code; the last step is `### N. Learn`.
+4. Common Rationalizations and Red Flags are required; new rows come from the skill's learnings, never invented.
+5. Write the procedure, not the workaround: no step justified only by one model's mistake. Plain prose: one term per concept, imperative mood, no time-sensitive text.
 
 ## Do's and Don'ts
 
@@ -99,7 +77,8 @@ Writes a Conventional Commits message with a Keep a Changelog body.
 4. **DO** ask every question in one batch before acting, and store answers that hold across runs. (Decision 2)
 5. **DO** list each gate as `<trigger>: <reason>` under `## Human gates`. (Decision 2, planned rule: `skill-human-gates-section`)
 6. **DO** put irreversible and outward-facing gates in `SKILL.md`; leave the rest to setup. (Decision 2)
-7. **DO** end every step with `_Done when:_` and the skill with `### N. Learn`. (Decision 3)
+7. **DO** end every step with `_Done when:_` and Verification with `### N. Learn`. (Decision 3)
+8. **DO** add a rationalization row when a learning shows the excuse. (Decision 3)
 
 ### Don'ts
 
@@ -109,6 +88,7 @@ Writes a Conventional Commits message with a Keep a Changelog body.
 4. **DON'T** ask the human mid-run for something setup could have stored. (Decision 2)
 5. **DON'T** stop for approval at a point the skill never declared. (Decision 2)
 6. **DON'T** number H2s as steps — `## 1. Gather` becomes `## Gather` plus `### 1. …`. (Decision 3)
+7. **DON'T** add a heading outside the frame — `## See Also` after Verification. (Decision 3)
 
 ## Consequences
 
@@ -116,13 +96,14 @@ Writes a Conventional Commits message with a Keep a Changelog body.
 
 1. **Unattended runs:** after the first batch of questions a skill runs to the end or to a declared gate.
 2. **Replaceable skills:** readers depend on contracts, so a skill can be rewritten or swapped without moving its data.
-3. **Predictable bodies:** an agent finds steps, gates and phases at the same levels in every skill.
+3. **Predictable bodies:** every skill has the same sections in the same order, and the agent meets its excuses rebutted before it acts.
 4. **Growing autonomy:** extra gates are setup answers, so trust is tuned per repo without editing the skill.
 
 **Negative:**
 
-1. **Refactor cost:** existing skills move their numbered H2 steps to H3 and gain a Learn step.
-2. **Mostly judgement:** the principles are checked by review, not by the gate.
+1. **Refactor cost:** existing skills move numbered H2 steps to H3 and gain Overview, When to Use, Common Rationalizations, Red Flags and Verification.
+2. **Context cost:** the three closing sections add about an eighth to every body.
+3. **Mostly judgement:** the principles are checked by review, not by the gate.
 
 **Risks:**
 
@@ -131,14 +112,17 @@ Writes a Conventional Commits message with a Keep a Changelog body.
 
 ## Compliance and Enforcement
 
-1. **Rule** (planned, `SKL-002-skill-design.rules.ts`, error): Decision 2.5 — when `## Human gates` exists, it is a non-empty list whose every item reads `<trigger>: <reason>`.
-2. **Review:** `archgate:reviewer` checks Decisions 1, 2.1–2.4 and 3 on every changed `SKILL.md`; until the rule ships, Decision 2.5 too.
+1. **Frame:** a closed body-structure rule in `skills/markdown-harness.config.yaml` checks Decision 3.1 and the closing Learn step, with an `intent` per heading; `mh check` runs in the pre-commit gate.
+2. **Rule** (planned, `SKL-002-skill-design.rules.ts`, error): Decision 2.5 — when `## Human gates` exists, it is a non-empty list whose every item reads `<trigger>: <reason>`.
+3. **Review:** `archgate:reviewer` checks Decisions 1, 2.1–2.4 and 3.2–3.5 on every changed `SKILL.md`; until the rule ships, Decision 2.5 too.
 
-**Manual review duties:** principles, shift left, skeleton fit and prose; every stop in the body is listed under `## Human gates`.
+**Manual review duties:** principles, shift left, content inside the frame and prose; every stop in the body is listed under `## Human gates`.
 
 **Exceptions:** raise a separate ADR; human approval required.
 
 ## References
+
+- [Skill anatomy — Addy Osmani, agent-skills (MIT)](https://github.com/addyosmani/agent-skills/blob/main/docs/skill-anatomy.md) — the frame, section purposes, writing principles, write the procedure not the workaround.
 
 - [Skill authoring best practices — Anthropic](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices) — concision, workflows with checklists, one term per concept, no time-sensitive text.
 - [Effective context engineering for AI agents — Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — progressive disclosure, persistent notes.
