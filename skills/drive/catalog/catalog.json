@@ -1,0 +1,25 @@
+{
+  "source": "mattpocock/skills",
+  "skills": {
+    "grilling": ["define"],
+    "grill-me": ["define"],
+    "grill-with-docs": ["define", "reason"],
+    "research": ["define"],
+    "domain-modeling": ["reason"],
+    "codebase-design": ["reason"],
+    "prototype": ["reason"],
+    "to-spec": ["reason"],
+    "to-tickets": ["reason"],
+    "wayfinder": ["reason"],
+    "handoff": ["reason"],
+    "improve-codebase-architecture": ["reason", "verify", "evolve"],
+    "tdd": ["implement"],
+    "implement": ["implement"],
+    "diagnosing-bugs": ["implement"],
+    "code-review": ["verify"],
+    "pr": ["verify"],
+    "retro": ["evolve"],
+    "writing-for-agents": ["evolve"]
+  },
+  "decisionFolders": ["docs/decision-records", "docs/adrs", "docs/decisions", "docs/features"]
+}

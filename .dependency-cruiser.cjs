@@ -11,6 +11,17 @@ module.exports = {
       to: { path: '^skills/[^/]+/scripts/', pathNot: '^skills/$1/scripts/' },
     },
     {
+      name: 'module-folder-through-index',
+      severity: 'error',
+      comment:
+        "A folder under drive's scripts/ is a module: code outside it imports only its index.ts. The rule governs drive; #75 widens it.",
+      from: { path: '^skills/drive/scripts/(?:[^/]+$|([^/]+)/)' },
+      to: {
+        path: '^skills/drive/scripts/[^/]+/',
+        pathNot: ['^skills/drive/scripts/[^/]+/index\\.ts$', '^skills/drive/scripts/$1/'],
+      },
+    },
+    {
       name: 'pure-no-node-io',
       severity: 'error',
       comment: 'Pure modules accept data and return values; I/O belongs in process adapters.',

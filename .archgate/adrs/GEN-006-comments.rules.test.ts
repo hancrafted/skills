@@ -31,7 +31,8 @@ const DOCS: Record<string, string> = {
   [ADR]: adrWith(REGISTRY_TABLE),
   '.archgate/adrs/ARCH-003-testing.md':
     '# Scene\n\n## Decision\n\n### 1. Wrapper\n\n1. One.\n\n### 4. Scene\n\n1. One.\n2. Two.\n3. Three.\n\n## Consequences\n\n### 7. Not a decision\n',
-  'docs/adr/0017-example.md': '# Source tree\n',
+  'docs/decision-records/0017-example.md': '# Source tree\n',
+  'docs/decision-records/drive/0004-example.md': '# Source tree\n',
 };
 
 const TS = 'tests/probe/probe.test.ts';
@@ -112,7 +113,16 @@ describe('no-comments', () => {
     const pointers: [label: string, file: string, source: string][] = [
       ['decision: to an ADR §', TS, '// decision: ARCH-003 §4\nexport const a = 1;\n'],
       ['decision: to an ADR §n.m', TS, '// decision: ARCH-003 §4.3\nexport const a = 1;\n'],
-      ['decision: to a design-ADR', TS, '// decision: docs/adr/0017-example.md\nexport const a = 1;\n'],
+      [
+        'decision: to a Decision record',
+        TS,
+        '// decision: docs/decision-records/0017-example.md\nexport const a = 1;\n',
+      ],
+      [
+        'decision: to a skill’s Decision record',
+        TS,
+        '// decision: docs/decision-records/drive/0004-example.md\nexport const a = 1;\n',
+      ],
       [
         'tech-debt: to this repo’s issue',
         TS,
@@ -314,9 +324,9 @@ describe('no-comments', () => {
         'ARCH-003 has no Decision §7',
       ],
       [
-        'a design-ADR that does not exist',
-        '// decision: docs/adr/0999-gone.md\nexport const a = 1;\n',
-        'docs/adr/0999-gone.md does not exist',
+        'a Decision record that does not exist',
+        '// decision: docs/decision-records/0999-gone.md\nexport const a = 1;\n',
+        'docs/decision-records/0999-gone.md does not exist',
       ],
     ];
     for (const [label, source, expected] of brokenPointers) {
@@ -350,6 +360,11 @@ describe('no-comments', () => {
         'tech-debt: takes',
       ],
       ['decision: with no target', '// decision:\nexport const a = 1;\n', 'decision: takes'],
+      [
+        'decision: to the retired docs/adr folder',
+        '// decision: docs/adr/0017-example.md\nexport const a = 1;\n',
+        'decision: takes',
+      ],
     ];
     for (const [label, source, expected] of wrongKind) {
       it(`reports a pointer label with the wrong kind of target: ${label}`, async () => {

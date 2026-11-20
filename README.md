@@ -25,8 +25,9 @@ linking to the working source.
 
 ## Skills
 
-| Skill                                    | What it does                                                                                                                                                                        |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`commit`](skills/commit/SKILL.md)       | Authors a commit message git history can be mined from, and carries the zero-dependency shell gate that enforces it. `--setup-husky` wires that gate into a repository's git hooks. |
-| [`cleanup`](skills/cleanup/SKILL.md)     | Cleans up local branches and worktrees after a merged PR, or classifies repository-wide cleanup candidates for approval.                                                            |
-| [`to-review`](skills/to-review/SKILL.md) | Creates standalone HTML for human review with feedback controls, an offline browser grader and two approved eval baselines.                                                         |
+| Skill                                    | What it does                                                                                                                                                                                                         |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`commit`](skills/commit/SKILL.md)       | Authors a commit message git history can be mined from, and carries the zero-dependency shell gate that enforces it. `--setup-husky` wires that gate into a repository's git hooks.                                  |
+| [`cleanup`](skills/cleanup/SKILL.md)     | Cleans up local branches and worktrees after a merged PR, or classifies repository-wide cleanup candidates for approval.                                                                                             |
+| [`drive`](skills/drive/SKILL.md)         | Runs a Workflow as its Orchestrator: grill and decide with the Operator, delegate tickets to Subagents on Task branches, merge into one Integration branch, review, then Fortify the harness. Ships the `drive` CLI. |
+| [`to-review`](skills/to-review/SKILL.md) | Creates standalone HTML for human review with feedback controls, an offline browser grader and two approved eval baselines.                                                                                          |

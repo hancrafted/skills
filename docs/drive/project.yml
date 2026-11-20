@@ -1,0 +1,23 @@
+worktree:
+  dir: .worktrees
+  baseBranch: main
+  remote: origin
+  invoke: node skills/drive/scripts/drive.ts worktree
+  install:
+    - npm ci
+  beforeMerge: []
+# Subagents at once: the lower of `default` and `harnessCap`, the rest queue. `harnessCap` records the agent
+# harness's own limit beside it; `drive` never writes harness settings.
+parallel:
+  default: 3
+  harnessCap: 10
+# Model tiers: the Binding names a tier per phase (mid | top); each provider entry maps a tier to its model.
+# The harness resolves a tier through its own provider entry.
+models:
+  claude:
+    mid: sonnet
+    top: opus
+# Decision docs: paths and globs that change only on a `decisions/*` branch.
+decisionDocs:
+  - docs/decision-records/**
+  - '**/GLOSSARY*.md'

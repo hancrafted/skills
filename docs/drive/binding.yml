@@ -1,0 +1,86 @@
+# The Binding (hancrafted/skills docs/decision-records/drive/0001-workflow-phases-are-ports-bound-per-project.md): which skills serve each DRIVE phase (n:m), the model tier each phase's Subagents run on,
+# and the agent type every agent uses. `drive setup` seeds it and adds newly installed skills; you own every edit.
+# `skills` and `model` (a tier, mid or top, mapped to models in project.yml) per phase are yours to change;
+# `seen` lists the skills setup has already offered, so one you
+# remove here is not added back.
+# `notify.adapter` (push-notification | none) names how the Orchestrator reaches you at the Decision gate;
+# the CLI sends nothing.
+
+agentType: general-purpose
+notify:
+  adapter: push-notification
+phases:
+  define:
+    model: mid
+    skills:
+      - grill-me
+      - grill-with-docs
+      - grilling
+      - research
+  reason:
+    model: top
+    skills:
+      - to-review
+      - codebase-design
+      - domain-modeling
+      - grill-with-docs
+      - handoff
+      - improve-codebase-architecture
+      - prototype
+      - to-spec
+      - to-tickets
+      - wayfinder
+  implement:
+    model: mid
+    skills:
+      - commit
+      - diagnosing-bugs
+      - implement
+      - tdd
+  verify:
+    model: top
+    skills:
+      - code-review
+      - improve-codebase-architecture
+      - pr
+  evolve:
+    model: mid
+    skills:
+      - cleanup
+      - to-review
+      - improve-codebase-architecture
+      - retro
+      - writing-for-agents
+seen:
+  - cleanup
+  - commit
+  - to-review
+  - agents
+  - ask-matt
+  - code-review
+  - codebase-design
+  - diagnosing-bugs
+  - domain-modeling
+  - grill-me
+  - grill-with-docs
+  - grilling
+  - handoff
+  - implement
+  - implement-spec
+  - improve-codebase-architecture
+  - pr
+  - prototype
+  - research
+  - retro
+  - scripts
+  - setup-matt-pocock-skills
+  - tdd
+  - teach
+  - to-questionnaire
+  - to-spec
+  - to-tickets
+  - triage
+  - wait-what
+  - wayfinder
+  - wizard
+  - writing-for-agents

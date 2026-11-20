@@ -1,0 +1,118 @@
+# The drive learnings store (hancrafted/skills docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md):
+# run with --root docs/drive/learnings, so folders are relative to it. `drive learnings check` holds what a field rule
+# cannot: every record H2 names a failure-mode file, a fixed failure mode cited after its fix carries a Regressed
+# bullet, status and skip fields agree, and no learnings.md sits beside a migrated store.
+frontmatter:
+  rules:
+    - ruleId: drive-learnings-record
+      folders: [records/]
+      intent: 'A record is what one Workflow hit, written once at the end of Verify and never edited after its Fortify question, so Fortify counts recurrences from records instead of from a typed number. Fail if the file name is not <date>-<workflow>.md.'
+      unknownKeys: forbidden
+      fields:
+        workflow:
+          presence: required
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          intent: 'The Workflow topic exactly as its .scratch/<topic>/ folder spells it, so the record traces back to its decisions log and transcripts.'
+        date:
+          presence: required
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          intent: "The day the Workflow's Verify ended, YYYY-MM-DD. drive learnings compares it with each cited failure mode's fixed-on to find regressions."
+        fortify:
+          presence: required
+          allowed:
+            - {
+                value: pending,
+                intent: 'Written at the end of Verify, before the Operator answers "Fortify now or skip?". Replace it with engaged or skipped the moment he answers.',
+              }
+            - {
+                value: engaged,
+                intent: 'The Operator answered yes to "Fortify now or skip?"; the Fortify branch adds corrections made after the merge.',
+              }
+            - {
+                value: skipped,
+                intent: 'The Operator answered skip. Write skip-reason in his words; the learnings are still recorded, nothing is asked again.',
+              }
+        skip-reason:
+          intent: 'Required when fortify is skipped, absent when pending or engaged: the Operator''s reason, verbatim ("deadline 17:30", "skipp fortify").'
+    - ruleId: drive-learnings-failure-mode
+      folders: [failure-modes/]
+      intent: 'A failure mode is one narrow way a Workflow went wrong that a single Enforcer could catch; its file is the stable thing every record cites by file name, and it never holds a count. Search with `drive learnings similar "<failure>"` first and reuse a file whose Enforcer would also catch this case; create one only when none would.'
+      unknownKeys: forbidden
+      fields:
+        title:
+          presence: required
+          maxLength: 120
+          intent: 'One line naming the symptom an observer sees, subject first: "drive push exits 0 when the remote rejected the commit". Equal to the H1. Fail if catching everything it says would take two Enforcers: split it into two failure modes.'
+        enforcer:
+          presence: required
+          pattern: '^(adr-checker|linter|type-checker|test-runner|formatter|check|hook|review): \S'
+          intent: '<kind>: <name>, the kind from docs/drive/enforcers.yml and the name of the Enforcer listed there, or "new <what>" for one to build ("hook: new PreToolUse hook on wt:new"). review: <who reads for it> only when no deterministic check can see it.'
+        status:
+          presence: required
+          allowed:
+            - { value: proposed, intent: 'Named, nothing filed. The default for a new failure mode.' }
+            - { value: ticket, intent: 'A ticket will fix it: set ticket to its URL.' }
+            - {
+                value: fixed,
+                intent: 'Its Enforcer landed: set fixed-by and fixed-on; keep ticket if it had one. A record dated after fixed-on that cites it is a regression and must say so.',
+              }
+            - {
+                value: wontfix,
+                intent: 'Accepted as is: set reason. Records may still cite it, and the count shows what the acceptance costs.',
+              }
+        ticket:
+          format: uri
+          intent: 'The tracker URL of the ticket that fixes it. Required with status ticket; keep it when the status moves on.'
+        fixed-by:
+          format: uri
+          intent: 'The merged PR URL or merge commit that made the Enforcer catch it. Required with status fixed.'
+        fixed-on:
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          intent: 'The day fixed-by merged, YYYY-MM-DD. Required with status fixed; records dated after it count as regressions.'
+        reason:
+          intent: 'Why it stays unfixed, in one sentence the Operator agreed to. Required with status wontfix.'
+body-structure:
+  rules:
+    - ruleId: drive-learnings-record
+      folders: [records/]
+      intent: "A record has one title and one H2 per failure mode the Workflow hit, each holding only labelled bullets, so Fortify reads every failure mode's evidence and maps it to an Enforcer without reopening the session."
+      undefinedHeadings: forbid
+      headings:
+        - {
+            purpose: heading,
+            level: 1,
+            intent: 'The Workflow topic, as in front matter workflow. At most one short paragraph under it: the Workflow in a sentence.',
+          }
+        - purpose: enumeration
+          level: 2
+          minCount: 0
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          mayHold: [unordered-list]
+          intent: "The file name, without .md, of the failure mode in failure-modes/ this evidence belongs to, once per record. Each bullet opens with **Evidence:** (what happened, where: a commit, PR, session or file, one line), **Correction:** (the Operator's words, verbatim, in quotes) or **Regressed:** (required when the failure mode is fixed: which fixed-by did not hold, and why). End a bullet with (source: monitor) when it came from .scratch/<topic>/monitor.md."
+    - ruleId: drive-learnings-failure-mode
+      folders: [failure-modes/]
+      intent: 'A failure mode states its symptom once and, optionally, the fix its Enforcer needs; evidence lives in the records that cite it, so this file changes only when its status does.'
+      undefinedHeadings: forbid
+      headings:
+        - { purpose: heading, level: 1, intent: 'The title from front matter, word for word.' }
+        - purpose: heading
+          level: 2
+          allowed:
+            [
+              {
+                title: Symptom,
+                intent: "What an Operator or reviewer observes, in general terms that fit every Workflow that hits it, with no single Workflow's evidence.",
+              },
+            ]
+          mayHold: [prose]
+        - purpose: heading
+          level: 2
+          presence: optional
+          allowed:
+            [
+              {
+                title: Fix,
+                intent: 'The change that makes the Enforcer catch it, concrete enough for a Subagent to build; once fixed, what landed.',
+              },
+            ]
+          mayHold: [prose, unordered-list, ordered-list]
