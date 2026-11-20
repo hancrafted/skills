@@ -30,7 +30,16 @@ const crossSkillScripts = {
 
 export default tseslint.config(
   {
-    ignores: ['node_modules/**', 'dist/**', 'coverage/**', '.archgate/**', '.worktrees/**', '.agents/**', '.claude/**'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'coverage/**',
+      '.archgate/**',
+      '.worktrees/**',
+      '.references/**',
+      '.agents/**',
+      '.claude/**',
+    ],
   },
   {
     files: ['**/*.{ts,mts}'],
