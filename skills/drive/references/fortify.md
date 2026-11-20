@@ -30,7 +30,7 @@ You never edit the store yourself. A correction never waits for Fortify: log it 
 
 ## After the merge: the one question
 
-`drive pr watch <n> --integration` exits 12 when the Integration PR merged ([worktrees.md](worktrees.md) "pr watch"). Close the leftover tickets it lists, then ask the Operator once: **"Fortify now (a top-tier decision page) or skip?"** Never ask again.
+`drive pr watch <n> --integration` exits 12 when the Integration PR merged (the worktrees reference, "pr watch"). Close the leftover tickets it lists, then ask the Operator once: **"Fortify now (a top-tier decision page) or skip?"** Never ask again.
 
 - **Skip.** The record is append-only after the merge, so recording a skip is one small PR from the base branch: delegate it to a Subagent, which sets `fortify: skipped` and `skip-reason` to the Operator's words. Log the decision in `decisions.md`; the Operator may contest it. The learnings are kept; nothing else runs. This is how a deadline is honoured.
 - **Yes.** Set `fortify: engaged` and run the steps. Corrections made after the merge (the Operator's PR comments) are added to the record on the Fortify branch.
@@ -45,7 +45,7 @@ You never edit the store yourself. A correction never waits for Fortify: log it 
 
    _Done when:_ every option has all fields of the table, its Existing state checked against the code.
 
-3. **The decision page.** Build a `/to-review` page of the evidence on `top` (`docs/drive/review.md` supplies the calibration) so the Operator picks among the options: [dispatch.md](dispatch.md) "A decision page".
+3. **The decision page.** Build a `/to-review` page of the evidence on `top` (`docs/drive/review.md` supplies the calibration) so the Operator picks among the options: the dispatch reference, "A decision page".
 
 4. **One architectural ticket.** File the recommended architectural option as a ticket labelled `fortify`, creating the label when the tracker lacks it: on the source repo's tracker when its Target is the installed skill, otherwise on this repo's tracker ([Where an option goes](#where-an-option-goes)). At most one `fortify` ticket is open per skill (labels `fortify` and `skill:drive`): when one is open, keep it and leave the new recommendation's failure mode `proposed`, first in line for the next Fortify. The ticket body leads with any smell and holds the quick wins; the Operator picks one when triaging. The recommended failure mode becomes `status: ticket` with its URL.
 
