@@ -18,11 +18,12 @@ Advisory prior art: these repos sharpen options and recommendations and never de
 
 ## Use
 
-1. Run `npm run refs` when `.references/` is missing or lacks a repo. It fills the cache and symlinks `.references` into the worktree.
-2. Offline: read the pinned file with `gh api repos/<owner>/<repo>/contents/<path>?ref=<sha>` and say you did.
-3. Grep the cache; open only the paths below.
-4. Cite as `name@sha7:path` (name from the front matter, first 7 characters of its commit), for example `agent-skills@8c99fa3:scripts/lib/skill-lint.js`.
-5. Edit this map only with `npm run refs -- --bump`, in the same commit as the pin move. `npm run refs -- --check` verifies every `.references/<name>/<path>` below.
+1. A repo's cache is present when `.references/<name>/.git` exists; run `npm run refs` when it does not. It fills the cache and symlinks `.references` into the worktree.
+2. Offline: `gh api -H 'Accept: application/vnd.github.raw' 'repos/<owner>/<repo>/contents/<path>?ref=<sha>'` reads the pinned file (`<path>` includes `pstack/` for cursor-plugins); say you did.
+3. Search with the path set to `.references/<name>` (Glob, Grep): a search from the repo root skips `.references` (gitignored symlink), and an empty root result does not mean the cache is missing.
+4. Start from the paths below; grep the cache for anything else.
+5. Cite as `name@sha7:path` (name from the front matter, first 7 characters of its commit), for example `agent-skills@<sha7>:scripts/lib/skill-lint.js`.
+6. Move pins only with `npm run refs -- --bump`, then fix the paths below by hand in the same commit. Hand edits any time are fine: `npm run refs -- --check` (pre-push) verifies every `.references/<name>/<path>` below.
 
 Repos: `agent-skills` (addyosmani), `mattpocock-skills` (mattpocock), `cursor-plugins` (cursor/plugins, `pstack/` only).
 
@@ -45,7 +46,6 @@ Strongest: `agent-skills`, with three tiers (structural, trigger ranking, behavi
 
 - `.references/agent-skills/evals/README.md`
 - `.references/agent-skills/scripts/run-evals.js`
-- `.references/agent-skills/evals/cases/test-driven-development.json`
 - `.references/agent-skills/evals/skill-impact.md`
 - `.references/cursor-plugins/pstack/skills/poteto-mode/playbooks/eval.md`
 - `.references/cursor-plugins/pstack/skills/arena/SKILL.md`
@@ -59,7 +59,6 @@ Strongest: `agent-skills` for skill lint and link checks; `mattpocock-skills` fo
 - `.references/agent-skills/scripts/validate-reference-links.js`
 - `.references/mattpocock-skills/scripts/check-frontmatter.mjs`
 - `.references/mattpocock-skills/.out-of-scope/new-skills.md`
-- `.references/mattpocock-skills/.out-of-scope/frozen-misc-skills.md`
 - `.references/mattpocock-skills/SCOPE.md`
 
 ### Test (tests for a skill's scripts and hooks)
@@ -78,7 +77,6 @@ Strongest: `mattpocock-skills` for changesets releases and plugin version sync; 
 
 - `.references/mattpocock-skills/.github/workflows/release.yml`
 - `.references/mattpocock-skills/scripts/sync-plugin-version.mjs`
-- `.references/mattpocock-skills/.changeset/config.json`
 - `.references/mattpocock-skills/.claude-plugin/plugin.json`
 - `.references/agent-skills/.github/workflows/test-plugin-install.yml`
 - `.references/agent-skills/scripts/validate-versions.js`

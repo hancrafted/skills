@@ -114,6 +114,8 @@ describe('success cases', () => {
     // ARRANGE
     const { main, flat, nested } = createFixture();
     const expectedFlatFile = 'alpha';
+    const expectedKept = 'pstack/guide.md';
+    const expectedSkipped = 'other/ignored.md';
     // ACT
     const run = runRefs(main);
     // ASSERT
@@ -121,8 +123,8 @@ describe('success cases', () => {
     expect(git(cacheOf(main, 'flat'), 'rev-parse', 'HEAD')).toBe(flat.commit);
     expect(git(cacheOf(main, 'nested'), 'rev-parse', 'HEAD')).toBe(nested.commit);
     expect(readFileSync(path.join(cacheOf(main, 'flat'), 'skills/alpha/SKILL.md'), 'utf8')).toBe(expectedFlatFile);
-    expect(existsSync(path.join(cacheOf(main, 'nested'), 'pstack/guide.md'))).toBe(true);
-    expect(existsSync(path.join(cacheOf(main, 'nested'), 'other/ignored.md'))).toBe(false);
+    expect(existsSync(path.join(cacheOf(main, 'nested'), expectedKept))).toBe(true);
+    expect(existsSync(path.join(cacheOf(main, 'nested'), expectedSkipped))).toBe(false);
   });
 
   it('links the main checkout cache into a worktree under .worktrees', () => {
@@ -131,13 +133,14 @@ describe('success cases', () => {
     const worktree = path.join(main, '.worktrees', 'task');
     git(main, 'worktree', 'add', '-q', '-b', 'task', worktree);
     const expectedTarget = path.join(main, '.references');
+    const expectedLinkedFile = '.references/flat/README.md';
     // ACT
     const run = runRefs(worktree);
     // ASSERT
     expect(run.status).toBe(0);
     expect(lstatSync(path.join(worktree, '.references')).isSymbolicLink()).toBe(true);
     expect(readlinkSync(path.join(worktree, '.references'))).toBe(expectedTarget);
-    expect(existsSync(path.join(worktree, '.references/flat/README.md'))).toBe(true);
+    expect(existsSync(path.join(worktree, expectedLinkedFile))).toBe(true);
   });
 
   it('moves each pin to the remote head and reports the change summary', () => {
@@ -148,6 +151,7 @@ describe('success cases', () => {
     const expectedAdded = 'added: fresh';
     const expectedRemoved = 'removed: old';
     const expectedStat = 'fresh/new.md';
+    const bumpedName = 'flat';
     // ACT
     const run = runRefs(main, '--bump');
     const pins = parseIndex(readFileSync(path.join(main, INDEX_PATH), 'utf8'));
@@ -156,7 +160,7 @@ describe('success cases', () => {
     expect(run.output).toContain(expectedAdded);
     expect(run.output).toContain(expectedRemoved);
     expect(run.output).toContain(expectedStat);
-    expect(pins.find((pin) => pin.name === 'flat')?.commit).toBe(newCommit);
+    expect(pins.find((pin) => pin.name === bumpedName)?.commit).toBe(newCommit);
     expect(git(cacheOf(main, 'flat'), 'rev-parse', 'HEAD')).toBe(newCommit);
   });
 
@@ -183,6 +187,18 @@ describe('failure cases', () => {
     for (const missing of expectedMissing) expect(run.output).toContain(missing);
   });
 
+  it('fails --check for an index path outside the repo subfolder', () => {
+    // ARRANGE
+    const outsideBody = `${GOOD_BODY}- \`.references/nested/other/ignored.md\`\n`;
+    const { main } = createFixture(outsideBody);
+    const expectedOutside = 'nested/other/ignored.md';
+    // ACT
+    const run = runRefs(main, '--check');
+    // ASSERT
+    expect(run.status).toBe(1);
+    expect(run.output).toContain(expectedOutside);
+  });
+
   it('fails when a pinned commit does not exist at its remote', () => {
     // ARRANGE
     const { main, flat } = createFixture();
@@ -196,6 +212,20 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  it('re-applies the sparse checkout when only the subfolder changes', () => {
+    // ARRANGE
+    const { main } = createFixture();
+    runRefs(main);
+    const widened = readFileSync(path.join(main, INDEX_PATH), 'utf8').replace('    subfolder: pstack\n', '');
+    writeFileSync(path.join(main, INDEX_PATH), widened);
+    const expectedNowPresent = 'other/ignored.md';
+    // ACT
+    const run = runRefs(main);
+    // ASSERT
+    expect(run.status).toBe(0);
+    expect(existsSync(path.join(cacheOf(main, 'nested'), expectedNowPresent))).toBe(true);
+  });
+
   it('re-runs without touching the remote and keeps an existing worktree link', () => {
     // ARRANGE
     const { main, flat, nested } = createFixture();
@@ -216,12 +246,14 @@ describe('edge cases', () => {
     const { main, flat } = createFixture();
     runRefs(main);
     const expectedPin = flat.commit;
+    const expectedNote = 'unchanged';
+    const pinnedName = 'flat';
     // ACT
     const run = runRefs(main, '--bump');
     const pins = parseIndex(readFileSync(path.join(main, INDEX_PATH), 'utf8'));
     // ASSERT
     expect(run.status).toBe(0);
-    expect(pins.find((pin) => pin.name === 'flat')?.commit).toBe(expectedPin);
-    expect(run.output).toContain('unchanged');
+    expect(pins.find((pin) => pin.name === pinnedName)?.commit).toBe(expectedPin);
+    expect(run.output).toContain(expectedNote);
   });
 });

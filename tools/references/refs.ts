@@ -6,6 +6,8 @@ import { indexPathsOf, parseIndex, replaceCommits } from './references.pure.ts';
 const INDEX_PATH = 'docs/agents/reference-repos.md';
 const SHORT_COMMIT_LENGTH = 7;
 
+const isUnder = (relativePath: string, folder: string) => path.posix.normalize(relativePath).startsWith(`${folder}/`);
+
 const flags = process.argv.slice(2);
 const checkouts = checkoutsAt(process.cwd());
 const indexFile = path.join(checkouts.current, INDEX_PATH);
@@ -44,6 +46,7 @@ if (flags.includes('--check') || flags.includes('--bump')) {
   const missing = indexPathsOf(currentText)
     .filter(({ name, path: relativePath }) => {
       const pin = currentPins.get(name);
+      if (pin?.subfolder && !isUnder(relativePath, pin.subfolder)) return true;
       return !pin || !existsAtPin(cacheDirOf(checkouts.main, name), pin.commit, relativePath);
     })
     .map(({ name, path: relativePath }) => `${name}/${relativePath}`);

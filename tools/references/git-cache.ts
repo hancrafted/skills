@@ -40,9 +40,13 @@ function fetchCommit(cacheDir: string, commit: string) {
   git(cacheDir, 'fetch', '-q', '--depth', '1', 'origin', commit);
 }
 
-function checkOut(cacheDir: string, pin: RepoPin, commit: string) {
+function applySparse(cacheDir: string, pin: RepoPin) {
   if (pin.subfolder) git(cacheDir, 'sparse-checkout', 'set', pin.subfolder);
   else git(cacheDir, 'sparse-checkout', 'disable');
+}
+
+function checkOut(cacheDir: string, pin: RepoPin, commit: string) {
+  applySparse(cacheDir, pin);
   git(cacheDir, 'checkout', '-q', '--force', '--detach', commit);
 }
 
@@ -53,7 +57,10 @@ export function syncRepo(main: string, pin: RepoPin): string {
     git(cacheDir, 'init', '-q');
     git(cacheDir, 'remote', 'add', 'origin', pin.url);
   }
-  if (checkedOutCommit(cacheDir) === pin.commit) return cacheDir;
+  if (checkedOutCommit(cacheDir) === pin.commit) {
+    applySparse(cacheDir, pin);
+    return cacheDir;
+  }
   git(cacheDir, 'remote', 'set-url', 'origin', pin.url);
   fetchCommit(cacheDir, pin.commit);
   checkOut(cacheDir, pin, pin.commit);
