@@ -1,8 +1,8 @@
 import { isTier, PHASES, type Binding, type Phase, type SeedOptions } from '../core/index.ts';
 
-export type SetupOptions = SeedOptions & { check?: boolean };
+export type SetupOptions = SeedOptions & { check?: boolean; approveLearnings?: boolean };
 
-const USAGE = { error: 'usage: drive setup [--check] [--agent-type <type>] [--tier mid|top]' };
+const USAGE = { error: 'usage: drive setup [--check] [--approve-learnings] [--agent-type <type>] [--tier mid|top]' };
 
 function readOption(options: SetupOptions, flag: string | undefined, value: string): boolean {
   if (flag === '--agent-type') options.agentType = value;
@@ -15,6 +15,7 @@ export function parseSetupArgs(args: readonly string[]): SetupOptions | { error:
   const options: SetupOptions = {};
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === '--check') options.check = true;
+    else if (args[i] === '--approve-learnings') options.approveLearnings = true;
     else {
       const value = args[i + 1];
       if (value === undefined || value.startsWith('--') || !readOption(options, args[i], value)) return USAGE;

@@ -1,6 +1,6 @@
 # Setup
 
-Run once per project, and again whenever a skill was installed or removed: `node scripts/drive.ts setup` from this skill's folder, at the project's root (`--agent-type <type>` and `--tier mid|top` seed a new Binding only). It is idempotent and prints each file it wrote, or that `docs/drive/` is up to date.
+Run once per project, and again whenever a skill was installed or removed: `node scripts/drive.ts setup` from this skill's folder, at the project's root (`--agent-type <type>` and `--tier mid|top` seed a new Binding only; `--approve-learnings` approves the learnings step below). It is idempotent and prints each file it wrote, or that `docs/drive/` is up to date.
 
 ## What it writes
 
@@ -10,14 +10,18 @@ Run once per project, and again whenever a skill was installed or removed: `node
 | `project.yml`   | seeds the base branch, the install command a lockfile implies, the parallel defaults, the `models` tier mapping and the `decisionDocs` globs it finds; later adds only missing sections | every value; preflight, lock and hooks are the Operator's to add |
 | `enforcers.yml` | rewrites it each run from the project's manifests, hook folders and checkers                                                                                                            | none: change the repo, then rerun setup                          |
 | `profiles.md`   | the empty headings                                                                                                                                                                      | the project's rules per Profile                                  |
-| `learnings/`    | `records/` and `failure-modes/` with a README, never a `learnings.md`                                                                                                                   | none: Fortify writes the files                                   |
+| `README.md`     | the home's contract, with the version record `generated: {by: drive@<version>, at}`; later only that record, after the learnings step                                                   | the body, if the project wants more                              |
 | `review.md`     | an empty template when missing, never rewritten                                                                                                                                         | the calibration answers every decision page uses                 |
 
 Skills are found in the skills lockfile and in the project's skill folders, authored ones first.
 
-## The learnings store
+## The learnings step
 
-Setup creates `docs/drive/learnings/{records,failure-modes}` and wires two checks. `mh check --root docs/drive/learnings --config <skill>/markdown-harness.config.yaml` and `drive learnings check` go into the project's docs check, so a record or failure-mode file that breaks the format fails the docs lane. Two async hooks, `SubagentStart` and `SubagentStop`, in `.claude/settings.json` run the skill's Claude adapter, which writes each Subagent's session and transcript path into `.scratch/<topic>/drive.log.jsonl` for `drive transcript`. `drive setup --check` writes nothing and reports Binding entries whose skill is not installed; it runs inside `npm run preflight`, so a renamed skill fails there. When the skill sits outside the repo, setup prints the line to add by hand instead of editing the file.
+drive depends on `/learnings` ([decision](../../../docs/decision-records/drive/0008-learnings-move-to-the-learnings-skill.md)). Setup never creates a store: `/learnings` and Fortify write `docs/learnings/drive/`. One approved step does three things together: it installs `/learnings` when it is missing (`npx skills add hancrafted/skills --skill learnings`), moves an old `docs/drive/learnings/` to `docs/learnings/drive/` with `git mv` (history kept; it stops if the target exists), and records `drive@<version>` in `docs/drive/README.md`. Without `--approve-learnings`, setup changes none of these and prints the step as pending; show it to the Operator, and on a yes rerun `drive setup --approve-learnings`. A repo with `/learnings` installed and no old store has nothing to approve: setup only writes or updates the README's version record. Commit the move yourself.
+
+## The checks setup wires
+
+`mh check --root docs/learnings/drive --config <skill>/markdown-harness.config.yaml` and `learnings check` go into the project's docs check only once `/learnings` is installed (setup installs it first, or prints the install command), so a record or failure-mode file that breaks the format fails the docs lane. Two async hooks, `SubagentStart` and `SubagentStop`, in `.claude/settings.json` run the skill's Claude adapter, which writes each Subagent's session and transcript path into `.scratch/<topic>/drive.log.jsonl` for `drive transcript`. `drive setup --check` writes nothing and reports Binding entries whose skill is not installed; it runs inside `npm run preflight`, so a renamed skill fails there. When the skill sits outside the repo, setup prints the line to add by hand instead of editing the file.
 
 ## The decision-doc guard
 
@@ -25,7 +29,7 @@ Setup creates `docs/drive/learnings/{records,failure-modes}` and wires two check
 
 ## Model tiers
 
-Setup seeds each phase's `model` from `PHASE_TIERS` in `scripts/core/binding.pure.ts`: reason and verify `top`, the rest `mid`. `project.yml` maps each tier to a provider's model (`models: { claude: { mid: sonnet, top: opus } }`); add an entry for another provider and its harness resolves the tiers the same way. Change a phase's tier in `binding.yml` when experience shows its Subagents need more or less, and log why in a record under `docs/drive/learnings/records/`. The Orchestrator's own session override, when the Operator gives one, beats the Binding for that session.
+Setup seeds each phase's `model` from `PHASE_TIERS` in `scripts/core/binding.pure.ts`: reason and verify `top`, the rest `mid`. `project.yml` maps each tier to a provider's model (`models: { claude: { mid: sonnet, top: opus } }`); add an entry for another provider and its harness resolves the tiers the same way. Change a phase's tier in `binding.yml` when experience shows its Subagents need more or less, and log why in a record under `docs/learnings/drive/records/`. The Orchestrator's own session override, when the Operator gives one, beats the Binding for that session.
 
 ## The review file
 

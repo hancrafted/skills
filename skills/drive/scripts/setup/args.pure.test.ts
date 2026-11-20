@@ -20,13 +20,26 @@ describe('success cases', () => {
       const valid = ['--agent-type', 'team:dev', '--tier', 'top'];
       const invalid = ['--tier', 'opus'];
       const expectedValid = { agentType: 'team:dev', tier: 'top' };
-      const expectedInvalid = { error: 'usage: drive setup [--check] [--agent-type <type>] [--tier mid|top]' };
+      const expectedInvalid = {
+        error: 'usage: drive setup [--check] [--approve-learnings] [--agent-type <type>] [--tier mid|top]',
+      };
       // ACT
       const parsedValid = parseSetupArgs(valid);
       const parsedInvalid = parseSetupArgs(invalid);
       // ASSERT
       expect(parsedValid).toEqual(expectedValid);
       expect(parsedInvalid).toEqual(expectedInvalid);
+    });
+  });
+  describe('parseSetupArgs --approve-learnings', () => {
+    it('reads --approve-learnings as a flag that takes no value', () => {
+      // ARRANGE
+      const argv = ['--approve-learnings', '--tier', 'top'];
+      const expected = { approveLearnings: true, tier: 'top' };
+      // ACT
+      const parsed = parseSetupArgs(argv);
+      // ASSERT
+      expect(parsed).toEqual(expected);
     });
   });
   describe('parseSetupArgs --check', () => {
