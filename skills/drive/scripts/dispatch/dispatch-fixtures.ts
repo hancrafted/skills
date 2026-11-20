@@ -37,7 +37,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   101: ticketBody({
     skills: 'tdd, writing-for-agents · Review after: yes: new on-disk format every later ticket writes',
     files:
-      'skills/drive/markdown-harness.config.yaml, skills/drive/scripts/learnings*.ts, skills/drive/scripts/setup*.ts, skills/drive/scripts/drive.ts, package.json, docs/drive/learnings/README.md',
+      'skills/drive/markdown-harness.config.yaml, skills/drive/scripts/learnings/**, skills/drive/scripts/setup/**, skills/drive/scripts/drive.ts, package.json, docs/drive/learnings/README.md',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q2, Q9',
@@ -46,7 +46,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   102: ticketBody({
     skills: 'tdd · Review after: no',
     files:
-      'skills/drive/scripts/worktree-merge.ts, skills/drive/scripts/report*.ts, skills/drive/references/dispatch.md (report template only), docs/drive/profiles.md',
+      'skills/drive/scripts/worktree/merge.ts, skills/drive/scripts/report/**, skills/drive/references/dispatch.md (report template only), docs/drive/profiles.md',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q4',
@@ -55,7 +55,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   103: ticketBody({
     skills: 'tdd · Review after: yes: changes how every Integration PR opens',
     files:
-      'skills/drive/scripts/push*.ts, skills/drive/scripts/pr-watch*.ts, skills/drive/scripts/pr-ready*.ts, skills/drive/scripts/drive.ts',
+      'skills/drive/scripts/push/**, skills/drive/scripts/pr/watch.ts, skills/drive/scripts/pr/ready.ts, skills/drive/scripts/drive.ts',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q7, Q8',
@@ -63,7 +63,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   }),
   104: ticketBody({
     skills: 'tdd · Review after: no',
-    files: 'skills/drive/scripts/dispatch*.ts, skills/drive/scripts/drive.ts',
+    files: 'skills/drive/scripts/dispatch/**, skills/drive/scripts/drive.ts',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q6',
@@ -80,7 +80,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   106: ticketBody({
     skills: 'tdd · Review after: yes: new hook in project settings',
     files:
-      'skills/drive/scripts/log*.ts, skills/drive/scripts/transcript*.ts, skills/drive/scripts/claude-adapter*.ts, skills/drive/scripts/setup*.ts, skills/drive/scripts/drive.ts, .claude/settings.json, skills/drive/scripts/fixtures/**',
+      'skills/drive/scripts/log/**, skills/drive/scripts/transcript/**, skills/drive/scripts/harness/claude/**, skills/drive/scripts/setup/**, skills/drive/scripts/drive.ts, .claude/settings.json, skills/drive/scripts/fixtures/**',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q15, Q20',
@@ -88,7 +88,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   }),
   107: ticketBody({
     skills: 'tdd · Review after: no',
-    files: 'skills/drive/scripts/status*.ts, skills/drive/scripts/drive.ts',
+    files: 'skills/drive/scripts/status/**, skills/drive/scripts/drive.ts',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q5',
@@ -97,7 +97,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   108: ticketBody({
     skills: 'tdd, diagnosing-bugs · Review after: no',
     files:
-      'skills/drive/scripts/worktree.ts, skills/drive/scripts/worktree-process*.ts, skills/drive/scripts/setup*.ts, skills/drive/scripts/config*.ts, docs/drive/project.yml, tools/**/preflight*, skills/cleanup/**',
+      'skills/drive/scripts/worktree/index.ts, skills/drive/scripts/worktree/process.ts, skills/drive/scripts/setup/**, skills/drive/scripts/config/**, docs/drive/project.yml, tools/preflight.ts, skills/cleanup/**',
     describes: 'none',
     adrs: CODE_RULES,
     evidence: 'decisions.md Q11',
@@ -105,7 +105,7 @@ export const EPIC_BODIES: Readonly<Record<number, string>> = {
   }),
   109: ticketBody({
     skills: 'writing-for-agents · Review after: yes: the skill text every future Workflow follows',
-    files: 'skills/drive/SKILL.md, skills/drive/references/**, docs/agents/grilling-format.md',
+    files: 'skills/drive/SKILL.md, skills/drive/references/**, docs/grilling.md',
     describes: '#101, #105, #102, #104, #103, #107, #108, #106',
     adrs: 'GEN-007-naming',
     evidence: 'decisions.md Q3, Q10; docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md',

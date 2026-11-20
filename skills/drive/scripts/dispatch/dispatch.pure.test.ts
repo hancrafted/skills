@@ -10,7 +10,7 @@ describe('success cases', () => {
       // ARRANGE
       const body = EPIC_BODIES[109] ?? '';
       const expected = {
-        files: ['skills/drive/SKILL.md', 'skills/drive/references/**', 'docs/agents/grilling-format.md'],
+        files: ['skills/drive/SKILL.md', 'skills/drive/references/**', 'docs/grilling.md'],
         describes: [101, 105, 102, 104, 103, 107, 108, 106],
         adrs: 'GEN-007-naming',
         evidence: 'docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md',
@@ -86,7 +86,7 @@ describe('failure cases', () => {
       // ARRANGE
       const queued = tickets([101, 106]);
       const expected = [
-        '#101 and #106 both own skills/drive/scripts/setup*.ts',
+        '#101 and #106 both own skills/drive/scripts/setup/**',
         '#101 and #106 both own skills/drive/scripts/drive.ts',
       ];
       // ACT

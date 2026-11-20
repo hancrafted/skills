@@ -14,11 +14,11 @@ module.exports = {
       name: 'module-folder-through-index',
       severity: 'error',
       comment:
-        "A folder under a skill's scripts/ is a module: code outside it imports only its index.ts. to-review predates the rule.",
-      from: { path: '^skills/[^/]+/scripts/(?:[^/]+$|([^/]+)/)', pathNot: '^skills/to-review/scripts/' },
+        "A folder under drive's scripts/ is a module: code outside it imports only its index.ts. The rule governs drive; #75 widens it.",
+      from: { path: '^skills/drive/scripts/(?:[^/]+$|([^/]+)/)' },
       to: {
-        path: '^skills/[^/]+/scripts/[^/]+/',
-        pathNot: ['^skills/[^/]+/scripts/[^/]+/index\\.ts$', '^skills/[^/]+/scripts/$1/'],
+        path: '^skills/drive/scripts/[^/]+/',
+        pathNot: ['^skills/drive/scripts/[^/]+/index\\.ts$', '^skills/drive/scripts/$1/'],
       },
     },
     {

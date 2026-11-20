@@ -278,8 +278,9 @@ describe('failure cases', () => {
     it('exits non-zero and prints the usage naming every group', () => {
       // ARRANGE
       const expected = `✖ unknown group '--help'; usage: ${DRIVE_USAGE}\n`;
+      const outsideAnyRepo = mkdtempSync(path.join(tmpdir(), 'drive-help-'));
       // ACT
-      const result = spawnSync(process.execPath, [CLI, '--help'], { encoding: 'utf8', cwd: import.meta.dirname });
+      const result = spawnSync(process.execPath, [CLI, '--help'], { encoding: 'utf8', cwd: outsideAnyRepo });
       // ASSERT
       expect(result.status).not.toBe(0);
       expect(result.stderr).toBe(expected);
