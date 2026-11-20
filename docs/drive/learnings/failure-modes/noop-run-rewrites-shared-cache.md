@@ -1,6 +1,6 @@
 ---
 title: 'A no-op run writes to a cache shared by every worktree'
-enforcer: 'test: a slow test that a re-run at the pinned commit leaves the cache index untouched'
+enforcer: 'test-runner: new slow test that a re-run at the pinned commit leaves the cache index untouched'
 status: proposed
 ---
 
