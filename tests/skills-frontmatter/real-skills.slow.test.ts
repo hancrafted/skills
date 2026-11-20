@@ -1,3 +1,4 @@
+import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { checkRoot, REPO_ROOT } from './helpers';
@@ -30,9 +31,14 @@ describe('edge cases', () => {
   it('governs at least one skill in the real folder', () => {
     // ARRANGE
     const skillsRoot = join(REPO_ROOT, 'skills');
+    const skillCount = readdirSync(skillsRoot).filter((name) =>
+      statSync(join(skillsRoot, name, 'SKILL.md'), { throwIfNoEntry: false }),
+    ).length;
     // ACT
     const result = checkRoot(skillsRoot);
     // ASSERT
+    expect(skillCount).toBeGreaterThan(0);
+    expect(result.governedFiles).toBe(skillCount);
     expect(result.invalidFiles).toBe(0);
     expect(result.status).toBe(0);
   });

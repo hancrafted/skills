@@ -19,3 +19,9 @@ All notable changes to the learnings skill are documented in this file. The form
 
 - Moved from drive: the store from `docs/drive/learnings/`, the scripts from `skills/drive/scripts/learnings/` (now
   `skills/learnings/scripts/store/`) and `markdown-harness.config.yaml`. `drive learnings` is removed.
+
+### Fixed
+
+- `--skill`, `--failure` and `--topic` must be slugs; `..`, `/` and spaces are refused before any path is built.
+- The README's Off list is one `- <skill>` bullet per line, as the parser reads it.
+- Rule ids are `learnings-record` and `learnings-failure-mode`, no longer `drive-learnings-*`.
