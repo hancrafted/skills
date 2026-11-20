@@ -17,6 +17,8 @@ All notable changes to the learnings skill are documented in this file. The form
 
 ### Changed
 
+- `metadata.state: stateful` and a `## Context` section in `SKILL.md`: it names `docs/learnings/` and carries the
+  context protocol block of `docs/skills/context-protocol.md` (SKL-003).
 - Moved from drive: the store from `docs/drive/learnings/`, the scripts from `skills/drive/scripts/learnings/` (now
   `skills/learnings/scripts/store/`) and `markdown-harness.config.yaml`. `drive learnings` is removed.
 
