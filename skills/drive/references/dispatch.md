@@ -2,6 +2,14 @@
 
 How the Orchestrator hands tickets to Subagents, and the Handoff they return. One contract for every provider: a Subagent in this session reads the same brief and writes the same report as an agent another provider runs from a copied brief.
 
+- [Before each wave](#before-each-wave)
+- [Before each dispatch](#before-each-dispatch)
+- [A decision page](#a-decision-page)
+- [The shared brief](#the-shared-brief)
+- [Follow-up briefs](#follow-up-briefs)
+- [The task brief](#the-task-brief)
+- [The report](#the-report)
+
 ## Before each wave
 
 Run `drive dispatch check [--base <Integration branch>] <issue number…>` on the tickets about to go out together. Without `--base` it takes the Integration branch from the tickets' `## Parent` epic: the single Decision PR whose `## Spec` names that epic; with none or several it refuses and asks you to pass `--base`. Merged means merged into the Integration branch, not the one you sit on. It fails a ticket missing its `Files:`, `ADRs:` or `Evidence from:` line, two queued tickets whose `Files:` globs overlap, and a `Describes:` target not yet merged. Fix the order or the ownership it names, then dispatch. A ticket carries those four lines under its **Skills** and **Review after** lines:

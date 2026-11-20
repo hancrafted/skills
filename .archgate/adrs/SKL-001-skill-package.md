@@ -3,7 +3,7 @@ type: adr
 id: SKL-001
 title: 'Skill Package'
 domain: skills
-rules: false
+rules: true
 files: ['skills/*/SKILL.md']
 paths: ['skills/**']
 description: 'What a skill folder under skills/ is: a portable Agent Skills package whose frontmatter, size, links and layout are checked mechanically.'
@@ -22,20 +22,20 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 ### 1. Frontmatter is the spec plus Claude Code's documented fields
 
 1. Allowed keys: the spec's (`name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`) and Claude Code's documented ones (`when_to_use`, `argument-hint`, `arguments`, `disable-model-invocation`, `user-invocable`, `disallowed-tools`, `model`, `effort`, `context`, `agent`, `background`, `hooks`, `paths`, `shell`). Any other key fails, so a typo fails.
-2. `name` matches the spec pattern — 1–64 of `a-z`, `0-9`, `-`, no leading, trailing or double hyphen: `cleanup`, `to-review` — and equals the skill's folder name (planned rule: `skill-name-matches-folder`).
+2. `name` matches the spec pattern — 1–64 of `a-z`, `0-9`, `-`, no leading, trailing or double hyphen: `cleanup`, `to-review` — and equals the skill's folder name (📜 Rule: `skill-name-matches-folder`).
 3. `description` is at most 1024 characters, contains `Use when`, carries no XML tags and does not open with `I ` or `You `.
 4. A Claude Code–only key makes a skill non-uploadable to claude.ai and the API. That is accepted; the spec keys alone stay portable.
 
 ### 2. The body loads cheaply
 
-1. `SKILL.md` is at most 500 lines (planned rule: `skill-size-budget`).
+1. `SKILL.md` is at most 500 lines (📜 Rule: `skill-size-budget`).
 2. Exactly one H1, the skill's title; the body-frame rule in the skills config checks it.
-3. Links from `SKILL.md` go one level deep: `SKILL.md` → `references/setup.md`; a linked file never links on to another file of the skill (planned rule: `skill-links-one-level`).
-4. A reference file over 100 lines opens with a table of contents — a list linking its own headings, before its first H2 (planned rule: `skill-reference-toc`).
+3. Links from `SKILL.md` go one level deep: `SKILL.md` → `references/setup.md`; a linked file never links on to another file of the skill (📜 Rule: `skill-links-one-level`).
+4. A reference file over 100 lines opens with a table of contents — a list linking its own headings, before its first H2 (📜 Rule: `skill-reference-toc`).
 
 ### 3. The layout is fixed
 
-1. A skill folder's top level holds only `SKILL.md`, the known folders (`scripts/`, `references/`, `assets/`, `agents/`, `evals/`, `catalog/`) and the known files (`GLOSSARY.md`, `CHANGELOG.md`, `package.json`, `markdown-harness.config.yaml`) (planned rule: `skill-allowed-layout`).
+1. A skill folder's top level holds only `SKILL.md`, the known folders (`scripts/`, `references/`, `assets/`, `agents/`, `evals/`, `catalog/`) and the known files (`GLOSSARY.md`, `CHANGELOG.md`, `package.json`, `markdown-harness.config.yaml`) (📜 Rule: `skill-allowed-layout`).
 2. Paths use forward slashes; file names say what they hold — `references/setup.md`, not `doc2.md`.
 
 ## Do's and Don'ts
@@ -43,12 +43,12 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 ### Do's
 
 1. **DO** front-load the description's trigger — `Use when the user asks to commit…`. (Decision 1)
-2. **DO** name the folder and the `name` key the same. (Decision 1, planned rule: `skill-name-matches-folder`)
-3. **DO** move branch detail into `references/` before the body nears 500 lines. (Decision 2, planned rule: `skill-size-budget`)
+2. **DO** name the folder and the `name` key the same. (Decision 1, 📜 Rule: `skill-name-matches-folder`)
+3. **DO** move branch detail into `references/` before the body nears 500 lines. (Decision 2, 📜 Rule: `skill-size-budget`)
 4. **DO** keep one H1. (Decision 2)
-5. **DO** link every reference straight from `SKILL.md`. (Decision 2, planned rule: `skill-links-one-level`)
-6. **DO** open a long reference with its contents. (Decision 2, planned rule: `skill-reference-toc`)
-7. **DO** put new material in a known folder. (Decision 3, planned rule: `skill-allowed-layout`)
+5. **DO** link every reference straight from `SKILL.md`. (Decision 2, 📜 Rule: `skill-links-one-level`)
+6. **DO** open a long reference with its contents. (Decision 2, 📜 Rule: `skill-reference-toc`)
+7. **DO** put new material in a known folder. (Decision 3, 📜 Rule: `skill-allowed-layout`)
 
 ### Don'ts
 
@@ -73,14 +73,14 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 **Risks:**
 
 1. **A passing description can still trigger badly.** **Mitigation:** reviewer judgement and the skill's evals.
-2. **Rules not built yet:** Decisions 1.2, 2 and 3.1 hold only by review until their rules ship. **Mitigation:** reviewers check them by hand meanwhile.
+2. **Rules check shape, not sense:** a link rule cannot tell a needed reference from a padded one. **Mitigation:** reviewer judgement.
 
 ## Compliance and Enforcement
 
 1. **Frontmatter:** `skills/markdown-harness.config.yaml` checks Decision 1 (except name equals folder) with `mh check`, in `npm run verify` and the pre-commit gate (`verify:commit`).
-2. **Rules** (planned, `SKL-001-skill-package.rules.ts`, error): Decisions 1.2, 2 and 3.1 over `skills/*/`, run by `archgate check`.
+2. **Rules** (`SKL-001-skill-package.rules.ts`, error): Decisions 1.2, 2 and 3.1 over `skills/*/`, run by `archgate check`.
 
-**Manual review duties:** 3.2 path style and file naming; until the rules ship, every planned rule above.
+**Manual review duties:** 3.2 path style and file naming.
 
 **Exceptions:** raise a separate ADR; human approval required.
 
