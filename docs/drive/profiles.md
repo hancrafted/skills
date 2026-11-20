@@ -5,7 +5,7 @@ and the implementer's, which every Subagent brief points at. Write only what is 
 
 ## Architect
 
-- Decision records `docs/decision-records/0001`-`0007` and the Archgate ADRs in `.archgate/adrs/` bind every design; read them before a Decision doc.
+- Decision records in `docs/decision-records/drive/` (drive's, per `GLOSSARY-MAP.md`) and the Archgate ADRs in `.archgate/adrs/` bind every design; read them before a Decision doc.
 - `docs/decision-records/**` and `**/GLOSSARY*.md` change only on a `decisions/<topic>` branch.
 
 ## Implementer

@@ -6,7 +6,7 @@ status: accepted
 
 # Drive runs on four harnesses
 
-The Operator approved this on 2026-11-19, in the drive-to-skills grill. Drive was written for Claude Code: the Binding names a Claude agent type, the model tiers map to Claude models, and Decision record 0003's transcript index reads Claude transcripts. The Operator wants it to run on Claude Code, GitHub Copilot, Google Antigravity and OpenAI Codex. All four load Agent Skills from `.agents/skills` (Claude Code from `.claude/skills`) and run parallel subagents with a model each; their hooks, transcripts and notifications differ (research of 2026-11-19, partly from secondary sources). Terms: [Drive glossary](../../skills/drive/GLOSSARY.md).
+The Operator approved this on 2026-11-19, in the drive-to-skills grill. Drive was written for Claude Code: the Binding names a Claude agent type, the model tiers map to Claude models, and `docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md`'s transcript index reads Claude transcripts. The Operator wants it to run on Claude Code, GitHub Copilot, Google Antigravity and OpenAI Codex. All four load Agent Skills from `.agents/skills` (Claude Code from `.claude/skills`) and run parallel subagents with a model each; their hooks, transcripts and notifications differ (research of 2026-11-19, partly from secondary sources). Terms: [Drive glossary](../../../skills/drive/GLOSSARY.md).
 
 ## Decisions
 

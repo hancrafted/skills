@@ -6,7 +6,7 @@ status: accepted
 
 # Tracker and code host are separate ports
 
-The Operator approved this on 2026-11-19, in the drive-to-skills grill. Drive assumed GitHub for both tickets and pull requests. Repos it should run in keep tickets in Jira through MCP, in GitLab, or as local markdown, and some push to GitHub while tracking in Jira. Terms: [Drive glossary](../../skills/drive/GLOSSARY.md).
+The Operator approved this on 2026-11-19, in the drive-to-skills grill. Drive assumed GitHub for both tickets and pull requests. Repos it should run in keep tickets in Jira through MCP, in GitLab, or as local markdown, and some push to GitHub while tracking in Jira. Terms: [Drive glossary](../../../skills/drive/GLOSSARY.md).
 
 ## Decisions
 

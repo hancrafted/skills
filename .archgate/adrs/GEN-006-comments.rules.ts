@@ -50,9 +50,9 @@ const REGEX_AFTER_WORDS = new Set([
 
 const TARGETS = {
   decision: {
-    grammar: /(?:([A-Z]+-\d{3}) §(\d+)(?:\.(\d+))?|(docs\/decision-records\/\d{4}-[a-z0-9-]+\.md))/,
+    grammar: /(?:([A-Z]+-\d{3}) §(\d+)(?:\.(\d+))?|(docs\/decision-records\/(?:[a-z0-9-]+\/)?\d{4}-[a-z0-9-]+\.md))/,
     takes:
-      'an Archgate ADR section, `decision: ARCH-003 §2`, or a Decision record path, `decision: docs/decision-records/0017-example.md`',
+      'an Archgate ADR section, `decision: ARCH-003 §2`, or a Decision record path, `decision: docs/decision-records/drive/0017-example.md`',
   },
   ['tech-debt']: {
     grammar: /https:\/\/github\.com\/hancrafted\/skills\/issues\/\d+/,
