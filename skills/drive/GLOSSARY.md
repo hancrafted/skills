@@ -16,16 +16,16 @@ _Avoid_: pipeline, process, flow
 **DRIVE**: the five phases of a Workflow, each named by its verb: **D**efine (_clarify_: requirements, grilling), **R**eason (_specify_: design, architecture, Decision docs, spec, tickets), **I**mplement (_codify_: the code), **V**erify (_verify_: review, integration, CI), **E**volve (_fortify_: Fortify). A skill may serve several phases and a phase several skills.
 _Avoid_: stage, step, SDLC
 
-**Fortify**: the Evolve phase. The Workflow's record is written automatically at the end of Verify; after the Operator merges the Integration branch, the Orchestrator asks once whether to Fortify now or skip. A skip is recorded with its reason. On a yes, on a branch from the base branch, it gathers what went wrong into 2–3 quick wins and 2–3 architectural options, each naming one narrow failure mode and its Enforcer, and the recommended architectural option becomes the single open `fortify` ticket, where the Operator picks a quick win when triaging it. Fortify blocks nothing.
+**Fortify**: the Evolve phase. The Workflow's record is written automatically at the end of Verify; after the Operator merges the Integration branch, the Orchestrator asks once whether to Fortify now or skip. A skip is recorded with its reason. On a yes, on a branch from the base branch, it gathers what went wrong into 2–3 quick wins and 2–3 architectural options, each naming one narrow failure mode and its Enforcer, and the recommended architectural option becomes drive's single open `fortify` ticket (labels `fortify` and `skill:drive`; the cap is one per skill), where the Operator picks a quick win when triaging it. Fortify blocks nothing.
 _Avoid_: retro, retrospective (`/retro` is one evidence source), lessons learned
 
-**Failure mode**: one narrow way the Workflow or the repo went wrong, named so an Enforcer could catch it next time. Each has one file holding its Enforcer and status; each Workflow's record cites the failure modes it hit, and the recurrence count is the number of records citing it, computed, never typed. A count of three or more is a **smell** to raise with the Operator.
+**Failure mode**: one narrow way the Workflow or the repo went wrong, named so an Enforcer could catch it next time. Each has one file holding its Enforcer and status; each Workflow's record cites the failure modes it hit, and the recurrence count is the number of records citing it, computed, never typed. A count of three or more is a **smell** to raise with the Operator. The `learnings` skill keeps them in `docs/learnings/drive/` and computes the counts.
 _Avoid_: issue, problem, lesson
 
 **Quick win**: a Fortify option the Operator can let a Subagent do and merge in 15–30 minutes, before cleanup.
 _Avoid_: low-hanging fruit, hotfix
 
-**Architectural option**: a Fortify option with a lasting effect on the harness, too large for the Workflow at hand; the one picked becomes the single open `fortify` ticket.
+**Architectural option**: a Fortify option with a lasting effect on the harness, too large for the Workflow at hand; the one picked becomes drive's single open `fortify` ticket.
 _Avoid_: tech debt item, long-term fix
 
 **Oversight levels**: where the Operator stands in a piece of the Workflow, named by the established terms _human-in-the-loop_, _human-on-the-loop_ and _human-out-of-the-loop_. The Operator works with the Orchestrator in the loop; Subagents run with the Operator on the loop or out of the loop.

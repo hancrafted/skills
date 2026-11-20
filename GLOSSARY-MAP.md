@@ -5,5 +5,6 @@ Each skill is a context. Its glossary ships inside the skill, because the agent 
 ## Contexts
 
 - **Drive**: how an Orchestrator runs a Workflow with the Operator and Subagents. Glossary: [skills/drive/GLOSSARY.md](./skills/drive/GLOSSARY.md). Records: [docs/decision-records/drive/](./docs/decision-records/drive/).
+- **Learnings**: how every skill records what went wrong and files it upstream. Glossary: [skills/learnings/GLOSSARY.md](./skills/learnings/GLOSSARY.md). Records: [docs/decision-records/drive/0008-learnings-move-to-the-learnings-skill.md](./docs/decision-records/drive/0008-learnings-move-to-the-learnings-skill.md).
 
 A skill with no glossary and no records has no row. Add one when its first term or decision settles.
