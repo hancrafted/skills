@@ -6,7 +6,7 @@ status: accepted
 
 # One Decision gate, then the run is unattended
 
-The Operator approved this on 2026-11-18, after the first three `/drive` Workflows (ai-attention-span-pool, ai-gives-you-more-work-pool, onboard-ai-every-time-event-look). Those runs still reached the Operator after Implement had started: a Decision docs PR to the base branch that blocked the Integration branch until it merged and synced, a separate ticket confirmation, "tell me if you contest" after each review, a `/retro` request, Fortify picks, and an Event-date warning only at the PR. The Operator could not tell when it was safe to step away. This record extends Decision record 0001, _Workflow phases are ports bound per project_. Moved from content-library Decision record 0028 (Decision record 0004). Terms: [Drive glossary](../../skills/drive/GLOSSARY.md).
+The Operator approved this on 2026-11-18, after the first three `/drive` Workflows (ai-attention-span-pool, ai-gives-you-more-work-pool, onboard-ai-every-time-event-look). Those runs still reached the Operator after Implement had started: a Decision docs PR to the base branch that blocked the Integration branch until it merged and synced, a separate ticket confirmation, "tell me if you contest" after each review, a `/retro` request, Fortify picks, and an Event-date warning only at the PR. The Operator could not tell when it was safe to step away. This record extends `docs/decision-records/drive/0001-workflow-phases-are-ports-bound-per-project.md`. Moved from content-library Decision record 0028 (see `docs/decision-records/drive/0004-drive-is-distributed-from-the-skills-repo.md`). Terms: [Drive glossary](../../../skills/drive/GLOSSARY.md).
 
 ## Decisions
 

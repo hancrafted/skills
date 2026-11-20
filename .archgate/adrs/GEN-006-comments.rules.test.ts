@@ -32,6 +32,7 @@ const DOCS: Record<string, string> = {
   '.archgate/adrs/ARCH-003-testing.md':
     '# Scene\n\n## Decision\n\n### 1. Wrapper\n\n1. One.\n\n### 4. Scene\n\n1. One.\n2. Two.\n3. Three.\n\n## Consequences\n\n### 7. Not a decision\n',
   'docs/decision-records/0017-example.md': '# Source tree\n',
+  'docs/decision-records/drive/0004-example.md': '# Source tree\n',
 };
 
 const TS = 'tests/probe/probe.test.ts';
@@ -116,6 +117,11 @@ describe('no-comments', () => {
         'decision: to a Decision record',
         TS,
         '// decision: docs/decision-records/0017-example.md\nexport const a = 1;\n',
+      ],
+      [
+        'decision: to a skill’s Decision record',
+        TS,
+        '// decision: docs/decision-records/drive/0004-example.md\nexport const a = 1;\n',
       ],
       [
         'tech-debt: to this repo’s issue',

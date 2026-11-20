@@ -5,7 +5,7 @@ status: accepted
 
 # Workflow phases are ports bound per project
 
-`/drive` must run the same Workflow in any repo, whichever skills that repo has installed. So the skill names five abstract phases, DRIVE, and never a concrete skill; each project binds the phases to its own skills in a Binding that setup detects and the Operator edits. The phases are the ports, the Binding the adapter: the Workflow depends on phases, not on a vendor's skills. Terms: [Drive glossary](../../skills/drive/GLOSSARY.md). Spec: hancrafted/content-library#663. Moved from content-library Decision record 0027 when drive moved to this repo (Decision record 0004).
+`/drive` must run the same Workflow in any repo, whichever skills that repo has installed. So the skill names five abstract phases, DRIVE, and never a concrete skill; each project binds the phases to its own skills in a Binding that setup detects and the Operator edits. The phases are the ports, the Binding the adapter: the Workflow depends on phases, not on a vendor's skills. Terms: [Drive glossary](../../../skills/drive/GLOSSARY.md). Spec: hancrafted/content-library#663. Moved from content-library Decision record 0027 when drive moved to this repo (see `docs/decision-records/drive/0004-drive-is-distributed-from-the-skills-repo.md`).
 
 ## Decisions
 
