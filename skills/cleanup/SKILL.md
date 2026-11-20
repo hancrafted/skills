@@ -1,6 +1,6 @@
 ---
 name: cleanup
-description: Clean up local branches and worktrees after a merged PR, or classify repository-wide cleanup candidates for approval when no PR is identified.
+description: Clean up local branches and worktrees after a merged PR, or classify repository-wide cleanup candidates for approval when no PR is identified. Use when a PR has merged and its branches and worktrees remain, or when asked to clean up the repository.
 ---
 
 # Cleanup
