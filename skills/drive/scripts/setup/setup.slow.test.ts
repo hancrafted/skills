@@ -9,11 +9,13 @@ function dropGitVariablesACommitHookExports(): void {
   for (const name of Object.keys(process.env)) if (name.startsWith('GIT_')) delete process.env[name];
 }
 dropGitVariablesACommitHookExports();
+const withoutGitVariables = (): NodeJS.ProcessEnv =>
+  Object.fromEntries(Object.entries(process.env).filter(([name]) => !name.startsWith('GIT_')));
 const SCRIPTS_ROOT = path.resolve(import.meta.dirname, '..');
 const CLI = path.join(SCRIPTS_ROOT, 'drive.ts');
 function repo(files: Record<string, string>): string {
   const root = realpathSync(mkdtempSync(path.join(tmpdir(), 'drive-setup-cli-')));
-  execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: root });
+  execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: root, env: withoutGitVariables() });
   for (const [file, text] of Object.entries(files)) {
     mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     writeFileSync(path.join(root, file), text);
@@ -24,6 +26,7 @@ const spawnSetup = (cwd: string, ...args: string[]) =>
   spawnSync(process.execPath, [CLI, 'setup', ...args], {
     cwd,
     encoding: 'utf8',
+    env: withoutGitVariables(),
   });
 const binding = (root: string) => {
   const read = readBinding(readFileSync(path.join(root, 'docs/drive/binding.yml'), 'utf8'));
@@ -53,7 +56,11 @@ const VENDOR = CATALOG.source;
 const text = (root: string, file: string) => readFileSync(path.join(root, file), 'utf8');
 
 const gitIn = (cwd: string, ...args: string[]): string =>
-  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd, encoding: 'utf8' }).trim();
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], {
+    cwd,
+    encoding: 'utf8',
+    env: withoutGitVariables(),
+  }).trim();
 const installLearningsStub = (root: string) => {
   mkdirSync(path.join(root, 'skills', 'learnings'), { recursive: true });
   writeFileSync(path.join(root, 'skills', 'learnings', 'SKILL.md'), SKILL);
@@ -196,6 +203,7 @@ describe('success cases', () => {
     it('wires the learnings check into check:docs once', () => {
       // ARRANGE
       const root = bareRepo({ 'package.json': JSON.stringify({ scripts: { 'check:docs': 'mh check' } }) });
+      installLearningsStub(root);
       const expected = `mh check && mh check --root docs/learnings/drive --config skills/learnings/markdown-harness.config.yaml && node skills/learnings/scripts/learnings.ts check`;
       // ACT
       setup(root, INSIDE(root));
@@ -221,6 +229,15 @@ describe('success cases', () => {
     });
   });
   describe('drive setup the learnings step', () => {
+    it('wires the learnings check in the same run that installs learnings', () => {
+      // ARRANGE
+      const root = repo({ 'package.json': JSON.stringify({ scripts: { 'check:docs': 'mh check' } }) });
+      const wired = 'node skills/learnings/scripts/learnings.ts check';
+      // ACT
+      setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      // ASSERT
+      expect(text(root, 'package.json')).toContain(wired);
+    });
     it('moves the old store with git mv, keeps its history and installs learnings once the Operator approves', () => {
       // ARRANGE
       const root = oldStoreRepo();
@@ -264,6 +281,7 @@ describe('failure cases', () => {
       // ARRANGE
       const manifest = JSON.stringify({ scripts: { 'check:docs': 'mh check' } });
       const root = bareRepo({ 'package.json': manifest });
+      installLearningsStub(root);
       // ACT
       const { notes } = setup(root, SCRIPTS_ROOT);
       // ASSERT
@@ -304,6 +322,17 @@ describe('failure cases', () => {
     });
   });
   describe('drive setup the learnings step', () => {
+    it('wires no learnings check while learnings is missing, and names the install command', () => {
+      // ARRANGE
+      const manifest = JSON.stringify({ scripts: { 'check:docs': 'mh check' } });
+      const root = bareRepo({ 'package.json': manifest });
+      const installCommand = 'npx skills add hancrafted/skills --skill learnings';
+      // ACT
+      const { notes } = setup(root, INSIDE(root));
+      // ASSERT
+      expect(text(root, 'package.json')).toBe(manifest);
+      expect(notes.join('\n')).toContain(installCommand);
+    });
     it('moves nothing and installs nothing before the Operator approves, and says what approval does', () => {
       // ARRANGE
       const root = oldStoreRepo();
@@ -331,6 +360,27 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  describe('drive setup test helpers', () => {
+    it('keep a temp repo out of the host repo an inherited GIT_DIR names', () => {
+      // ARRANGE
+      const host = repo({});
+      const hostGitDir = path.join(host, '.git');
+      const hostBare = () =>
+        execFileSync('git', ['config', 'core.bare'], {
+          cwd: host,
+          encoding: 'utf8',
+          env: withoutGitVariables(),
+        }).trim();
+      const before = hostBare();
+      process.env.GIT_DIR = hostGitDir;
+      // ACT
+      const temp = repo({ 'a.txt': 'a' });
+      delete process.env.GIT_DIR;
+      // ASSERT
+      expect(existsSync(path.join(temp, '.git'))).toBe(true);
+      expect(hostBare()).toBe(before);
+    });
+  });
   describe('drive setup, spawned', () => {
     it('writes nothing the second time and says so', () => {
       // ARRANGE

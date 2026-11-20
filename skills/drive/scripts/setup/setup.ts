@@ -14,7 +14,7 @@ import {
 import { missingBindingSkills, parseSetupArgs, type SetupOptions } from './args.pure.ts';
 import { enforcerFacts, projectFacts } from './facts.ts';
 import { adapterHookNote, addAdapterHooks, SETTINGS_FILE } from './hooks.pure.ts';
-import { installLearnings, learningsStep } from './learnings.ts';
+import { installLearnings, learningsInstalled, learningsStep } from './learnings.ts';
 import {
   addGuardToHook,
   addLearningsCheck,
@@ -117,16 +117,11 @@ export function setup(root: string, scriptsRoot: string, options: SetupInput = {
   );
   write(CONFIG_PATH, updateProjectConfig(read(path.join(root, CONFIG_PATH)), facts));
   write(`${DRIVE_FOLDER}/enforcers.yml`, renderEnforcers(detectEnforcers(enforcerFacts(root))));
+  const approval = { approve: options.approveLearnings === true, install: options.install ?? installLearnings };
+  notes.push(...learningsStep(root, approval, write));
   notes.push(...wire(root, { entry, baseBranch: facts.baseBranch }, write));
   createdOnly(`${DRIVE_FOLDER}/profiles.md`, PROFILES_STUB);
   createdOnly(`${DRIVE_FOLDER}/review.md`, REVIEW_STUB);
-  notes.push(
-    ...learningsStep(
-      root,
-      { approve: options.approveLearnings === true, install: options.install ?? installLearnings },
-      write,
-    ),
-  );
   return { written, notes };
 }
 
@@ -153,7 +148,7 @@ function wire(
 ): string[] {
   const notes = [
     wireGuard(root, guard, write),
-    wireLearningsCheck(root, guard.entry, write),
+    learningsInstalled(root) ? wireLearningsCheck(root, guard.entry, write) : null,
     wireAdapterHooks(root, guard.entry, write),
   ];
   return notes.filter((note): note is string => note !== null);
