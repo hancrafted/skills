@@ -1,9 +1,9 @@
-# Authored skills follow the Agent Skills specification. The skills root excludes installed agent copies.
+# Authored skills follow SKL-001 Decision 1: the Agent Skills specification plus Claude Code's documented keys. The skills root excludes installed agent copies.
 frontmatter:
   rules:
     - ruleId: agentskills-spec
       fileNames: [SKILL.md]
-      intent: 'A skill follows the agentskills.io specification, so any harness that loads skills can load it'
+      intent: 'A skill carries the agentskills.io keys and the documented Claude Code keys, so a typo in a key fails instead of being ignored'
       unknownKeys: forbidden
       fields:
         name:
@@ -13,8 +13,24 @@ frontmatter:
         description:
           presence: required
           maxLength: 1024
-          intent: 'What the skill does and when to use it, with the words that trigger it.'
+          pattern: '^(?!I )(?!You )(?![\s\S]*<\/?[A-Za-z][^>]*>)(?=[\s\S]*Use when)'
+          intent: 'At most 1024 characters, third person (not opening with I or You), no XML tags, and a Use when trigger.'
         license: { intent: 'A license name or a bundled license file.' }
         compatibility: { maxLength: 500, intent: 'Environment requirements, only when the skill has any.' }
         metadata: { intent: 'A map of string keys to string values that the spec does not define.' }
         allowed-tools: { intent: 'Space-separated pre-approved tools. Experimental in the spec.' }
+        # Claude Code's documented keys (SKL-001 Decision 1.1). Declaring a field is what allows its key.
+        when_to_use: { intent: 'Extra trigger context appended to the description in the skill listing.' }
+        argument-hint: { intent: 'The arguments the slash command expects, shown in autocomplete.' }
+        arguments: { intent: 'Named positional arguments for substitution in the body.' }
+        disable-model-invocation: { intent: 'True keeps the model from loading the skill on its own.' }
+        user-invocable: { intent: 'False hides the skill from the slash menu.' }
+        disallowed-tools: { intent: 'Tools denied while the skill is active.' }
+        model: { intent: 'The model the skill runs on.' }
+        effort: { intent: 'The effort level the skill runs at.' }
+        context: { intent: 'Set to fork to run the skill in a subagent context.' }
+        agent: { intent: 'The subagent type used when context is fork.' }
+        background: { intent: 'True runs the skill as a background task.' }
+        hooks: { intent: 'Hooks scoped to the skill lifecycle.' }
+        paths: { intent: 'Globs that limit when the skill loads automatically.' }
+        shell: { intent: 'The shell used for inline commands in the body.' }
