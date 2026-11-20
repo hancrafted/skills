@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { indexPathsOf, parseIndex, replaceCommits, topLevelChanges } from './references.pure.ts';
+import { indexPathsOf, isUnder, parseIndex, replaceCommits, topLevelChanges } from './references.pure.ts';
 
 const FIRST_COMMIT = 'a'.repeat(40);
 const SECOND_COMMIT = 'b'.repeat(40);
@@ -57,6 +57,30 @@ describe('success cases', () => {
     // ASSERT
     expect(pins.map((pin) => pin.commit)).toEqual([FIRST_COMMIT, SECOND_COMMIT]);
     expect(rewritten.slice(rewritten.indexOf('# Reference repos'))).toBe(INDEX.slice(bodyStart));
+  });
+
+  it('reads a subfolder written with a trailing slash as the bare folder', () => {
+    // ARRANGE
+    const slashed = INDEX.replace('subfolder: pstack', 'subfolder: pstack/');
+    const expectedSubfolder = 'pstack';
+    // ACT
+    const [, plugins] = parseIndex(slashed);
+    // ASSERT
+    expect(plugins.subfolder).toBe(expectedSubfolder);
+  });
+
+  it('accepts a path inside the folder and rejects one outside or climbing out', () => {
+    // ARRANGE
+    const folder = 'pstack';
+    // ACT
+    const results = [
+      isUnder('pstack/x.md', folder),
+      isUnder('pstack/../other/x.md', folder),
+      isUnder('other/x.md', folder),
+      isUnder('pstack', folder),
+    ];
+    // ASSERT
+    expect(results).toEqual([true, false, false, false]);
   });
 });
 

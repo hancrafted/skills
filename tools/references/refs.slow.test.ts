@@ -8,6 +8,7 @@ import {
   readlinkSync,
   realpathSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -224,6 +225,21 @@ describe('edge cases', () => {
     // ASSERT
     expect(run.status).toBe(0);
     expect(existsSync(path.join(cacheOf(main, 'nested'), expectedNowPresent))).toBe(true);
+  });
+
+  it('leaves the cache index untouched when a re-run finds nothing to change', () => {
+    // ARRANGE
+    const { main } = createFixture();
+    runRefs(main);
+    const indexFile = path.join(cacheOf(main, 'nested'), '.git', 'index');
+    const expectedModified = statSync(indexFile).mtimeMs;
+    const expectedContent = readFileSync(indexFile).toString('hex');
+    // ACT
+    const run = runRefs(main);
+    // ASSERT
+    expect(run.status).toBe(0);
+    expect(statSync(indexFile).mtimeMs).toBe(expectedModified);
+    expect(readFileSync(indexFile).toString('hex')).toBe(expectedContent);
   });
 
   it('re-runs without touching the remote and keeps an existing worktree link', () => {

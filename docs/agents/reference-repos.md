@@ -18,7 +18,7 @@ Advisory prior art: these repos sharpen options and recommendations and never de
 
 ## Use
 
-1. A repo's cache is present when `.references/<name>/.git` exists; run `npm run refs` when it does not. It fills the cache and symlinks `.references` into the worktree.
+1. A repo's cache is present when `.references/<name>/.git` exists (Read `.references/<name>/.git/HEAD`, or `test -d .references/<name>/.git` in Bash; Glob cannot see it); run `npm run refs` when it does not. It fills the cache and symlinks `.references` into the worktree.
 2. Offline: `gh api -H 'Accept: application/vnd.github.raw' 'repos/<owner>/<repo>/contents/<path>?ref=<sha>'` reads the pinned file (`<path>` includes `pstack/` for cursor-plugins); say you did.
 3. Search with the path set to `.references/<name>` (Glob, Grep): a search from the repo root skips `.references` (gitignored symlink), and an empty root result does not mean the cache is missing.
 4. Start from the paths below; grep the cache for anything else.
@@ -73,7 +73,7 @@ Strongest: `agent-skills` for script tests beside each script and hook test suit
 
 ### Ship (manifests, versions, release, install)
 
-Strongest: `mattpocock-skills` for changesets releases and plugin version sync; `agent-skills` for a real install test in CI and multi-host manifests.
+Strongest: `mattpocock-skills` for changesets releases and plugin version sync; `agent-skills` for a real install test in CI and multi-host manifests; `cursor-plugins` for a single Cursor plugin manifest.
 
 - `.references/mattpocock-skills/.github/workflows/release.yml`
 - `.references/mattpocock-skills/scripts/sync-plugin-version.mjs`

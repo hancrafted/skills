@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { parse, parseDocument } from 'yaml';
 
 export interface RepoPin {
@@ -14,6 +15,7 @@ export interface CachePath {
 
 const FRONT_MATTER = /^---\n([\s\S]*?)\n---\n/;
 const CACHE_PATH = /\.references\/([A-Za-z0-9._-]+)\/([^\s`'")\]>]+)/g;
+const TRAILING_SLASHES = /\/+$/;
 const TRAILING_PUNCTUATION = /[.,;:/]+$/;
 
 function frontMatterOf(text: string): RegExpMatchArray {
@@ -32,7 +34,7 @@ export function parseIndex(text: string): RepoPin[] {
     return {
       name,
       url: fields.url as string,
-      subfolder: typeof subfolder === 'string' ? subfolder : undefined,
+      subfolder: typeof subfolder === 'string' ? subfolder.replace(TRAILING_SLASHES, '') : undefined,
       commit: fields.commit as string,
     };
   });
@@ -61,3 +63,6 @@ export function topLevelChanges(before: readonly string[], after: readonly strin
     removed: before.filter((entry) => !after.includes(entry)),
   };
 }
+
+export const isUnder = (relativePath: string, folder: string) =>
+  path.posix.normalize(relativePath).startsWith(`${folder}/`);
