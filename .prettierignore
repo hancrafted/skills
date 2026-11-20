@@ -4,6 +4,7 @@ dist
 .worktrees
 .agents
 .claude
+.scratch
 .archgate/rules.d.ts
 # Frozen eval inputs and grader fixtures are byte-addressed artifacts.
 skills/to-review/evals/cases/
