@@ -1,0 +1,169 @@
+# markdown-harness.config.yaml — a worked example, not a preset.
+#
+# Copy it, delete the rules you do not want, and rename the folders to your own.
+# Every key in the language appears below at least once, so this file doubles as
+# the vocabulary: if a key is not here, it does not exist.
+#
+# A selector is two axes of LITERAL tokens and carries no wildcard anywhere:
+#
+#   folders:   each token one folder, repo-root-relative, with a MANDATORY
+#              trailing `/`, selecting THAT FOLDER ALONE. No recursion — name a
+#              subfolder to govern it. The corpus root is `./`.
+#   fileNames: each token one literal basename, extension included, compared
+#              case-sensitively.
+#
+# At least one axis is required. An absent axis means every, so folders alone is
+# every file in those folders, names alone is that name anywhere, and both
+# together is those names in those folders. Literal tokens compare the same way
+# on every filesystem, which is why your colleague on Linux gets your report.
+#
+# A folder list goes stale: a folder created under one you named is governed by
+# nothing until you add it here, and the tool will not tell you. A rule keyed on
+# a file name alone has no such hole.
+#
+# Verify any edit with the query loop, which needs no file to exist yet:
+#
+#   mh query docs/research/whatever.md --config markdown-harness.config.yaml
+#
+# Exit 0 prints the winning rule and what it asks for. Exit 2 prints a fault
+# whose `location` is the exact key to fix.
+
+frontmatter:
+  # ── The rule list is ORDERED, and the first match wins outright ─────────────
+  # For any file the harness walks top-down and stops at the first rule whose
+  # selector matches. Nothing merges and nothing is inherited, so the most
+  # specific rules go first and the broadest goes last. Reversed, a narrow rule
+  # silently governs zero files — `mh audit` is what makes that visible.
+  rules:
+    # ── 1. A rule that forbids frontmatter outright ───────────────────────────
+    # `fileNames` on its own matches the basename ANYWHERE in the corpus — the
+    # corpus root included, and folders created after you wrote this config.
+    # An absent axis means every, which is the only spelling "all" has: there is
+    # no wildcard in this language.
+    #
+    # `frontmatter: forbidden` is the one payload that takes no other payload
+    # key — there is nothing to constrain on a file that must carry none.
+    - ruleId: index-files
+      fileNames: [index.md]
+      intent: An index lists what is in a directory, and carries no frontmatter of its own
+      frontmatter: forbidden
+
+    # ── 2. A rule that governs a path in order to ask nothing of it ───────────
+    # OKF §3.1 reserves TWO filenames, not one: `index.md` above, and `log.md`
+    # here — an update history of date-grouped prose entries (§9). Neither is a
+    # concept document, so neither owes the `type` that rule 6 asks of everything
+    # under docs/. Without this rule the catch-all reaches `log.md` and demands a
+    # key OKF never asked for.
+    #
+    # A selector and an `intent` with NO payload is legal and is the point: the
+    # rule claims the path so that first-match stops here, and then asserts
+    # nothing. That is the difference between "exempt" and "ungoverned" — this
+    # exemption is written down, and `mh audit` will show it winning.
+    #
+    # Not `frontmatter: forbidden`, which is what rule 1 can say because §8 says
+    # index files carry none. §9 says no such thing about `log.md`, so forbidding
+    # it here would be this config over-claiming on OKF's behalf.
+    - ruleId: log-files
+      fileNames: [log.md]
+      intent: An update history is not a concept document, and OKF asks nothing of its frontmatter
+
+    # ── 3. The signal-bearing rule ────────────────────────────────────────────
+    # Research is where provenance matters, so this is the rule that reaches the
+    # nested addresses and the named formats.
+    - ruleId: research
+      folders: [docs/research/]
+      # Excluded files fall THROUGH to a later, broader rule rather than being
+      # exempted from governance altogether. Per rule, never global.
+      #
+      # An exclusion is the SAME selector object, under the same at-least-one
+      # rule — one vocabulary rather than two. Prefer a folder, or a folder and
+      # a name together: an exclusion written by name alone reaches that name
+      # anywhere, and a widened exclusion makes files ungoverned silently.
+      excludeFiles: [{ folders: [docs/research/vendor/] }]
+      intent: Research is only worth as much as the sources behind it, so it names them
+      # At least one of these must be present. `allOf` and `exactlyOneOf` are the
+      # other two spellings.
+      anyOf: [sources, generated]
+      fields:
+        type:
+          presence: required
+          # `allowed` replaces wholesale, never appends. Each entry is a record
+          # so it can say what choosing that value MEANS — the whole set is
+          # printed back when a membership check fails.
+          allowed:
+            - { value: research, intent: 'Findings gathered to settle a question, with sources.' }
+        # `required` means present AND non-empty, which is why there is no
+        # `minLength: 1` anywhere in this language.
+        description: { presence: required, maxLength: 200 }
+        tags: { minItems: 1, maxItems: 5, itemMaxLength: 20 }
+        # A field address reaches exactly one level into a nested shape.
+        generated.by: { presence: required, format: actor }
+        generated.at: { presence: required, format: datetime }
+        # Addressing a LIST and addressing EVERY ENTRY of it are different
+        # addresses, so the two never collide.
+        sources: { minItems: 1 }
+        sources[].resource: { presence: required, format: uri }
+        sources[].author: { format: actor }
+
+    # ── 4. Closing the key set, and the escape valve ──────────────────────────
+    - ruleId: reference
+      folders: [docs/reference/]
+      intent: Reference pages are looked up by slug and say how far they can be trusted
+      # Defaults to `allowed` when absent. `forbidden` is the only rule-level way
+      # to catch a typo'd frontmatter key.
+      unknownKeys: forbidden
+      fields:
+        type:
+          presence: required
+          allowed:
+            - { value: reference, intent: Lookup data an agent consults rather than reads through. }
+        description: { presence: required }
+        status:
+          allowed:
+            - { value: draft, intent: 'Written down, not yet trusted.' }
+            - { value: stable, intent: Safe to rely on. }
+            - { value: deprecated, intent: 'Still here, no longer to be followed.' }
+        slug:
+          # `pattern` is the escape valve for anything the named formats cannot
+          # express. A sibling `intent` is MANDATORY beside it — without one the
+          # raw regex leaks into the violation, which is the reason the key exists.
+          # Searched, never anchored, and compiled with the `u` flag in every Module,
+          # so an escape `u` refuses (`\-` outside a class) fails the config load.
+          pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+          intent: Slugs are lowercase words joined by single hyphens
+
+    # ── 5. Freshness — the only rule that a clock ever reads ──────────────────
+    # `assess.stale` is your sentence, handed to an agent that opened the file at
+    # or past its `stale_after`. Write it as an instruction, because that is how
+    # it gets read.
+    #
+    # `stale_after: { presence: required }` is MANDATORY on the same rule. Without
+    # it the sentence below could never be printed, and the config is rejected
+    # with CONFIG_ASSESS_WITHOUT_REQUIRED_FIELD.
+    #
+    # Prefer this rule-level form. A Module-wide `frontmatter.assess:` forces
+    # `stale_after` onto EVERY constraining rule in the list, which is rarely
+    # what anyone means.
+    - ruleId: runbooks
+      folders: [docs/runbooks/]
+      intent: A runbook that has drifted from the system it describes is worse than none
+      assess:
+        stale: Re-run these steps against the live system before following them, then move stale_after.
+      fields:
+        type: { presence: required }
+        stale_after: { presence: required, format: datetime }
+
+    # ── 6. The broadest rule, deliberately last ───────────────────────────────
+    # The narrowest useful payload there is: say what you are. Governance is
+    # opt-in, so anything this does not match is invisible to the harness — never
+    # reported, never counted.
+    #
+    # "Broadest" is an ENUMERATION now, not a wildcard, so this is the rule that
+    # carries the cost of the grammar: every folder you want reached is named,
+    # including the ones the rules above already claim. Keep it in step with
+    # your tree — `mh audit` shows what each rule actually won.
+    - ruleId: everything-else
+      folders: [docs/, docs/reference/, docs/research/, docs/runbooks/]
+      intent: Every document under docs/ still has to say what it is
+      fields:
+        type: { presence: required }

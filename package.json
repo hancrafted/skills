@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "~10.0.1",
-    "@hancrafted/markdown-harness": "~0.0.6",
+    "@hancrafted/markdown-harness": "~0.0.7",
     "@playwright/test": "~1.64.1",
     "@types/node": "~26.1.2",
     "@vitest/coverage-v8": "~4.1.10",

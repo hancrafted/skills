@@ -73,6 +73,13 @@
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
       "computedHash": "f0820b18426a7d9a6c823a890988ba0ac70bf0fd596d30d7ef07c88558728c23"
     },
+    "markdown-harness": {
+      "source": "hancrafted/markdown-harness",
+      "commit": "a10f6760a31276a88a22d9f196bd8a5f7f995aa5",
+      "sourceType": "github",
+      "skillPath": "skills/markdown-harness/SKILL.md",
+      "computedHash": "5f7a15fb15c8cd52a60a03cce91c222267a04bd1a145e49b765dc6bd4507632e"
+    },
     "pr": {
       "source": "mattpocock/skills",
       "sourceType": "github",
