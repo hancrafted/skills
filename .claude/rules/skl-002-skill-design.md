@@ -1,0 +1,1 @@
+../../.archgate/adrs/SKL-002-skill-design.md
