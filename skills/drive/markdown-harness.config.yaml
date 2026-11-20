@@ -1,7 +1,7 @@
-# The drive learnings store (drive Decision record 0003, hancrafted/skills): run with --root docs/drive/learnings, so folders are relative
-# to it. `drive learnings check` holds what a field rule cannot: every record H2 names a failure-mode file, a fixed
-# failure mode cited after its fix carries a Regressed bullet, status and skip fields agree, and no learnings.md
-# sits beside a migrated store.
+# The drive learnings store (hancrafted/skills docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md):
+# run with --root docs/drive/learnings, so folders are relative to it. `drive learnings check` holds what a field rule
+# cannot: every record H2 names a failure-mode file, a fixed failure mode cited after its fix carries a Regressed
+# bullet, status and skip fields agree, and no learnings.md sits beside a migrated store.
 frontmatter:
   rules:
     - ruleId: drive-learnings-record

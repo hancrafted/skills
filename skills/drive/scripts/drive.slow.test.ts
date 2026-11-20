@@ -9,7 +9,7 @@ function dropGitVariablesACommitHookExports(): void {
 }
 dropGitVariablesACommitHookExports();
 const CLI = path.join(import.meta.dirname, 'drive.ts');
-const LOCK = path.join(import.meta.dirname, 'lock.fixture.ts');
+const LOCK = path.join(import.meta.dirname, 'worktree', 'lock.fixture.ts');
 const git = (cwd: string, ...args: string[]): string =>
   execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], {
     cwd,
@@ -404,7 +404,7 @@ describe('failure cases', () => {
 
     it('rejects a config that names a lock module without withLock', () => {
       // ARRANGE
-      const { main } = fixture(path.join(import.meta.dirname, 'git.ts'));
+      const { main } = fixture(path.join(import.meta.dirname, 'core', 'git.ts'));
       // ACT
       const result = drive(main, 'new', 'feat/x');
       // ASSERT
