@@ -1,0 +1,1 @@
+../../.archgate/adrs/SKL-001-skill-package.md

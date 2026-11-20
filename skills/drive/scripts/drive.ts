@@ -1,7 +1,6 @@
 import { logCommandAtExit } from './core/index.ts';
 import { runDispatch } from './dispatch/index.ts';
 import { runGuard } from './guard/index.ts';
-import { runLearnings } from './learnings/index.ts';
 import { runPr } from './pr/index.ts';
 import { runPush } from './push/index.ts';
 import { runSetup } from './setup/index.ts';
@@ -18,7 +17,6 @@ else if (group === 'setup') runSetup(rest, SCRIPTS_ROOT);
 else if (group === 'guard') runGuard(rest, SCRIPTS_ROOT);
 else if (group === 'push') runPush(rest, SCRIPTS_ROOT);
 else if (group === 'pr') await runPr(rest);
-else if (group === 'learnings') runLearnings(rest);
 else if (group === 'transcript') runTranscript(rest);
 else if (group === 'dispatch') runDispatch(rest, SCRIPTS_ROOT);
 else if (group === 'status') runStatus(rest, SCRIPTS_ROOT);

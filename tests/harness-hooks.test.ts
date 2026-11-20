@@ -5,6 +5,10 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { REPO_ROOT } from './helpers/commit-gate';
 
+function withoutGitEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  return Object.fromEntries(Object.entries(env).filter(([name]) => !name.startsWith('GIT_')));
+}
+
 function runHook(hook: string, env: Record<string, string> = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'harness-hooks-'));
   try {
@@ -16,7 +20,7 @@ function runHook(hook: string, env: Record<string, string> = {}) {
     for (const command of ['npm', 'git']) chmodSync(join(dir, command), 0o755);
     return spawnSync('sh', [join(REPO_ROOT, '.husky', hook)], {
       cwd: REPO_ROOT,
-      env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, ...env },
+      env: { ...withoutGitEnv(process.env), PATH: `${dir}:${process.env.PATH}`, ...env },
       input: 'refs/heads/topic local-sha refs/heads/topic remote-sha\n',
       encoding: 'utf8',
       timeout: 5000,

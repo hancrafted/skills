@@ -1,9 +1,9 @@
-# Authored skills follow the Agent Skills specification. The skills root excludes installed agent copies.
+# Authored skills follow SKL-001 Decision 1: the Agent Skills specification plus Claude Code's documented keys. The skills root excludes installed agent copies.
 frontmatter:
   rules:
     - ruleId: agentskills-spec
       fileNames: [SKILL.md]
-      intent: 'A skill follows the agentskills.io specification, so any harness that loads skills can load it'
+      intent: 'A skill carries the agentskills.io keys and the documented Claude Code keys, so a typo in a key fails instead of being ignored'
       unknownKeys: forbidden
       fields:
         name:
@@ -13,8 +13,131 @@ frontmatter:
         description:
           presence: required
           maxLength: 1024
-          intent: 'What the skill does and when to use it, with the words that trigger it.'
+          pattern: '^(?!I )(?!You )(?![\s\S]*<\/?[A-Za-z][^>]*>)(?=[\s\S]*Use when)'
+          intent: 'At most 1024 characters, third person (not opening with I or You), no XML tags, and a Use when trigger.'
         license: { intent: 'A license name or a bundled license file.' }
         compatibility: { maxLength: 500, intent: 'Environment requirements, only when the skill has any.' }
         metadata: { intent: 'A map of string keys to string values that the spec does not define.' }
         allowed-tools: { intent: 'Space-separated pre-approved tools. Experimental in the spec.' }
+        # Claude Code's documented keys (SKL-001 Decision 1.1). Declaring a field is what allows its key.
+        when_to_use: { intent: 'Extra trigger context appended to the description in the skill listing.' }
+        argument-hint: { intent: 'The arguments the slash command expects, shown in autocomplete.' }
+        arguments: { intent: 'Named positional arguments for substitution in the body.' }
+        disable-model-invocation: { intent: 'True keeps the model from loading the skill on its own.' }
+        user-invocable: { intent: 'False hides the skill from the slash menu.' }
+        disallowed-tools: { intent: 'Tools denied while the skill is active.' }
+        model: { intent: 'The model the skill runs on.' }
+        effort: { intent: 'The effort level the skill runs at.' }
+        context: { intent: 'Set to fork to run the skill in a subagent context.' }
+        agent: { intent: 'The subagent type used when context is fork.' }
+        background: { intent: 'True runs the skill as a background task.' }
+        hooks: { intent: 'Hooks scoped to the skill lifecycle.' }
+        paths: { intent: 'Globs that limit when the skill loads automatically.' }
+        shell: { intent: 'The shell used for inline commands in the body.' }
+
+# SKL-002 Decision 3: one body frame, adopted from Addy Osmani's skill anatomy. The rule is closed, so a heading outside the frame or the process middle fails.
+body-structure:
+  rules:
+    - ruleId: skill-body-frame
+      fileNames: [SKILL.md]
+      undefinedHeadings: forbid
+      intent: 'An agent finds each part of a skill at the same place in every skill: what it is for, when to load it, the state it keeps, where it stops for a human, the steps, the excuses to refuse, the signs of drift and the evidence that ends the run. SKL-002 governs what goes inside each part.'
+      headings:
+        - purpose: heading
+          level: 1
+          mayHold: [prose]
+          intent: 'The skill title, one per file. Under it, nothing but prose that names the skill.'
+        - purpose: heading
+          level: 2
+          mayHold: [prose, unordered-list]
+          allowed:
+            [
+              {
+                title: Overview,
+                intent: 'One or two sentences: what the skill does and why an agent should follow it. Nothing nested.',
+              },
+            ]
+        - purpose: heading
+          level: 2
+          mayHold: [prose, unordered-list]
+          allowed:
+            [
+              {
+                title: When to Use,
+                intent: 'Positive triggers as bullets, then the cases this skill is NOT for, so an agent stops or hands off before starting.',
+              },
+            ]
+        - purpose: heading
+          level: 2
+          presence: optional
+          allowed:
+            [
+              {
+                title: Context,
+                intent: 'Stateful skills only (SKL-003): every home the skill reads or writes, and the context protocol block.',
+              },
+            ]
+        - purpose: heading
+          level: 2
+          presence: optional
+          mayHold: [prose, unordered-list]
+          allowed:
+            [
+              {
+                title: Human gates,
+                intent: 'Every point where the agent stops and waits for a human, one `<trigger>: <reason>` item each (SKL-002 Decision 2). Present whenever the skill stops anywhere.',
+              },
+            ]
+        - purpose: enumeration
+          level: 2
+          pattern: '^(?!(Overview|When to Use|Context|Human gates|Common Rationalizations|Red Flags|Verification)$)(?![0-9]+\. )'
+          minCount: 1
+          intent: 'A process phase or topic: a named group of steps, never numbered itself. Every section outside the frame goes here, after Human gates and before Common Rationalizations; a frame title found among the phases, or a section after Verification, is in the wrong place.'
+          headings:
+            - purpose: enumeration
+              level: 3
+              pattern: '^[0-9]+\. \S'
+              minCount: 0
+              intent: 'One step, `### N. <imperative>`, numbered across the whole skill and ending with a `_Done when:_` line that names the evidence.'
+              headings:
+                - purpose: enumeration
+                  level: 4
+                  minCount: 0
+                  intent: 'A sub-part of one step, unnumbered.'
+                  headings:
+                    - { purpose: enumeration, level: 5, minCount: 0, intent: 'Detail under a sub-part.' }
+        - purpose: heading
+          level: 2
+          allowed:
+            [
+              {
+                title: Common Rationalizations,
+                intent: 'A two-column table of excuses an agent gave for skipping a step, quoted, and the fact that refutes each. Add a row only for an excuse a run actually produced (SKL-002 Decision 3.4).',
+              },
+            ]
+        - purpose: heading
+          level: 2
+          mayHold: [prose, unordered-list]
+          allowed:
+            [
+              {
+                title: Red Flags,
+                intent: 'Signs, observable mid-run, that the agent has drifted from the steps, one bullet each; on any of them stop and return to the step it skipped.',
+              },
+            ]
+        - purpose: heading
+          level: 2
+          mayHold: [prose, unordered-list]
+          allowed:
+            [
+              {
+                title: Verification,
+                intent: 'The exit checklist for the whole run: `- [ ]` items, each confirmed by evidence such as a command exit code, then the Learn step. Nothing follows it.',
+              },
+            ]
+          headings:
+            - purpose: heading
+              level: 3
+              pattern: '^[0-9]+\. Learn$'
+              mayHold: [prose]
+              intent: 'The last step, `### N. Learn`: after a correction or a failed step, run /learnings when it is available; otherwise skip.'

@@ -6,17 +6,28 @@ compatibility: The local grader requires Node.js with TypeScript support, @playw
 
 # To review
 
+## Overview
+
 A **decision page** is one standalone HTML file. In mode `decide` a person decides open decisions from it with confidence; in mode `explain` a reader understands decisions already made. Every item leads with its decision, and each visual serves that decision. You write the page and stop there: the caller owns what happens next, including implementing what the page proposes.
+
+## When to Use
+
+- A person must choose between Options, or approve or comment on proposals (mode `decide`).
+- A reader must understand decisions already made (mode `explain`).
+- A caller wants only the items, with its own page frame and feedback route.
+- NOT for: implementing what a page proposes, which the caller owns; or a page the reader only skims for status.
+
+## Human gates
+
+- Before building items, when the caller left an input open: one batched calibration round asks the page's mode, audience, depth and rung, and without an answer the page proceeds with each chosen value marked assumed.
 
 ## When the caller owns the frame
 
 When the caller owns both the frame (the page, its layout and controls) and the feedback (its format, rounds and approval), write content only: the items, their Options and visuals, built by steps 1 to 3 in the caller's markup and at the fidelity it names, handed back where it says. The caller's frame takes the place of steps 4 to 7.
 
-## Feedback on the skill
+## Gather
 
-When the person faults how a page works rather than what it says (picking, amount of text, framing, layout, controls), add a lesson to [LEARNINGS.md](LEARNINGS.md) as it describes, then revise the page as usual.
-
-## 1. Gather the inputs
+### 1. Gather the inputs
 
 The caller supplies the domain. Take each input from the caller first:
 
@@ -39,7 +50,7 @@ For a revision of an existing page, read it first: keep its page id and every it
 
 _Done when_ every input is supplied or listed as missing.
 
-## 2. Calibrate once
+### 2. Calibrate once
 
 Skip this step when the caller supplied every input. Otherwise ask one round, in the repository's grilling format when it has one. Show a table: the page's mode, audience and feedback route, then one row per item with its [depth](#depth) (`simple`, `detailed` or `both`) and fidelity rung. A cell the caller supplied shows its value as fixed; propose a value only in each missing cell, and "yes" accepts every proposal.
 
@@ -47,7 +58,9 @@ Without an answer, proceed, and mark each value you chose as _assumed_ on the pa
 
 _Done when_ the page has a mode and every item a depth and rung, each confirmed or marked assumed.
 
-## 3. Build each item: decision → evidence → rendering
+## Build
+
+### 3. Build each item: decision → evidence → rendering
 
 Order items by consequence, most consequential first. For each item:
 
@@ -67,11 +80,11 @@ Order items by consequence, most consequential first. For each item:
 
 Show before and after for every change, fixes included. The before comes from evidence; when it is unknown, the page says unknown. Graph-shaped relationships get a diagram; when a graph layout hides the point, compose HTML and SVG instead. True alternatives differ in the decision itself. An analogy explains and never proves: give it a show/hide toggle on its Option, closed by default, and name where it breaks down.
 
-### Fidelity ladder
+#### Fidelity ladder
 
 `diagram` (diagram or sketch) → `wireframe` → `mock` (real-content mock) → `prototype` (interactive). Pick the lowest rung that settles the decision, unless the caller names one. The ladder guides rather than limits. Each item states its rung and why that rung is enough, so the reviewer can ask for a higher one, and a revision may raise it.
 
-### Depth
+#### Depth
 
 Each item has a depth, set per item like its rung. The simple view alone, with every collapsible closed, clears the confidence bar; the detailed layer adds what a reader needs to verify the item, never the decision itself.
 
@@ -85,13 +98,13 @@ The simple view is an **inverted pyramid**, one slot per line: the plain-words n
 
 Without caller input, propose `both` for an item whose references or technical detail stand behind a simple decision, and `simple` otherwise.
 
-### Diagrams and motion
+#### Diagrams and motion
 
 Keep each Mermaid diagram's source word for word in `<script type="text/x-mermaid" data-diagram="<name>">`, so it can be copied into documentation, and render it beside the script, in the same parent element. With a browser tool, pre-render the source to inline SVG while you build the page; without one, use the fallback, which shows the source as text until Mermaid renders it. [Diagrams](references/diagrams.md) gives both procedures.
 
 Animate with CSS transitions and the Web Animations API, and honour `prefers-reduced-motion`. Inline a library only when the caller names it, such as a motion library's core at the caller's pinned version; the diagram fallback is the one exception.
 
-### Confidence bar
+#### Confidence bar
 
 An item is finished when a reader can answer from the page alone:
 
@@ -105,7 +118,9 @@ An item is finished when a reader can answer from the page alone:
 
 _Done when_ every item clears the bar for its mode.
 
-## 4. Lay out the page
+## Page
+
+### 4. Lay out the page
 
 Copy [the page skeleton](assets/page-skeleton.html) and fill its slots; its comments say where each part goes. A banner `<header>` holds the `<h1>` and a sentence stating purpose and scope. A `<nav>` links to every item and stays visible while the page scrolls; collapsed, it gives back all of its width, leaving only the page gutter. Build for laptop (1440 px) and landscape tablet (1024 px): the page never scrolls sideways, and no box clips or spills its text. On a laptop with the navigation collapsed, the content keeps at least 1000 px with the rail beside it: the Options sit in a rail to the right of the visual, and no empty column wider than the 48 px gutter remains at the left. The page **grows** with the screen: a visual with a design size the caller names (a 1920 × 1080 frame) widens up to that size, so the content column's cap is the widest design size, not a reading width.
 
@@ -138,7 +153,7 @@ Every field and button has an accessible name, every control shows a visible foc
 
 _Done when_ the toolbar is one row at 1024 px and wider, a fixed-size preset shows its whole frame below the toolbar, the review panel spans the content width, every item's visual stays at least half in view beside its comment fields at both widths, the first item's heading starts within the first screen of a laptop with the background cards closed, the content keeps 1000 px beside the rail on a laptop with the navigation collapsed, a visual with a design size reaches it on a 2560 px screen, and every control is labelled, shows focus and reads at AA contrast in both themes.
 
-## 5. Add the mode's controls
+### 5. Add the mode's controls
 
 Both modes carry one reflection block of open questions through lenses the items may have missed. The reader writes the answers, so the page shows no agent-written answer, hint or answer key beside a prompt.
 
@@ -161,17 +176,19 @@ Both modes carry one reflection block of open questions through lenses the items
 
 _Done when_ every item carries its mode's controls, and the page holds its mode's blocks: Before you approve and the Next action in `decide`, reflection and Questions? in `explain`.
 
-## 6. Hand back the feedback
+### 6. Hand back the feedback
 
 Apply the [feedback contract](references/feedback-contract.md): Copy as prompt and Save carry the reviewer's responses and comments back to you, verbatim, with no server. The contract says where Copy as prompt sits and what it copies.
 
 _Done when_ the page names its [feedback file](references/feedback-contract.md#save) or the caller's destination.
 
-## 7. Deliver and verify
+## Deliver
+
+### 7. Deliver and verify
 
 The page loads with no network: inline all CSS and JavaScript, embed every asset, and draw diagrams as inline SVG.
 
-### Page contract
+#### Page contract
 
 The page carries these attributes; everything else on it is yours to shape.
 
@@ -186,12 +203,45 @@ The page carries these attributes; everything else on it is yours to shape.
 - Optional: `data-visual` on the visual a comment is about, and on a laptop the content column the grader measures: put it on the box that fills the column. Without it, the grader takes the largest `svg`, `img`, `canvas`, `video` or `iframe` in the comment's Option, else in its item.
 - Optional: `data-design-width`, a positive integer of CSS px, on a visual with a design size, such as `1920` on a preview. At 2560 × 1440 the grader expects it at least as wide as the smaller of that size and the screen less the navigation (if still shown), the rail and three 48 px gutters.
 
-### Hand over
+#### Hand over
 
 Open the page with the platform's opener, then print three lines: the page's absolute path and its mode; the feedback file's name or the caller's destination; and how to continue: after Save, say "saved feedback"; after Copy as prompt, paste the prompt into this or any agent session. A person who wants to check the page follows [verification](references/verification.md).
 
 _Done when_ the page is inlined, the person has it open and has those three lines.
 
-## Evaluation
+## Common Rationalizations
 
-The evaluation process grades the skill; a use of the skill delivers its page ungraded. When this skill changes, run the grader (`node scripts/grade-page.ts <page.html>`), the fixture proof (`npm run review:prove`) and the evals. The grader proves mechanics, not taste: whether a page looks right and explains well stays with human review.
+| Excuse                                                                         | Rebuttal                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The reader was in the session, so the page can skip explaining the decision." | The default audience is a **cold reader**: no recall of the session, under high load. A page once asked for a decision before it explained it; the reader said the content was not explained or visualized well enough to decide (record 2026-11-17, `docs/learnings/to-review/`). |
+| "More text makes the page thorough."                                           | Visible words in that run went 736 (haiku), 815 (sonnet) to 1077 (opus), and the reader found it far too much to parse. Haiku had the fewest words and the worst page, so the fault was composition, not length: lead with the inverted pyramid and close every collapsible.       |
+| "Three incidents is evidence enough."                                          | A label says what the evidence shows, never only how many: an incident gives what happened, when and its cost, or `unknown` (3758caf).                                                                                                                                             |
+| "I will compose the layout from scratch."                                      | A weak model's layout was "terrible" and inline code wrapped one letter per line. Copy the page skeleton and the toolbar asset; the grader's overflow check fails a word that wraps mid-word (0d7c40d, 0d2cf06).                                                                   |
+| "An analogy makes the Option clear on its own."                                | An analogy explains and never proves. Give it a toggle on its Option, closed by default, and name where it breaks down (3758caf).                                                                                                                                                  |
+| "This Option changes nothing existing, so it needs no before and after."       | Show before and after for every change, fixes included; the before comes from evidence or the page says unknown. `data-before` and `data-after` come as a pair of visuals the grader checks (7e0c115).                                                                             |
+
+## Red Flags
+
+- The first screen asks for a pick before a visual or an example explains the decision.
+- The simple view makes no sense until a collapsible is opened.
+- An Option has `data-before` without `data-after`, or the reverse.
+- Inline code, an After list or any word wraps mid-word in a preview.
+- Evidence is labelled with a count alone, or a research question is stated as a finding.
+- An analogy is open by default or names no point where it breaks down.
+- An agent-written answer, hint or answer key sits beside a reflection prompt.
+- The page loads a script, stylesheet or image over the network.
+- The agent implements what the page proposes.
+
+## Verification
+
+- [ ] `grep -nE '<(script|link|img)[^>]+(src|href)="https?:' <page.html>` prints nothing, so the page loads with no network (the `data-offline="partial"` diagram fallback is the one exception).
+- [ ] `grep -o 'data-mode="[a-z]*"' <page.html>` prints the page's mode, and `<html>` also carries `data-page-id` and `data-revision`.
+- [ ] With every collapsible closed, each item answers the confidence-bar questions for its mode from the page alone.
+- [ ] The hand-over printed the page's absolute path and mode, the feedback file or the caller's destination, and how to continue.
+- [ ] When this skill itself changed: `node scripts/grade-page.ts <page.html>` and `npm run review:prove` both exit 0, and the evals pass. The grader proves mechanics, not taste: whether a page looks right and explains well stays with human review.
+
+### 8. Learn
+
+When the person faults how a page works rather than what it says (picking, amount of text, framing, layout, controls), or a step failed, and `/learnings` is available, ask "Record learnings from this run?" and on yes run `/learnings` for skill `to-review`, then revise the page as usual. A clean run asks nothing.
+
+_Done when:_ the question was asked and answered, or the run was clean and the step skipped.

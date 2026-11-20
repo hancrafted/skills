@@ -43,7 +43,11 @@ export const VERIFY_PLAN: Plan = {
 
 export const COMMIT_PLAN: Plan = {
   label: 'verify:commit',
-  phases: [[script('lint-staged')], [{ name: 'archgate', command: 'archgate check' }], [TYPECHECK, TEST]],
+  phases: [
+    [script('lint-staged')],
+    [{ name: 'archgate', command: 'archgate check' }],
+    [TYPECHECK, TEST, script('skills', 'check:skills')],
+  ],
 };
 
 function stepReport(step: Step, run: StepRun): string {
