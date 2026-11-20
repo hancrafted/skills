@@ -18,11 +18,12 @@ export interface CheckResult {
   ruleIds: string[];
   violations: Violation[];
   invalidFiles: number;
+  governedFiles: number;
 }
 
 interface CheckReport {
   result: {
-    summary: { invalidFiles: number };
+    summary: { invalidFiles: number; governedFiles: number };
     files: { modules: { ruleId: string; violations: Violation[] }[] }[];
   };
 }
@@ -39,6 +40,7 @@ export function checkRoot(root: string): CheckResult {
     ruleIds: modules.map((module) => module.ruleId),
     violations: modules.flatMap((module) => module.violations),
     invalidFiles: report.result.summary.invalidFiles,
+    governedFiles: report.result.summary.governedFiles,
   };
 }
 

@@ -67,11 +67,39 @@ describe('failure cases', () => {
       // ASSERT
       expect(commands).toEqual(expected);
     });
+
+    it.each([
+      ['--skill', '..', ['record', '--topic', 't', '--failure', 'f']],
+      ['--skill', 'a/b', ['list']],
+      ['--skill', 'has space', ['list']],
+      ['--skill', '../escape', ['check']],
+      ['--failure', '../x', ['record', '--skill', 'drive', '--topic', 't']],
+      ['--topic', 'a/b', ['record', '--skill', 'drive', '--failure', 'f']],
+      ['--topic', 'two words', ['record', '--skill', 'drive', '--failure', 'f']],
+    ])('refuses %s %j before any path is built', (flag, value, others) => {
+      // ARRANGE
+      const [verb = '', ...rest] = others;
+      const argv = [verb, flag, value, ...rest];
+      const expected = { error: `${flag} "${value}" is not a slug: use lowercase letters, digits and single hyphens` };
+      // ACT
+      const command = parseCommand(argv);
+      // ASSERT
+      expect(command).toEqual(expected);
+    });
   });
 });
 
 describe('edge cases', () => {
   describe('parseCommand', () => {
+    it('accepts a slug with digits and hyphens', () => {
+      // ARRANGE
+      const argv = ['list', '--skill', 'to-review2'];
+      // ACT
+      const command = parseCommand(argv);
+      // ASSERT
+      expect(command).toMatchObject({ skill: 'to-review2' });
+    });
+
     it('refuses an empty argument list', () => {
       // ARRANGE
       const expected = { error: 'no verb' };

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addBullet,
   addMonth,
+  LEARNINGS_README,
   markTicket,
   offSkills,
   recordBullets,
@@ -171,6 +172,16 @@ describe('edge cases', () => {
   });
 
   describe('offSkills', () => {
+    it('reads the bullet form the README tells a human to write', () => {
+      // ARRANGE
+      const readme = LEARNINGS_README.concat('- `drive`\n');
+      // ACT
+      const off = offSkills(readme);
+      // ASSERT
+      expect(off).toEqual(['drive']);
+      expect(LEARNINGS_README).toContain('one `- <skill>` bullet per line');
+    });
+
     it('lists none when the README has no Off heading', () => {
       // ARRANGE
       const expected: string[] = [];

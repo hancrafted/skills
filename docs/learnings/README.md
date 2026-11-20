@@ -9,4 +9,4 @@ The `learnings` skill's `markdown-harness.config.yaml` is the template for both:
 
 ## Off
 
-Skills whose learning is turned off, one per line. `learnings record` refuses them. None yet.
+Skills whose learning is turned off, one `- <skill>` bullet per line. `learnings record` refuses them. None yet.

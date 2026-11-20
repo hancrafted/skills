@@ -31,6 +31,19 @@ export interface Command {
   rest: string[];
 }
 
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const SLUG_FLAGS = ['skill', 'failure', 'topic'] as const;
+
+function badSlug(flags: Readonly<Record<string, string>>): string | null {
+  for (const name of SLUG_FLAGS) {
+    const value = flags[name];
+    if (value !== undefined && !SLUG.test(value)) {
+      return `--${name} "${value}" is not a slug: use lowercase letters, digits and single hyphens`;
+    }
+  }
+  return null;
+}
+
 const isVerb = (word: string): word is Verb => VERBS.some((verb) => verb === word);
 const isValueFlag = (name: string): boolean => VALUE_FLAGS.some((flag) => flag === name);
 
@@ -58,11 +71,18 @@ function parseWords(words: readonly string[]): ParsedWords | { error: string } {
   return parsed;
 }
 
+function parseSafeWords(words: readonly string[]): ParsedWords | { error: string } {
+  const parsed = parseWords(words);
+  if ('error' in parsed) return parsed;
+  const unsafe = badSlug(parsed.flags);
+  return unsafe === null ? parsed : { error: unsafe };
+}
+
 export function parseCommand(argv: readonly string[]): Command | { error: string } {
   const [verb, ...words] = argv;
   if (verb === undefined) return { error: 'no verb' };
   if (!isVerb(verb)) return { error: `unknown verb "${verb}"` };
-  const parsed = parseWords(words);
+  const parsed = parseSafeWords(words);
   if ('error' in parsed) return parsed;
   const { skill = null, ...flags } = parsed.flags;
   if (skill === null && verb !== 'check') return { error: `${verb} needs --skill <name>` };

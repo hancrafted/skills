@@ -5,7 +5,7 @@
 # learnings.md sits beside a migrated store.
 frontmatter:
   rules:
-    - ruleId: drive-learnings-record
+    - ruleId: learnings-record
       folders: [records/]
       intent: 'A record is what one Workflow hit, written once at the end of Verify and never edited after its Fortify question, so Fortify counts recurrences from records instead of from a typed number. Fail if the file name is not <date>-<workflow>.md.'
       unknownKeys: forbidden
@@ -42,7 +42,7 @@ frontmatter:
               }
         skip-reason:
           intent: 'Required when fortify is skipped, absent when pending or engaged: the Operator''s reason, verbatim ("deadline 17:30", "skipp fortify").'
-    - ruleId: drive-learnings-failure-mode
+    - ruleId: learnings-failure-mode
       folders: [failure-modes/]
       intent: 'A failure mode is one narrow way a Workflow went wrong that a single Enforcer could catch; its file is the stable thing every record cites by file name, and it never holds a count. Search with `learnings similar --skill <skill> "<failure>"` first and reuse a file whose Enforcer would also catch this case; create one only when none would.'
       unknownKeys: forbidden
@@ -89,7 +89,7 @@ frontmatter:
           intent: 'Why it stays unfixed, in one sentence the Operator agreed to. Required with status wontfix.'
 body-structure:
   rules:
-    - ruleId: drive-learnings-record
+    - ruleId: learnings-record
       folders: [records/]
       intent: "A record has one title and one H2 per failure mode the Workflow hit, each holding only labelled bullets, so Fortify reads every failure mode's evidence and maps it to an Enforcer without reopening the session."
       undefinedHeadings: forbid
@@ -105,7 +105,7 @@ body-structure:
           pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
           mayHold: [unordered-list]
           intent: "The file name, without .md, of the failure mode in failure-modes/ this evidence belongs to, once per record. Each bullet opens with **Evidence:** (what happened, where: a commit, PR, session or file, one line), **Correction:** (the Operator's words, verbatim, in quotes) or **Regressed:** (required when the failure mode is fixed: which fixed-by did not hold, and why). End a bullet with (source: monitor) when it came from .scratch/<topic>/monitor.md."
-    - ruleId: drive-learnings-failure-mode
+    - ruleId: learnings-failure-mode
       folders: [failure-modes/]
       intent: 'A failure mode states its symptom once and, optionally, the fix its Enforcer needs; evidence lives in the records that cite it, so this file changes only when its status does.'
       undefinedHeadings: forbid
