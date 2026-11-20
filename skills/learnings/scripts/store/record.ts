@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { FAILURE_MODES_FOLDER, LEARNINGS_HOME, RECORDS_FOLDER, storeOf } from './learnings.pure.ts';
 import { type Context, type Report } from './report.pure.ts';
-import { addBullet, LEARNINGS_README, recordBullets, renderFailureMode, renderRecord } from './write.pure.ts';
+import { addBullet, recordBullets, renderFailureMode, renderLearningsReadme, renderRecord } from './write.pure.ts';
 
 const refused = (output: string): Report => ({ output: `✖ ${output}`, exit: 1 });
 
@@ -42,6 +42,6 @@ export function recordRun(context: Context): Report {
   if (problem !== null) return problem;
   const file = appendToRecord(context, date);
   const readme = path.join(context.root, LEARNINGS_HOME, 'README.md');
-  if (!existsSync(readme)) write(readme, LEARNINGS_README);
+  if (!existsSync(readme)) write(readme, renderLearningsReadme(date));
   return { output: `✔ recorded ${file}`, exit: 0 };
 }
