@@ -1,9 +1,9 @@
 ---
 name: learnings
-description: Use when a skill's last step asks "Record learnings from this run?", when recording what went wrong in a run of any skill, when listing the failure modes a skill keeps hitting, or when a repeated failure should be filed upstream. Keeps one append-only store per skill and counts recurrences from its records.
+description: Keeps one append-only store of failure modes per skill, counts how often each recurs from its records and files a repeated one upstream. Use when a skill's last step asks "Record learnings from this run?", when recording what went wrong in a run of any skill, when listing the failure modes a skill keeps hitting, or when a repeated failure should be filed upstream.
 compatibility: git, gh for `file-upstream`, and Node.js 22.18 or later for the learnings CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
-  version: '0.1.0'
+  version: '0.2.0'
   state: stateful
 ---
 
@@ -11,7 +11,7 @@ metadata:
 
 ## Overview
 
-Record what went wrong in a skill's run, count how often each failure mode recurs, and file a repeated one upstream. Words: [GLOSSARY.md](GLOSSARY.md). Decision: `docs/decision-records/drive/0008-learnings-move-to-the-learnings-skill.md`.
+Record what went wrong in a skill's run, count how often each failure mode recurs, and file a repeated one upstream. Words: [GLOSSARY.md](GLOSSARY.md).
 
 The store is `docs/learnings/<skill>/{records,failure-modes}/`. Its contract is `docs/learnings/README.md`, which also lists the skills whose learning is off: read it before writing. Run the CLI from the repo root: `node <skills>/learnings/scripts/learnings.ts <verb> --skill <name>`.
 
@@ -34,6 +34,8 @@ Context protocol (SKL-003), identical in every stateful skill:
 2. When the README is missing, setup has not run: run the skill's setup, ask its questions once and write the README.
 3. When reading a context file, compare its `stale_after` with today; review or refresh a stale file before relying on it.
 4. When the README's `generated.by` differs from this skill's version, migrate the home.
+
+Setup and migration are `learnings record`: it writes `docs/learnings/README.md` when missing, and moves an existing README's `generated.by` and `at` to this version and today when `generated.by` differs. It changes nothing else in the README.
 
 ## Human gates
 
@@ -83,11 +85,11 @@ A record is an append-only log and carries `type` only. A failure mode carries `
 
 ## Common Rationalizations
 
-| Excuse                                                                      | Rebuttal                                                                                                                                                                                                                                                                          |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "This looks like an existing failure mode, so cite it."                     | Two candidates are the same failure mode only when the same check would catch both. A subagent-skips-acceptance-criterion mode was not reused for a ticked-but-unmet criterion, because its Enforcer catches unchecked criteria, not ticked ones (drive-port record, 2026-11-20). |
-| "I will paraphrase the correction to keep the record tidy."                 | Pass `--correction` with the human's words verbatim. The Orchestrator's own corrections went into the drive-port record verbatim, so the store holds what was said.                                                                                                               |
-| "`--skill` and `--failure` come from a person, so they are safe in a path." | Review 1 found `--skill`, `--failure` and `--topic` unvalidated in path building, a path traversal. Pass slugs only and let the CLI refuse the rest.                                                                                                                              |
+| Excuse                                                      | Rebuttal                                                                                                                                                                                                                                                                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "This looks like an existing failure mode, so cite it."     | Two candidates are the same failure mode only when the same check would catch both. A mode for a subagent skipping a criterion was not reused for a ticked-but-unmet one, because its Enforcer catches unchecked criteria, not ticked ones (`docs/learnings/drive/records/2026-11-20-drive-port.md`). |
+| "I will paraphrase the correction to keep the record tidy." | Pass `--correction` with the human's words verbatim: the store holds what was said. The Orchestrator's own corrections went into `docs/learnings/drive/records/2026-11-20-drive-port.md` verbatim.                                                                                                    |
+| "The value comes from a person, so it is safe in a path."   | Review 1 of the drive port found `--skill`, `--failure` and `--topic` unvalidated in path building, a path traversal (`docs/learnings/drive/failure-modes/cli-argument-becomes-path-unvalidated.md`). Pass slugs only and let the CLI refuse the rest.                                                |
 
 ## Red Flags
 

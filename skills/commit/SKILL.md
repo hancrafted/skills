@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Author a commit message and commit it — Conventional Commits header, Keep a Changelog body, Source trailer, enforced by a commit-time husky gate if setup (--setup-husky). Use when about to `git commit`, whether a human or an agent initiates it, including a run split across commits.
+description: Authors a commit message and commits it, with a Conventional Commits header, a Keep a Changelog body and a Source trailer, enforced by a commit-time husky gate when set up with `--setup-husky`. Use when about to `git commit`, whether a human or an agent initiates it, including a run split across commits.
 ---
 
 # Commit
@@ -223,14 +223,12 @@ hook depends on.
 
 ## Common Rationalizations
 
-| Excuse                                                                     | Rebuttal                                                                                                                                                                                                                   |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "The repository's hooks will catch a bad message, so I can skip the gate." | A repository without `--setup-husky` wiring enforces nothing. The gate costs about 0.08 s against about 8 s for a tree verification, so run it against the draft every time (85389b3).                                     |
-| "The harness told me to add a `Co-Authored-By` for the model."             | Silence loses to an active instruction, which is why the body answers it: provenance is `Source:` alone. Strip the line and any "generated with" line (85389b3).                                                           |
-| "`Source: 78` or `GH-78` names the ticket well enough."                    | The gate rejects the numeric forms, hashless ones included. A branch name such as `feature/78-commit-skill` yields `78`; expand it to the full tracker URL (840e949).                                                      |
-| "`--no-verify`, or `-c core.hooksPath=`, just this once."                  | The command is `git commit -F <draft>` and nothing else. Both flags skip the hooks that are the guarantee (840e949).                                                                                                       |
-| "The gate passed, so the message is good."                                 | The gate checks shape only. Conventional-Commits-compliant security commits were rated poor 49.73% of the time against 30.53% for non-compliant ones, so write the why in prose yourself ([research](assets/research.md)). |
-| "I will pass the message with `-m`."                                       | A message with both backticks and apostrophes survives no `-m` quoting. Write the draft file and commit with `-F`.                                                                                                         |
+| Excuse                                                                     | Rebuttal                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The repository's hooks will catch a bad message, so I can skip the gate." | A repository without `--setup-husky` wiring enforces nothing: the flow once relied on hooks alone. The gate costs about 0.08 s against about 8 s for a tree verification, so run it against the draft every time (https://github.com/hancrafted/skills/commit/85389b3). |
+| "The harness told me to add a `Co-Authored-By` for the model."             | Silence loses to an active instruction, which is why the body answers it: provenance is `Source:` alone. Strip the line and any "generated with" line (https://github.com/hancrafted/skills/issues/2).                                                                  |
+| "`Source: 78` or `GH-78` names the ticket well enough."                    | The adversarial evaluation of the gate found hashless numeric forms slipping through; a branch name such as `feature/78-commit-skill` yields `78`. Expand it to the full tracker URL (https://github.com/hancrafted/skills/commit/840e949).                             |
+| "`--no-verify`, or `-c core.hooksPath=`, just this once."                  | The command is `git commit -F <draft>` and nothing else. Both flags skip the hooks that are the guarantee, a seam the same evaluation confirmed (https://github.com/hancrafted/skills/commit/840e949).                                                                  |
 
 ## Red Flags
 

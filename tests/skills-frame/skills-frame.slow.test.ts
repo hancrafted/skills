@@ -7,8 +7,6 @@ const OUT_OF_ORDER = 'BODY_STRUCTURE__HEADING_OUT_OF_ORDER';
 const REPEATED = 'BODY_STRUCTURE__HEADING_REPEATED';
 const UNDEFINED = 'BODY_STRUCTURE__HEADING_UNDEFINED';
 
-const RATIONALIZATIONS_INTENT = 'excuses';
-const RED_FLAGS_INTENT = 'drift';
 const PHASE_INTENT = 'never numbered';
 const TITLE_INTENT = 'one per file';
 const LEARN_INTENT = 'after a correction';
@@ -35,6 +33,19 @@ describe('success cases', () => {
     expect(result.status).toBe(0);
   });
 
+  it('passes a body without Common Rationalizations and Red Flags, which a skill with no learning omits', () => {
+    // ARRANGE
+    const body = FRAME.replace('## Red Flags\n\n- A sign of drift.\n\n', '').replace(
+      /## Common Rationalizations[\s\S]*?(?=## Verification)/,
+      '',
+    );
+    // ACT
+    const result = checkBody(body);
+    // ASSERT
+    expect(result.violations).toEqual([]);
+    expect(result.status).toBe(0);
+  });
+
   it('passes every skill under skills/', () => {
     // ARRANGE
     const skillsRoot = join(REPO_ROOT, 'skills');
@@ -48,18 +59,6 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
-  it('fails a missing fixed section with its intent', () => {
-    // ARRANGE
-    const body = FRAME.replace('## Red Flags\n\n- A sign of drift.\n\n', '');
-    // ACT
-    const result = checkBody(body);
-    // ASSERT
-    expect(result.status).toBe(1);
-    expect(result.violations).toContainEqual(
-      expect.objectContaining({ code: MISSING, text: expect.stringContaining(RED_FLAGS_INTENT) }),
-    );
-  });
-
   it('fails a wrong order with the intent of the section out of place', () => {
     // ARRANGE
     const body = FRAME.replace('## Common Rationalizations', '## Red Flags').replace(
@@ -117,18 +116,6 @@ describe('failure cases', () => {
     expect(result.status).toBe(1);
     expect(result.violations).toContainEqual(
       expect.objectContaining({ code: MISSING, text: expect.stringContaining(LEARN_INTENT) }),
-    );
-  });
-
-  it('fails a missing Common Rationalizations section with its intent', () => {
-    // ARRANGE
-    const body = FRAME.replace(/## Common Rationalizations[\s\S]*?(?=## Red Flags)/, '');
-    // ACT
-    const result = checkBody(body);
-    // ASSERT
-    expect(result.status).toBe(1);
-    expect(result.violations).toContainEqual(
-      expect.objectContaining({ code: MISSING, text: expect.stringContaining(RATIONALIZATIONS_INTENT) }),
     );
   });
 });

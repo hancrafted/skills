@@ -108,15 +108,17 @@ body-structure:
                     - { purpose: enumeration, level: 5, minCount: 0, intent: 'Detail under a sub-part.' }
         - purpose: heading
           level: 2
+          presence: optional
           allowed:
             [
               {
                 title: Common Rationalizations,
-                intent: 'A two-column table of excuses an agent gave for skipping a step, quoted, and the fact that refutes each. Add a row only for an excuse a run actually produced (SKL-002 Decision 3.4).',
+                intent: 'A two-column table of excuses an agent gave for skipping a step, quoted, and the fact that refutes each. Add a row only for an excuse a run actually produced, citing its incident (SKL-002 Decision 3.2). Optional until the skill has a learning.',
               },
             ]
         - purpose: heading
           level: 2
+          presence: optional
           mayHold: [prose, unordered-list]
           allowed:
             [
