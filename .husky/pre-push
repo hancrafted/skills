@@ -6,6 +6,10 @@ npm run verify </dev/null || exit 1
 
 # Changed slow tests run before a push; without a merge base the whole lane runs.
 if base=$(git merge-base HEAD origin/main 2>/dev/null); then
+  # A changed reference index must still resolve every path at its pin.
+  if ! git diff --quiet "$base" HEAD -- docs/agents/reference-repos.md >/dev/null; then
+    npm run -s refs -- --check </dev/null || exit 1
+  fi
   npm run -s test:slow -- --changed "$base" --passWithNoTests </dev/null || exit 1
 else
   echo "no merge-base with origin/main: running the whole slow lane"
