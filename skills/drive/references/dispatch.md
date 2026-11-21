@@ -12,7 +12,7 @@ How the Orchestrator hands tickets to Subagents, and the Handoff they return. On
 
 ## Before each wave
 
-Run `drive dispatch check [--base <Integration branch>] <issue number…>` on the tickets about to go out together. Without `--base` it takes the Integration branch from the tickets' `## Parent` epic: the single Decision PR whose `## Spec` names that epic; with none or several it refuses and asks you to pass `--base`. Merged means merged into the Integration branch, not the one you sit on. It fails a ticket missing its `Files:`, `ADRs:` or `Evidence from:` line, two queued tickets whose `Files:` globs overlap, and a `Describes:` target not yet merged. Fix the order or the ownership it names, then dispatch. A ticket carries those four lines under its **Skills** and **Review after** lines:
+Run it in Reason after filing the tickets and before the Decision PR, and again before each wave. Run `drive dispatch check [--base <Integration branch>] <issue number…>` on the tickets about to go out together. Without `--base` it takes the Integration branch from the tickets' `## Parent` epic: the single Decision PR whose `## Spec` names that epic; with none or several it refuses and asks you to pass `--base`. Merged means merged into the Integration branch, not the one you sit on. It fails a ticket missing its `Files:`, `ADRs:` or `Evidence from:` line, two queued tickets whose `Files:` globs overlap, and a `Describes:` target not yet merged. Fix the order or the ownership it names, then dispatch. A ticket carries those four lines under its **Skills** and **Review after** lines:
 
 ```markdown
 Files: <paths or globs the ticket owns>
