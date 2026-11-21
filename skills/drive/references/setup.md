@@ -39,7 +39,7 @@ Setup seeds each phase's `model` from `PHASE_TIERS` in `scripts/core/binding.pur
 
 `drive status` prints three project inputs, each `filled`, `missing` or `empty`: the grill format (`grill.format` in `project.yml`, and whether the file it names exists), `review.md` (empty when every section is blank) and `profiles.md` (empty when `## Live or scheduled` is missing or blank). Name the input in an instruction and point at `drive status`, never at a file that may not exist.
 
-- **Grill format missing:** fall back to /grilling's own format, and say so once at Define.
+- **Grill format missing** (`grill.format` unset or its file absent): use drive's template, [assets/grilling-format.md](../assets/grilling-format.md), and say so once at Define. Setup may later propose a project file; until then the template stands.
 - **`review.md` or `profiles.md` empty or missing:** the first time the Orchestrator needs it (a decision page; the pre-flight list), ask the Operator once, write the answers to the file, and never ask again.
 
 ## After setup

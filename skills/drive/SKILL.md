@@ -100,7 +100,7 @@ These names override any worktree path or branch a Handoff or another skill name
 
 ### 1. Define (clarify)
 
-Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
+Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"; when missing, [drive's template](assets/grilling-format.md), said once): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
 
 **Pre-flight.** Before the gate, list what the change touches that is live or scheduled; the live or scheduled kinds are `profiles.md`'s, as `drive status` reports ("Optional inputs"). Settle each with the Operator now and record it in `decisions.md`; it goes into the Decision PR body, never first raised at the PR.
 

@@ -135,7 +135,9 @@ const prLine = (label: string, pr: PrFact | null, ghFailed: boolean): string => 
 };
 
 const inputLines = ({ grillFormat, grillFormatPath, review, profiles }: ProjectInputs): string[] => [
-  `Grill format: ${grillFormat} (${grillFormatPath ?? 'grill.format unset'})`,
+  grillFormat === 'missing'
+    ? "Grill format: missing (using drive's template)"
+    : `Grill format: ${grillFormat} (${grillFormatPath ?? 'grill.format unset'})`,
   `review.md: ${review}`,
   `profiles.md: ${profiles}`,
 ];

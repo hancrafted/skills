@@ -47,7 +47,9 @@ describe('success cases', () => {
         ...base,
         inputs: { grillFormat: grill, grillFormatPath: 'docs/g.md', review, profiles },
       };
-      const expected = [`Grill format: ${grill} (docs/g.md)`, `review.md: ${review}`, `profiles.md: ${profiles}`];
+      const grillLine =
+        grill === 'missing' ? "Grill format: missing (using drive's template)" : 'Grill format: filled (docs/g.md)';
+      const expected = [grillLine, `review.md: ${review}`, `profiles.md: ${profiles}`];
       // ACT
       const text = renderStatus(facts);
       // ASSERT
@@ -282,13 +284,13 @@ describe('failure cases', () => {
 
 describe('edge cases', () => {
   describe('renderStatus', () => {
-    it('says grill.format is unset when no path is configured', () => {
+    it("names drive's template when no grill.format path is configured", () => {
       // ARRANGE
       const facts: Facts = { ...base, inputs: { ...base.inputs, grillFormat: 'missing', grillFormatPath: null } };
       // ACT
       const text = renderStatus(facts);
       // ASSERT
-      expect(text).toContain('Grill format: missing (grill.format unset)');
+      expect(text).toContain("Grill format: missing (using drive's template)");
     });
   });
   describe('derivePhase', () => {
