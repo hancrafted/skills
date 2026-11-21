@@ -1,9 +1,10 @@
 ---
 type: failure-mode
-stale_after: 2026-12-20
+stale_after: 2026-12-21
 title: 'A skill reference states two rules that contradict each other or the repo'
 enforcer: 'review: the Orchestrator applies /writing-for-agents to every changed reference section'
-status: proposed
+status: ticket
+ticket: https://github.com/hancrafted/skills/issues/95
 ---
 
 # A skill reference states two rules that contradict each other or the repo
