@@ -7,7 +7,7 @@ describe('success cases', () => {
       // ARRANGE
       const ahead = 0;
       // ACT
-      const problem = baseAheadProblem('main', ahead);
+      const problem = baseAheadProblem('main', 'feat/x', ahead);
       // ASSERT
       expect(problem).toBeNull();
     });
@@ -39,11 +39,11 @@ describe('failure cases', () => {
     it('refuses with the count and says to sync then push', () => {
       // ARRANGE
       const expected = [
-        'origin/main has 3 commits the Integration branch lacks: run drive worktree sync, then drive push',
-        'origin/main has 1 commit the Integration branch lacks: run drive worktree sync, then drive push',
+        'origin/main has 3 commits origin/feat/x lacks: run drive worktree sync, then drive push',
+        'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
       ];
       // ACT
-      const problems = [3, 1].map((ahead) => baseAheadProblem('main', ahead));
+      const problems = [3, 1].map((ahead) => baseAheadProblem('main', 'feat/x', ahead));
       // ASSERT
       expect(problems).toEqual(expected);
     });

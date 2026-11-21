@@ -5,7 +5,7 @@ The round format drive uses when `grill.format` is unset or its file is missing.
 ## Each round
 
 1. A short reply to the last answers, or an introduction.
-2. Numbered questions, each labelled `W` (wayfinder) or `H` (grill-with-docs) and stated in full.
+2. Numbered questions, each starting with a W word (what, which, why, where, who) or with How, and stated in full.
 3. Under each question, numbered options: at least 2-3, each with an example.
 4. A Recommendation at the end, with the reason. The Operator answers "yes" to accept every recommendation.
 

@@ -1,12 +1,22 @@
 export const CONTRADICTIONS_HEADING = '## Contradictions';
 const ENTRY_SHAPE = '- "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>)';
-const ENTRY = /^- "(.+?)" \(([^()\s]+):(\d+)\) vs "(.+?)" \(([^()\s]+):(\d+)\)$/;
+const ENTRY = /^- "(.*?\S.*?)" \(([^()\s]+):(\d+)\) vs "(.*?\S.*?)" \(([^()\s]+):(\d+)\)$/;
 
 export type ReadFile = (file: string) => string | null;
 
+function lastHeadingOutsideFences(lines: readonly string[]): number {
+  let fenced = false;
+  let found = -1;
+  lines.forEach((line, at) => {
+    if (/^\s*(```|~~~)/.test(line)) fenced = !fenced;
+    else if (!fenced && line.trim().toLowerCase() === CONTRADICTIONS_HEADING.toLowerCase()) found = at;
+  });
+  return found;
+}
+
 function sectionLines(report: string): string[] | null {
   const lines = report.split('\n');
-  const start = lines.findIndex((line) => line.trim().toLowerCase() === CONTRADICTIONS_HEADING.toLowerCase());
+  const start = lastHeadingOutsideFences(lines);
   if (start === -1) return null;
   const rest = lines.slice(start + 1);
   const end = rest.findIndex((line) => /^#{1,2} /.test(line));

@@ -9,7 +9,7 @@ export const USAGE = [
   '       drive pr ready <number>',
   'watch exits 0 merged, 2 closed unmerged, 3 new review comment (the Decision PR).',
   'watch --integration exits 10 failing check, 11 merge conflict, 12 merged (lists the tickets still open), 13 closed unmerged.',
-  'ready refuses without .scratch/<topic>/review.md, or when its ## Contradictions quotes do not check out.',
+  'ready refuses without .scratch/<topic>/review.md, when its ## Contradictions quotes do not check out, or while origin/<base> has commits origin/<Integration branch> lacks (run drive worktree sync, then drive push).',
 ].join('\n');
 
 export type PrArgs =
