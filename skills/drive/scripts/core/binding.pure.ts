@@ -1,5 +1,5 @@
 import { type Document, isMap, isSeq, parseDocument, type YAMLMap, type YAMLSeq } from 'yaml';
-import catalogData from '../../catalog/catalog.json' with { type: 'json' };
+import catalogData from '../../assets/catalog.json' with { type: 'json' };
 import { isRecord, isText, openMapping } from './yaml.pure.ts';
 
 export const PHASES = ['define', 'reason', 'implement', 'verify', 'evolve'] as const;

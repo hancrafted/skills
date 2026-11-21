@@ -2,7 +2,14 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { FAILURE_MODES_FOLDER, LEARNINGS_HOME, RECORDS_FOLDER, storeOf } from './learnings.pure.ts';
 import { type Context, type Report } from './report.pure.ts';
-import { addBullet, recordBullets, renderFailureMode, renderLearningsReadme, renderRecord } from './write.pure.ts';
+import {
+  addBullet,
+  migrateReadme,
+  recordBullets,
+  renderFailureMode,
+  renderLearningsReadme,
+  renderRecord,
+} from './write.pure.ts';
 
 const refused = (output: string): Report => ({ output: `✖ ${output}`, exit: 1 });
 
@@ -32,6 +39,13 @@ function appendToRecord({ root, store, command }: Context, date: string): string
   return path.relative(root, file);
 }
 
+function settleReadme(readme: string, date: string): void {
+  if (!existsSync(readme)) return write(readme, renderLearningsReadme(date));
+  const text = readFileSync(readme, 'utf8');
+  const migrated = migrateReadme(text, date);
+  if (migrated !== null) write(readme, migrated);
+}
+
 export function recordRun(context: Context): Report {
   const { flags } = context.command;
   const hasText = recordBullets(flags).length > 0;
@@ -42,6 +56,6 @@ export function recordRun(context: Context): Report {
   if (problem !== null) return problem;
   const file = appendToRecord(context, date);
   const readme = path.join(context.root, LEARNINGS_HOME, 'README.md');
-  if (!existsSync(readme)) write(readme, renderLearningsReadme(date));
+  settleReadme(readme, date);
   return { output: `✔ recorded ${file}`, exit: 0 };
 }

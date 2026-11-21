@@ -25,7 +25,7 @@ describe('failure cases', () => {
     const heading = lines[lines.indexOf('---', 1) + 2];
     const frontMatter = lines.slice(0, 5);
     // ASSERT
-    expect(frontMatter).toEqual(['---', 'type: readme', 'generated:', '  by: learnings@0.1.0', '  at: 2026-11-20']);
+    expect(frontMatter).toEqual(['---', 'type: readme', 'generated:', '  by: learnings@0.2.0', '  at: 2026-11-21']);
     expect(heading).toBe('# Learnings');
   });
 });

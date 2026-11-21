@@ -113,8 +113,8 @@ export function offSkills(readme: string): string[] {
   return names;
 }
 
-export const LEARNINGS_VERSION = '0.1.0';
-const TEMPLATE_DATE = '2026-11-20';
+export const LEARNINGS_VERSION = '0.2.0';
+const TEMPLATE_DATE = '2026-11-21';
 
 export const renderLearningsReadme = (date: string): string => `---
 type: readme
@@ -138,3 +138,11 @@ Skills whose learning is turned off, one \`- <skill>\` bullet per line. \`learni
 `;
 
 export const LEARNINGS_README = renderLearningsReadme(TEMPLATE_DATE);
+
+export function migrateReadme(text: string, date: string): string | null {
+  const by = /^ {2}by: learnings@(\S+)$/m.exec(text);
+  if (by === null || by[1] === LEARNINGS_VERSION) return null;
+  return text
+    .replace(/^ {2}by: learnings@\S+$/m, `  by: learnings@${LEARNINGS_VERSION}`)
+    .replace(/^ {2}at: .*$/m, `  at: ${date}`);
+}

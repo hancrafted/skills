@@ -151,6 +151,35 @@ const MODES = {
 };
 
 describe('success cases', () => {
+  describe('record migration', () => {
+    it('migrates a README written by another version when recording, keeping its Off list', () => {
+      // ARRANGE
+      const old =
+        '---\ntype: readme\ngenerated:\n  by: learnings@0.0.1\n  at: 2026-01-02\n---\n\n# Learnings\n\n## Off\n\n- other\n';
+      const root = repo({ 'docs/learnings/README.md': old });
+      const flags = [
+        'record',
+        '--skill',
+        SKILL,
+        '--topic',
+        'sweep',
+        '--failure',
+        'new-mode',
+        '--title',
+        'New mode',
+        '--enforcer',
+        'review: x',
+        '--evidence',
+        'e',
+      ];
+      // ACT
+      runLearnings(root, flags);
+      const migrated = readFileSync(path.join(root, 'docs/learnings/README.md'), 'utf8');
+      // ASSERT
+      expect(migrated).toBe(old.replace('learnings@0.0.1', 'learnings@0.2.0').replace('2026-01-02', TODAY));
+    });
+  });
+
   describe('drive learnings', () => {
     it('lists each failure mode with the count computed from the records, its status and regressed', () => {
       // ARRANGE
@@ -303,7 +332,7 @@ describe('edge cases', () => {
         '---',
         'type: readme',
         'generated:',
-        '  by: learnings@0.1.0',
+        '  by: learnings@0.2.0',
         `  at: ${TODAY}`,
         '---',
       ]);

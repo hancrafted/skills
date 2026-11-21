@@ -1,6 +1,6 @@
 ---
 name: cleanup
-description: Clean up local branches and worktrees after a merged PR, or classify repository-wide cleanup candidates for approval when no PR is identified. Use when a PR has merged and its branches and worktrees remain, or when asked to clean up the repository.
+description: Cleans up local branches and worktrees after a merged PR, or classifies repository-wide cleanup candidates for approval when no PR is identified. Use when a PR has merged and its branches and worktrees remain, or when asked to clean up the repository.
 ---
 
 # Cleanup
@@ -212,11 +212,11 @@ losses, and each local update result, distinguishing failures from successes.
 
 ## Common Rationalizations
 
-| Excuse                                                                                                | Rebuttal                                                                                                                                                                                                                                                                                      |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "`.agents/skills/` and `skills-lock.json` are ignored or generated, so they leave with the worktree." | A name or a `.gitignore` entry proves nothing. The main checkout once held an untracked `skills-lock.json` and an untracked `.agents/skills/` install that no worktree or clone could see (drive-port, #32). Only verified reproducible artifacts such as dependency installs are disposable. |
-| "Local `main` is behind, so reset it to origin."                                                      | Fast-forward only. Local `main` once held c227528, a commit origin lacked (drive-port review 2, finding 13). Preserve dirty and divergent branches.                                                                                                                                           |
-| "That `backup/...` tag is clutter after the rebase."                                                  | Backup refs are out of scope. `backup/drive-port-pre-rebase` (d2cabd0) was the recovery point for a rebase that had to amend a merged commit.                                                                                                                                                 |
+| Excuse                                                       | Rebuttal                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Ignored or generated files leave with the worktree."        | A name or a `.gitignore` entry proves nothing. The main checkout once held an untracked `skills-lock.json` and an untracked `.agents/skills/` install that no worktree or clone could see (`docs/learnings/drive/failure-modes/skill-install-left-untracked-in-main-checkout.md`). Only verified reproducible artifacts such as dependency installs are disposable. |
+| "The local default branch is behind, so reset it to origin." | Fast-forward only. Local `main` once held a commit origin lacked (`docs/learnings/drive/failure-modes/base-branch-ahead-of-origin.md`). Preserve dirty and divergent branches.                                                                                                                                                                                      |
+| "A backup ref is clutter after the rebase."                  | Backup refs are out of scope. `backup/drive-port-pre-rebase` was the recovery point for a rebase that had to amend a merged commit (`docs/learnings/drive/records/2026-11-20-drive-port.md`).                                                                                                                                                                       |
 
 ## Red Flags
 

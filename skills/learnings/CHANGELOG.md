@@ -8,7 +8,8 @@ All notable changes to the learnings skill are documented in this file. The form
 
 ### Added
 
-- `learnings record` writes `docs/learnings/README.md` with OKF `generated: {by: learnings@0.1.0, at: <date>}` when it is missing.
+- `learnings record` writes `docs/learnings/README.md` with OKF `generated: {by: learnings@<version>, at: <date>}` when it is missing, and moves `generated.by` and `at` to this
+  version and today when the README names another version (version 0.2.0).
 - The learnings skill: `learnings record|list|similar|check|file-upstream --skill <name>`, the learning loop drive
   had, generalised by skill. The store is `docs/learnings/<skill>/{records,failure-modes}/`, with the README contract
   at `docs/learnings/README.md`. Records carry `type`; failure modes carry `type` and `stale_after`.
@@ -18,6 +19,7 @@ All notable changes to the learnings skill are documented in this file. The form
 
 ### Changed
 
+- The description says what the skill does before `Use when`, and the repo-only decision link left `SKILL.md`; rationalization rows cite their incident.
 - `metadata.state: stateful` and a `## Context` section in `SKILL.md`: it names `docs/learnings/` and carries the
   context protocol block of `docs/skills/context-protocol.md` (SKL-003).
 - Moved from drive: the store from `docs/drive/learnings/`, the scripts from `skills/drive/scripts/learnings/` (now

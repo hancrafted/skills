@@ -3,13 +3,17 @@ import {
   addBullet,
   addMonth,
   LEARNINGS_README,
+  LEARNINGS_VERSION,
   markTicket,
+  migrateReadme,
   offSkills,
   recordBullets,
   renderFailureMode,
   renderRecord,
 } from './write.pure.ts';
 
+const OLD_README =
+  '---\ntype: readme\ngenerated:\n  by: learnings@0.0.1\n  at: 2026-01-02\n---\n\n# Learnings\n\n## Off\n\n- drive\n';
 const SLUG = 'push-exits-zero';
 const TITLE = 'drive push exits 0 when the remote rejected the commit';
 
@@ -133,6 +137,17 @@ describe('success cases', () => {
       expect(bullets).toEqual(expected);
     });
   });
+
+  describe('migrateReadme', () => {
+    it('moves generated.by to the current version and keeps the rest of the README', () => {
+      // ARRANGE
+      const expected = `---\ntype: readme\ngenerated:\n  by: learnings@${LEARNINGS_VERSION}\n  at: 2026-11-21\n---\n\n# Learnings\n\n## Off\n\n- drive\n`;
+      // ACT
+      const migrated = migrateReadme(OLD_README, '2026-11-21');
+      // ASSERT
+      expect(migrated).toBe(expected);
+    });
+  });
 });
 
 describe('failure cases', () => {
@@ -155,6 +170,17 @@ describe('failure cases', () => {
       const bullets = recordBullets({});
       // ASSERT
       expect(bullets).toEqual(expected);
+    });
+  });
+
+  describe('migrateReadme', () => {
+    it('returns null for a README with no generated.by, which it cannot place', () => {
+      // ARRANGE
+      const text = 'edited\n';
+      // ACT
+      const migrated = migrateReadme(text, '2026-11-21');
+      // ASSERT
+      expect(migrated).toBeNull();
     });
   });
 });
@@ -201,6 +227,17 @@ describe('edge cases', () => {
       const text = addBullet(record, 'a-mode', '**Evidence:** x');
       // ASSERT
       expect(text).toBe(expected);
+    });
+  });
+
+  describe('migrateReadme', () => {
+    it('returns null when generated.by already names the current version', () => {
+      // ARRANGE
+      const current = migrateReadme(OLD_README, '2026-11-21') ?? '';
+      // ACT
+      const again = migrateReadme(current, '2026-12-01');
+      // ASSERT
+      expect(again).toBeNull();
     });
   });
 });
