@@ -9,6 +9,8 @@ const TRIGGERS = [
   'tests/skills-frontmatter/**',
   'eslint.config.mjs',
   'tools/lint/**',
+  'tools/references/**',
+  'docs/agents/reference-repos.md',
   'vitest.slow.config.mts',
 ];
 
@@ -16,7 +18,7 @@ export default defineConfig({
   test: {
     passWithNoTests: false,
     include: ['**/*.slow.test.ts'],
-    exclude: [...configDefaults.exclude, '.worktrees/**', '.agents/**', '.claude/**'],
+    exclude: [...configDefaults.exclude, '.worktrees/**', '.references/**', '.agents/**', '.claude/**'],
     globalSetup: ['tests/slow-fence/strip-git-env.setup.ts'],
     testTimeout: 60_000,
     forceRerunTriggers: [

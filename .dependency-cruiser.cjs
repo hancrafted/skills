@@ -41,6 +41,6 @@ module.exports = {
     tsPreCompilationDeps: true,
     tsConfig: { fileName: 'tsconfig.json' },
     doNotFollow: { path: 'node_modules' },
-    exclude: { path: '(^|/)(node_modules|\\.worktrees|\\.agents|\\.claude)/' },
+    exclude: { path: '(^|/)(node_modules|\\.worktrees|\\.references|\\.agents|\\.claude)/' },
   },
 };

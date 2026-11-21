@@ -15,7 +15,7 @@ fortify: pending
 
 - **Correction:** Operator: "set archgate:developer as default profile for this repo. then have 3 opus /archgate:adr-author review and fix each created ADR." — ADR prose was not reviewed by an ADR author before the Decision PR opened.
 
-## tickets-published-without-dispatch-lines
+## tickets-written-without-dispatch-lines
 
 - **Correction:** Orchestrator (mine): tickets were published without the dispatch lines (Files/Describes/ADRs/Evidence from); added after the gate, which surfaced the #78/#80 shared-config overlap only then (#80 gained blocker #78).
 

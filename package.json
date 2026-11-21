@@ -19,6 +19,7 @@
     "verify:commit": "node tools/verify/verify.ts commit",
     "lint-staged": "lint-staged",
     "test:slow": "vitest run --config vitest.slow.config.mts",
+    "refs": "node tools/references/refs.ts",
     "review:prove": "node skills/to-review/scripts/prove.ts",
     "check:docs": "npm run check:skills && for s in $(find docs/learnings -mindepth 1 -maxdepth 1 -type d 2>/dev/null); do mh check --root \"$s\" --config skills/learnings/markdown-harness.config.yaml || exit 1; done && node skills/learnings/scripts/learnings.ts check",
     "check:skills": "mh check --root skills --config skills/markdown-harness.config.yaml && for c in skills/*/markdown-harness.config.yaml; do test ! -e \"$c\" || mh check --root \"$(dirname \"$c\")\" --config \"$c\" || exit 1; done"
