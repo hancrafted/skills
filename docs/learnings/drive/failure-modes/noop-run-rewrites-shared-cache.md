@@ -3,7 +3,9 @@ type: failure-mode
 stale_after: 2026-12-21
 title: 'A no-op run writes to a cache shared by every worktree'
 enforcer: 'test-runner: new slow test that a re-run at the pinned commit leaves the cache index untouched'
-status: proposed
+status: fixed
+fixed-by: https://github.com/hancrafted/skills/pull/92
+fixed-on: 2026-11-21
 ---
 
 # A no-op run writes to a cache shared by every worktree

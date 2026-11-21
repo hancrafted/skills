@@ -2,7 +2,7 @@
 type: record
 workflow: reference-repos
 date: '2026-11-20'
-fortify: pending
+fortify: engaged
 ---
 
 # reference-repos
