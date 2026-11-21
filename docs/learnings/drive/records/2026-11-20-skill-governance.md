@@ -2,7 +2,7 @@
 type: record
 workflow: skill-governance
 date: 2026-11-20
-fortify: pending
+fortify: engaged
 ---
 
 # skill-governance
