@@ -34,11 +34,13 @@ fortify: pending
 ## ticket-ownership-misses-flagged-files
 
 - **Correction:** Orchestrator (mine): #82's brief missed two drive references its rules would flag; ownership extended mid-task.
+- **Evidence:** review 3 P2: a ticket's Files line missed a change its own decision required: R1's frame-config intents pointing at docs/skills/skill-anatomy.md, owned by no ticket, fixed in fix-review-3 (review-3.md, decisions.md Review 3 triage)
 
 ## integration-branch-not-synced-with-base
 
 - **Correction:** Orchestrator (mine): the Integration branch never synced main; PR #85's drive-port learnings would have landed in the retired store (caught by the final review).
 - **Evidence:** review 2 S1 (high): origin/main 5de5bb2 (PR #85) added 28 files under docs/drive/learnings/ after this branch moved the store at 5b55e5d; git merge-tree merged cleanly and kept them in the retired store (review.md)
+- **Evidence:** PR #91 review round: main moved twice while the PR waited (PR watch exit 11, then a second sync); the first sync was 3451ff0 with a conflict in skill-names-setting-that-does-not-exist.md (decisions.md, PR #91 review round, Implement resumed)
 
 ## test-inherits-git-env-corrupts-host-repo
 
@@ -73,3 +75,15 @@ fortify: pending
 ## setup-wires-check-for-skill-it-does-not-install
 
 - **Evidence:** review 1 spec finding 1: drive setup wrote 'learnings check' into check:docs without installing learnings; fixed by #81 (review-1.md)
+
+## adr-prose-invents-check-name
+
+- **Evidence:** review 3 S2: #96 put skill-description-purpose-first into SKL-001 Decision 1.4, a name no rule or config defines; dropped in fix-review-3, Compliance 3 names agentskills-spec and the description pattern (review-3.md, 98-skl-checks.report.md)
+
+## report-token-count-differs-from-rule
+
+- **Evidence:** review 3 S4/S5: #97 reported token estimates from bytes / 4 while SKL-001 says ceil(characters / 4); drive's 4,995 was re-measured by the rule and passes, SKL-001 now says whole SKILL.md (review-3.md, 97-skills-meet-adrs.report.md, fix-review-3.report.md)
+
+## fix-edits-decision-doc-the-gate-blocks
+
+- **Evidence:** review 3 P3: the fix reached skills/learnings/GLOSSARY.md:9, a Decision doc; the pre-commit gate refused it, so it was deferred to #102 (fix-review-3.report.md, decisions.md Review 3 triage)
