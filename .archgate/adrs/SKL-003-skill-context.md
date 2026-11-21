@@ -23,48 +23,48 @@ Without a declaration nobody can tell which skills shape future agents. Without 
 
 ### 1. Stateless and stateful skills
 
-1. A **stateless** skill leaves no context behind. A **stateful** skill persists context in a home.
-2. A stateful skill MUST declare `metadata.state: stateful` in its frontmatter; no key means stateless.
-3. Learnings alone do not make a skill stateful: the learnings skill owns that store.
+1. A **stateless** skill leaves no context behind. A **stateful** skill persists context in a home.[^house]
+2. A stateful skill MUST declare `metadata.state: stateful` in its frontmatter; no key means stateless.[^house]
+3. Learnings alone do not make a skill stateful: the learnings skill owns that store.[^house]
 
 ### 2. Homes
 
-1. A **skill home**, `docs/<skill>/`, is written only by its own skill: setup answers, calibration, its version record — `docs/drive/`.
-2. A **domain home**, `docs/<domain>/`, is shared: many skills write it, bound by its README — `docs/decision-records/`.
-3. Each home's `README.md` is its contract: contents, format, naming, freshness interval. Writers and readers MUST depend on the README, never on the skill that wrote it.
-4. A missing README means setup has not run: the skill runs its setup, asks its questions once, writes the README. For a domain home, the first skill needing it.
-5. The skill home README records the writer's version in OKF `generated` — `by: drive@1.4.0`. A skill MUST migrate its home when its own version differs.
+1. A **skill home**, `docs/<skill>/`, is written only by its own skill: setup answers, calibration, its version record.[^house]
+2. A **domain home**, `docs/<domain>/`, is shared by many skills and bound by its README.[^house]
+3. Each home's `README.md` is its contract: contents, format, naming, freshness interval. Writers and readers MUST depend on it, never on the skill that wrote it.[^mattpocock]
+4. A missing README means setup has not run: the skill runs its setup, asks its questions once, writes the README; for a domain home, the first skill needing it.[^mattpocock]
+5. The skill home README records the writer's version in OKF `generated` — `by: <skill>@1.4.0`. A skill MUST migrate its home when its own version differs.[^okf]
 
 ### 3. Freshness
 
-1. Every produced context file MUST carry OKF `type` and `stale_after`, interval from its home README. The stateful skill decides which further OKF fields it fills.
-2. An append-only log carries `type` only: history does not go stale.
-3. A skill MUST compare `stale_after` with today before using a file, and review or refresh a stale one.
-4. A markdown-harness rule on a home is recommended, not required: the check on read works without it.
+1. Every produced context file MUST carry OKF `type` and `stale_after`, interval from its home README.[^okf]
+2. An append-only log carries `type` only: history does not go stale.[^okf]
+3. A skill MUST compare `stale_after` with today before using a file, and review or refresh a stale one.[^okf][^anthropic-ctx]
+4. A freshness check on a home is recommended, not required: the check on read works without it.[^house]
 
 ### 4. One context protocol
 
-1. Every stateful skill MUST carry the same protocol block, byte-identical to one canonical copy: check the home README, run setup when it is missing, compare `stale_after` with today on read, migrate when `generated.by` differs (📜 Rule: `skill-context-protocol`).
-2. A stateful skill MUST have a `## Context` section naming every home it reads or writes (📜 Rule: `skill-context-section`).
+1. Every stateful skill MUST carry one protocol block, byte-identical to a canonical copy: check the home README, run setup when missing, compare `stale_after` on read, migrate when `generated.by` differs (📜 Rule: `skill-context-protocol`).[^house]
+2. A stateful skill MUST have a `## Context` section naming every home it reads or writes (📜 Rule: `skill-context-section`).[^house]
 
 ## Do's and Don'ts
 
 ### Do's
 
-1. **DO** add `metadata.state: stateful` when a skill writes context outside the learnings store. (Decision 1)
-2. **DO** keep a skill's own setup, calibration and version record in `docs/<skill>/`. (Decision 2)
-3. **DO** run setup and write the README when a home has none. (Decision 2)
-4. **DO** set `stale_after` from the home README's interval on every write — `stale_after: 2026-12-20`. (Decision 3)
-5. **DO** copy the protocol block verbatim from the canonical copy. (Decision 4, 📜 Rule: `skill-context-protocol`)
-6. **DO** name every home under `## Context` — `docs/drive/`, `docs/decision-records/`. (Decision 4, 📜 Rule: `skill-context-section`)
+1. **DO** add `metadata.state: stateful` when a skill writes context outside the learnings store. (Decision 1)[^house]
+2. **DO** keep a skill's own setup, calibration and version record in `docs/<skill>/`. (Decision 2)[^house]
+3. **DO** run setup and write the README when a home has none. (Decision 2)[^mattpocock]
+4. **DO** set `stale_after` from the home README's interval on every write — `stale_after: 2026-12-20`. (Decision 3)[^okf]
+5. **DO** copy the protocol block verbatim from the canonical copy. (Decision 4, 📜 Rule: `skill-context-protocol`)[^house]
+6. **DO** name every home under `## Context` — `docs/<skill>/`, `docs/<domain>/`. (Decision 4, 📜 Rule: `skill-context-section`)[^house]
 
 ### Don'ts
 
-1. **DON'T** declare a skill stateful because it records learnings. (Decision 1)
-2. **DON'T** write into another skill's home. (Decision 2)
-3. **DON'T** read or write a domain home without reading its README first. (Decision 2)
-4. **DON'T** give an append-only log a `stale_after`. (Decision 3)
-5. **DON'T** use a context file past its `stale_after` without reviewing it. (Decision 3)
+1. **DON'T** declare a skill stateful because it records learnings. (Decision 1)[^house]
+2. **DON'T** write into another skill's home. (Decision 2)[^house]
+3. **DON'T** read or write a domain home without reading its README first. (Decision 2)[^mattpocock]
+4. **DON'T** give an append-only log a `stale_after`. (Decision 3)[^okf]
+5. **DON'T** use a context file past its `stale_after` without reviewing it. (Decision 3)[^okf]
 
 ## Consequences
 
@@ -99,6 +99,10 @@ Without a declaration nobody can tell which skills shape future agents. Without 
 
 ## References
 
-- [Open Knowledge Format — Google Cloud](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) — `type`, `stale_after`, `generated`, `verified`.
-- [Effective context engineering for AI agents — Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — structured note-taking, persistent memory.
-- `docs/decision-records/drive/0008-learnings-move-to-the-learnings-skill.md` — the learnings store.
+[^house]: House rule: no external source; decided for this repository's skills, 2026-11-20/21.
+
+[^okf]: [Open Knowledge Format — Google Cloud](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) — `type`, `stale_after`, `generated`, `verified`.
+
+[^anthropic-ctx]: [Effective context engineering for AI agents — Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — structured note-taking, persistent memory.
+
+[^mattpocock]: [mattpocock-skills@abeeaf9:skills/engineering/setup-matt-pocock-skills/SKILL.md](https://github.com/mattpocock/skills/blob/abeeaf95660ba9e8b7c753eb38f441ca707a8823/skills/engineering/setup-matt-pocock-skills/SKILL.md) — setup writes `docs/agents/*` contract files once; other skills read them.
