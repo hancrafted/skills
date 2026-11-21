@@ -5,6 +5,8 @@ import { configDefaults, defineConfig } from 'vitest/config';
 const TRIGGERS = [
   'package-lock.json',
   'skills/**',
+  'docs/learnings/**',
+  'tests/skills-frontmatter/**',
   'eslint.config.mjs',
   'tools/lint/**',
   'tools/references/**',
@@ -17,6 +19,7 @@ export default defineConfig({
     passWithNoTests: false,
     include: ['**/*.slow.test.ts'],
     exclude: [...configDefaults.exclude, '.worktrees/**', '.references/**', '.agents/**', '.claude/**'],
+    globalSetup: ['tests/slow-fence/strip-git-env.setup.ts'],
     testTimeout: 60_000,
     forceRerunTriggers: [
       ...configDefaults.forceRerunTriggers,

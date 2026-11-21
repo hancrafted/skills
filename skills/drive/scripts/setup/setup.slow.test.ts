@@ -9,11 +9,13 @@ function dropGitVariablesACommitHookExports(): void {
   for (const name of Object.keys(process.env)) if (name.startsWith('GIT_')) delete process.env[name];
 }
 dropGitVariablesACommitHookExports();
+const withoutGitVariables = (): NodeJS.ProcessEnv =>
+  Object.fromEntries(Object.entries(process.env).filter(([name]) => !name.startsWith('GIT_')));
 const SCRIPTS_ROOT = path.resolve(import.meta.dirname, '..');
 const CLI = path.join(SCRIPTS_ROOT, 'drive.ts');
 function repo(files: Record<string, string>): string {
   const root = realpathSync(mkdtempSync(path.join(tmpdir(), 'drive-setup-cli-')));
-  execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: root });
+  execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: root, env: withoutGitVariables() });
   for (const [file, text] of Object.entries(files)) {
     mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     writeFileSync(path.join(root, file), text);
@@ -24,6 +26,7 @@ const spawnSetup = (cwd: string, ...args: string[]) =>
   spawnSync(process.execPath, [CLI, 'setup', ...args], {
     cwd,
     encoding: 'utf8',
+    env: withoutGitVariables(),
   });
 const binding = (root: string) => {
   const read = readBinding(readFileSync(path.join(root, 'docs/drive/binding.yml'), 'utf8'));
@@ -51,6 +54,28 @@ const INSIDE = (root: string) => path.join(root, 'skills', 'drive', 'scripts');
 const ENTRY = 'skills/drive/scripts/drive.ts';
 const VENDOR = CATALOG.source;
 const text = (root: string, file: string) => readFileSync(path.join(root, file), 'utf8');
+
+const gitIn = (cwd: string, ...args: string[]): string =>
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], {
+    cwd,
+    encoding: 'utf8',
+    env: withoutGitVariables(),
+  }).trim();
+const installLearningsStub = (root: string) => {
+  mkdirSync(path.join(root, 'skills', 'learnings'), { recursive: true });
+  writeFileSync(path.join(root, 'skills', 'learnings', 'SKILL.md'), SKILL);
+};
+const OLD_RECORD = 'docs/drive/learnings/records/2026-01-01-x.md';
+const NEW_RECORD = 'docs/learnings/drive/records/2026-01-01-x.md';
+const oldStoreRepo = () => {
+  const root = repo({
+    [OLD_RECORD]: '---\ntype: record\n---\n# x\n',
+    'docs/drive/learnings/failure-modes/a.md': 'a',
+  });
+  gitIn(root, 'add', '-A');
+  gitIn(root, 'commit', '-q', '-m', 'seed');
+  return root;
+};
 
 describe('success cases', () => {
   describe('drive setup, spawned', () => {
@@ -128,7 +153,6 @@ describe('success cases', () => {
       const expectedFiles = [
         'docs/drive/binding.yml',
         'docs/drive/enforcers.yml',
-        'docs/drive/learnings/README.md',
         'docs/drive/profiles.md',
         'docs/drive/project.yml',
         'docs/drive/review.md',
@@ -176,10 +200,11 @@ describe('success cases', () => {
     });
   });
   describe('drive setup the learnings check', () => {
-    it('wires the learnings check into check:docs once and seeds the store README', () => {
+    it('wires the learnings check into check:docs once', () => {
       // ARRANGE
       const root = bareRepo({ 'package.json': JSON.stringify({ scripts: { 'check:docs': 'mh check' } }) });
-      const expected = `mh check && mh check --root docs/drive/learnings --config skills/drive/markdown-harness.config.yaml && node ${ENTRY} learnings check`;
+      installLearningsStub(root);
+      const expected = `mh check && mh check --root docs/learnings/drive --config skills/learnings/markdown-harness.config.yaml && node skills/learnings/scripts/learnings.ts check`;
       // ACT
       setup(root, INSIDE(root));
       const { written } = setup(root, INSIDE(root));
@@ -187,7 +212,6 @@ describe('success cases', () => {
       const scripts = (JSON.parse(text(root, 'package.json')) as { scripts: Record<string, string> }).scripts;
       expect(scripts['check:docs']).toBe(expected);
       expect(written).toEqual([]);
-      expect(text(root, 'docs/drive/learnings/README.md')).toContain('# Drive learnings');
     });
   });
   describe('drive setup the Decision-doc guard', () => {
@@ -202,6 +226,42 @@ describe('success cases', () => {
       const hook = text(root, '.husky/pre-commit').split('\n');
       expect(hook.filter((line) => line.includes('drive.ts guard'))).toHaveLength(1);
       expect(hook.at(lineBeforeTheGuard)).toBe('npm run check:staged');
+    });
+  });
+  describe('drive setup the learnings step', () => {
+    it('wires the learnings check in the same run that installs learnings', () => {
+      // ARRANGE
+      const root = repo({ 'package.json': JSON.stringify({ scripts: { 'check:docs': 'mh check' } }) });
+      const wired = 'node skills/learnings/scripts/learnings.ts check';
+      // ACT
+      setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      // ASSERT
+      expect(text(root, 'package.json')).toContain(wired);
+    });
+    it('moves the old store with git mv, keeps its history and installs learnings once the Operator approves', () => {
+      // ARRANGE
+      const root = oldStoreRepo();
+      const history = 'move\nseed';
+      // ACT
+      const { notes } = setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      gitIn(root, 'add', '-A');
+      gitIn(root, 'commit', '-q', '-m', 'move');
+      // ASSERT
+      expect(existsSync(path.join(root, 'docs/drive/learnings'))).toBe(false);
+      expect(text(root, NEW_RECORD)).toContain('type: record');
+      expect(gitIn(root, 'log', '--follow', '--format=%s', '--', NEW_RECORD)).toBe(history);
+      expect(existsSync(path.join(root, 'skills/learnings/SKILL.md'))).toBe(true);
+      expect(text(root, 'docs/drive/README.md')).toMatch(/by: drive@\d+\.\d+\.\d+/);
+      expect(notes.join('\n')).toContain('docs/learnings/drive');
+    });
+    it('installs learnings in a repo without the old store when approved, and migrates nothing', () => {
+      // ARRANGE
+      const root = repo({});
+      // ACT
+      setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      // ASSERT
+      expect(existsSync(path.join(root, 'skills/learnings/SKILL.md'))).toBe(true);
+      expect(existsSync(path.join(root, 'docs/learnings'))).toBe(false);
     });
   });
 });
@@ -221,11 +281,12 @@ describe('failure cases', () => {
       // ARRANGE
       const manifest = JSON.stringify({ scripts: { 'check:docs': 'mh check' } });
       const root = bareRepo({ 'package.json': manifest });
+      installLearningsStub(root);
       // ACT
       const { notes } = setup(root, SCRIPTS_ROOT);
       // ASSERT
       expect(text(root, 'package.json')).toBe(manifest);
-      expect(notes.join('\n')).toContain('learnings check');
+      expect(notes.join('\n')).toContain('learnings.ts check');
     });
   });
   describe('drive setup the Decision-doc guard', () => {
@@ -260,9 +321,66 @@ describe('failure cases', () => {
       expect(fixed).toEqual([]);
     });
   });
+  describe('drive setup the learnings step', () => {
+    it('wires no learnings check while learnings is missing, and names the install command', () => {
+      // ARRANGE
+      const manifest = JSON.stringify({ scripts: { 'check:docs': 'mh check' } });
+      const root = bareRepo({ 'package.json': manifest });
+      const installCommand = 'npx skills add hancrafted/skills --skill learnings';
+      // ACT
+      const { notes } = setup(root, INSIDE(root));
+      // ASSERT
+      expect(text(root, 'package.json')).toBe(manifest);
+      expect(notes.join('\n')).toContain(installCommand);
+    });
+    it('moves nothing and installs nothing before the Operator approves, and says what approval does', () => {
+      // ARRANGE
+      const root = oldStoreRepo();
+      const installs: string[] = [];
+      // ACT
+      const { notes } = setup(root, INSIDE(root), { install: (target) => installs.push(target) });
+      // ASSERT
+      expect(existsSync(path.join(root, OLD_RECORD))).toBe(true);
+      expect(installs).toEqual([]);
+      expect(existsSync(path.join(root, 'docs/drive/README.md'))).toBe(false);
+      expect(notes.join('\n')).toContain('--approve-learnings');
+    });
+    it('refuses to overwrite a store already at the new place', () => {
+      // ARRANGE
+      const root = oldStoreRepo();
+      mkdirSync(path.join(root, 'docs/learnings/drive'), { recursive: true });
+      writeFileSync(path.join(root, 'docs/learnings/drive/x.md'), 'x');
+      const refusal = /docs\/learnings\/drive/;
+      // ACT
+      const migrate = () => setup(root, INSIDE(root), { approveLearnings: true, install: installLearningsStub });
+      // ASSERT
+      expect(migrate).toThrow(refusal);
+    });
+  });
 });
 
 describe('edge cases', () => {
+  describe('drive setup test helpers', () => {
+    it('keep a temp repo out of the host repo an inherited GIT_DIR names', () => {
+      // ARRANGE
+      const host = repo({});
+      const hostGitDir = path.join(host, '.git');
+      const hostBare = () =>
+        execFileSync('git', ['config', 'core.bare'], {
+          cwd: host,
+          encoding: 'utf8',
+          env: withoutGitVariables(),
+        }).trim();
+      const before = hostBare();
+      process.env.GIT_DIR = hostGitDir;
+      // ACT
+      const temp = repo({ 'a.txt': 'a' });
+      delete process.env.GIT_DIR;
+      // ASSERT
+      expect(existsSync(path.join(temp, '.git'))).toBe(true);
+      expect(hostBare()).toBe(before);
+    });
+  });
   describe('drive setup, spawned', () => {
     it('writes nothing the second time and says so', () => {
       // ARRANGE
@@ -339,28 +457,6 @@ describe('edge cases', () => {
       expect(parseConfig(text(root, 'docs/drive/project.yml'), ENTRY)).toMatchObject(handEdited);
     });
 
-    it('creates the learnings store with its records and failure-modes folders', () => {
-      // ARRANGE
-      const root = bareRepo({});
-      // ACT
-      setup(root, SCRIPTS_ROOT);
-      // ASSERT
-      expect(existsSync(path.join(root, 'docs/drive/learnings/records'))).toBe(true);
-      expect(existsSync(path.join(root, 'docs/drive/learnings/failure-modes'))).toBe(true);
-    });
-
-    it('does not recreate learnings.md in a store that has failure modes', () => {
-      // ARRANGE
-      const root = bareRepo({
-        'docs/drive/learnings/failure-modes/stale-branch.md': '---\nstatus: open\n---\n# Stale branch\n',
-      });
-      // ACT
-      const { written } = setup(root, SCRIPTS_ROOT);
-      // ASSERT
-      expect(written).not.toContain('docs/drive/learnings.md');
-      expect(existsSync(path.join(root, 'docs/drive/learnings.md'))).toBe(false);
-    });
-
     it('seeds notify once and keeps a notify the Operator changed', () => {
       // ARRANGE
       const root = bareRepo({});
@@ -411,6 +507,33 @@ describe('edge cases', () => {
       // ASSERT
       expect(written.filter((file) => file.startsWith('.husky') || file.startsWith('.github'))).toEqual([]);
       expect(notes.join('\n')).toMatch(/drive\.ts guard --against origin\/main/);
+    });
+  });
+  describe('drive setup the learnings step', () => {
+    it('leaves a repo without the old store untouched by the migration', () => {
+      // ARRANGE
+      const root = repo({ 'docs/other.md': 'x' });
+      installLearningsStub(root);
+      gitIn(root, 'add', '-A');
+      gitIn(root, 'commit', '-q', '-m', 'seed');
+      const installs: string[] = [];
+      // ACT
+      setup(root, INSIDE(root), { approveLearnings: true, install: (target) => installs.push(target) });
+      // ASSERT
+      expect(installs).toEqual([]);
+      expect(existsSync(path.join(root, 'docs/learnings'))).toBe(false);
+      expect(text(root, 'docs/other.md')).toBe('x');
+    });
+    it('rewrites only the version record when the README is from an older drive', () => {
+      // ARRANGE
+      const old = '---\ntype: readme\ngenerated:\n  by: drive@0.1.0\n  at: 2026-01-01\n---\n# Drive\n\nmine\n';
+      const root = repo({ 'docs/drive/README.md': old });
+      installLearningsStub(root);
+      // ACT
+      setup(root, INSIDE(root));
+      // ASSERT
+      expect(text(root, 'docs/drive/README.md')).not.toContain('drive@0.1.0');
+      expect(text(root, 'docs/drive/README.md')).toContain('mine');
     });
   });
 });

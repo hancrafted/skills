@@ -6,7 +6,7 @@
 # `notify.adapter` (push-notification | none) names how the Orchestrator reaches you at the Decision gate;
 # the CLI sends nothing.
 
-agentType: general-purpose
+agentType: archgate:developer
 notify:
   adapter: push-notification
 phases:

@@ -1,4 +1,6 @@
 {
-  "domains": {},
+  "domains": {
+    "skills": "SKL"
+  },
   "baseBranch": "origin/main"
 }
