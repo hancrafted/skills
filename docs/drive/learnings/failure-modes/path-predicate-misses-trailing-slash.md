@@ -1,7 +1,9 @@
 ---
 title: 'A path predicate fails on a trailing-slash input and has no fast test'
 enforcer: 'test-runner: new pure unit test of the predicate in the pure module'
-status: proposed
+status: fixed
+fixed-by: https://github.com/hancrafted/skills/pull/92
+fixed-on: 2026-11-21
 ---
 
 # A path predicate fails on a trailing-slash input and has no fast test
