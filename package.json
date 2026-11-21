@@ -14,7 +14,7 @@
     "lint": "eslint . && npm run lint:boundaries",
     "lint:boundaries": "depcruise skills tools",
     "typecheck": "tsc --noEmit",
-    "archgate:full": "archgate check --base $(git rev-list --max-parents=0 HEAD)",
+    "archgate:full": "archgate check --strict --base $(git rev-list --max-parents=0 HEAD)",
     "verify": "node tools/verify/verify.ts",
     "verify:commit": "node tools/verify/verify.ts commit",
     "lint-staged": "lint-staged",

@@ -26,61 +26,47 @@ Existing comments were retired in one sweep; every authored code file is now gov
 ### 1. No prose comments (📜 Rule: `no-comments`)
 
 1. Governed code MUST carry no prose comment in TS, JS or CSS: `//`, `/* */`, JSDoc `/** */`, JSX `{/* */}`. Only a registered marker, bare, survives (§4).
-2. Out of scope: `fixtures/`, `*.generated.*` and root config files, whose reasons sit beside their entries.
-3. Working comments are free until staged. The commit gate checks staged files; pre-push and CI check every file.
-4. Every finding names the comment's position and says what to do instead.
+2. Out of scope: `fixtures/`, `*.generated.*`, root config files.
+3. Working comments are free until staged.
+4. Every finding names the fix.
 
 ### 2. The ladder
 
-1. A comment's information moves to the first rung that keeps all of it: delete (it restates the code) → rename or tighten a type → extract a named constant or function → a test named for it → a pointer marker → the commit body.
-2. A slightly longer name is a full fix. Names have no length cap.
+1. A comment's information moves to the first rung that keeps it all: delete → rename or tighten a type → named constant or function → a test → a pointer marker → the commit body.
+2. A longer name is a fix.
 
 ### 3. Homes for a why
 
 1. An invariant: a test named for it.
-2. A security invariant: a test or a lint rule, never a pointer.
+2. A security invariant: a test or lint rule.
 3. A decision: its ADR.
-4. A rejected alternative: its ADR's options; the commit body when too local for one.
-5. A timing or coupling reason: a name stating the constraint — `beginMotionBeforePaint`; the rest to the commit body.
-6. The narrative of a change: the commit body.
-7. Read-time visibility of a reason held elsewhere: a pointer marker.
+4. A rejected alternative: its ADR, else the commit body.
+5. A timing or coupling reason: a name stating it, `beginMotionBeforePaint`; the rest in the commit body.
+6. A change's narrative: the commit body.
+7. A reason held elsewhere, visible at the line: a pointer marker.
 
 ### 4. Marker registry
 
-1. A marker is admitted only if a gate tool reads it. Nothing may follow a marker.
-2. The registry, mirrored by the rule; the two may not differ:
-
-   | Marker                                            | Read by                          |
-   | ------------------------------------------------- | -------------------------------- |
-   | `// ARRANGE`, `// ACT`, `// ASSERT`               | the Testing ADR, `test-body-aaa` |
-   | `// @ts-expect-error`, `{/* @ts-expect-error */}` | tsc                              |
-   | `/// <reference … />`                             | tsc                              |
-   | `// <label>: <target>`, `/* <label>: <target> */` | this ADR                         |
-
+1. A marker is admitted only if a gate tool reads it; nothing may follow it.
+2. The registry (see Compliance and Enforcement) mirrors the rule; they may not differ.
 3. No pragma (`/* @vitest-environment */`, `// #__PURE__`) is in use; one enters only by §4.1 and an amendment.
 
 ### 5. Pointer markers
 
-1. Shape: `// <label>: <target>`, or `/* <label>: <target> */` in CSS. One target, on its own line, directly above the code; pointers may stack.
-2. Labels, closed:
-
-   | Label        | Target                                             |
-   | ------------ | -------------------------------------------------- |
-   | `decision:`  | an Archgate ADR section, or a Decision record path |
-   | `tech-debt:` | an issue URL in this repo                          |
-
-3. An ADR section is `<ID> §<n>[.<m>]`: Decision anchor n, item m.
-4. Every target is checked offline; a missing one fails. An external URL fails: an outside fact goes to the commit body.
-5. `tech-debt:` is checked for format only; the issue holds the cost.
+1. Shape: `// <label>: <target>`, or `/* <label>: <target> */` in CSS: one target, on its own line above the code; pointers may stack.
+2. The closed labels are listed in Compliance and Enforcement.
+3. An ADR section is `<ID> §<n>[.<m>]`: anchor n, item m.
+4. Every target is checked offline; a missing or external one fails: put an outside fact in the commit body.
+5. `tech-debt:` is checked for format only.
 
 ### 6. Lint directives
 
-1. No `eslint-*` or `oxlint-*` directive comment, in any form. A wrong rule is turned off in the lint config behind a `files:` glob, with its reason.
+1. No `eslint-*` or `oxlint-*` directive comment; turn a wrong rule off in the lint config behind a `files:` glob.
 
 ### 7. When it fires
 
-1. Commit: staged files only. Pre-push and CI: the whole repo.
-2. The staged check picks files by the index but reads the working copy: a partly staged file is checked whole, unstaged hunks included.
+1. Commit: staged files. Pre-push and CI: the whole repo.
+2. A partly staged file is checked whole.
 
 ## Do's and Don'ts
 
@@ -126,6 +112,22 @@ Existing comments were retired in one sweep; every authored code file is now gov
 1. **Rule** `no-comments` (archgate, error): every file in `files:` that the run changed; at commit the staged files, in `npm run verify` every file. It finds comments with its own lexer and checks the registry table against its own.
 2. **Lint:** a bare `@ts-expect-error` passes the lint config; any other TS directive still fails.
 3. **Review:** a why deleted as a what; a § renumbered under a pointer; name quality.
+
+### Marker registry
+
+| Marker                                            | Read by                          |
+| ------------------------------------------------- | -------------------------------- |
+| `// ARRANGE`, `// ACT`, `// ASSERT`               | the Testing ADR, `test-body-aaa` |
+| `// @ts-expect-error`, `{/* @ts-expect-error */}` | tsc                              |
+| `/// <reference … />`                             | tsc                              |
+| `// <label>: <target>`, `/* <label>: <target> */` | this ADR                         |
+
+### Pointer labels
+
+| Label        | Target                                             |
+| ------------ | -------------------------------------------------- |
+| `decision:`  | an Archgate ADR section, or a Decision record path |
+| `tech-debt:` | an issue URL in this repo                          |
 
 **Known gaps:** name quality and a missing pointer are checked by review only.
 

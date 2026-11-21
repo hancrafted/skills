@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { COMMIT_PLAN, runPlan, VERIFY_PLAN, type Exec, type Plan } from './verify.pure.ts';
 
@@ -105,6 +106,25 @@ describe('edge cases', () => {
     // ASSERT
     expect(commitCommands).toContain(expectedCommand);
     expect(verifyCommands.some((command) => command.includes('check:docs'))).toBe(true);
+  });
+
+  it('fails the gate on archgate advisory findings, at every commit and in the full verify', () => {
+    // ARRANGE
+    const archgateCommands = (plan: Plan) =>
+      plan.phases
+        .flat()
+        .filter((step) => step.name === 'archgate')
+        .map((step) => step.command);
+    const fullScript = (JSON.parse(readFileSync('package.json', 'utf8')) as { scripts: Record<string, string> })
+      .scripts['archgate:full'];
+    // ACT
+    const commitCommands = archgateCommands(COMMIT_PLAN);
+    const verifyCommands = archgateCommands(VERIFY_PLAN);
+    // ASSERT
+    expect(commitCommands).toHaveLength(1);
+    expect(commitCommands[0]).toContain('--strict');
+    expect(verifyCommands).toEqual(['npm run -s archgate:full']);
+    expect(fullScript).toContain('--strict');
   });
 
   it('reports a step that cannot start as failed, with the reason, while the rest of its phase finishes', async () => {
