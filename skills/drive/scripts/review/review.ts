@@ -1,20 +1,21 @@
 import { existsSync, readFileSync } from 'node:fs';
-import path from 'node:path';
-import { capture, fail } from '../core/index.ts';
-import { quoteProblems, type ReadFile } from './quotes.pure.ts';
+import { fail, run } from '../core/index.ts';
+import { quoteProblems, type CommitSource } from './quotes.pure.ts';
 
 export const REVIEW_USAGE = 'usage: drive review quotes <report>';
 
-export function readerFromRepoRoot(): ReadFile {
-  const root = capture('git', ['rev-parse', '--show-toplevel']);
-  return (file) => {
-    const full = path.join(root, file);
-    return existsSync(full) ? readFileSync(full, 'utf8') : null;
+export function commitSource(cwd?: string): CommitSource {
+  return {
+    knows: (sha) => run('git', ['cat-file', '-e', `${sha}^{commit}`], { cwd }).status === 0,
+    show: (sha, file) => {
+      const result = run('git', ['show', `${sha}:${file}`], { cwd });
+      return result.status === 0 ? result.stdout : null;
+    },
   };
 }
 
-export function checkedQuoteProblems(reportFile: string): string[] {
-  return quoteProblems(readFileSync(reportFile, 'utf8'), readerFromRepoRoot());
+export function checkedQuoteProblems(reportFile: string, cwd?: string): string[] {
+  return quoteProblems(readFileSync(reportFile, 'utf8'), commitSource(cwd));
 }
 
 export function runReview(argv: readonly string[]): void {
