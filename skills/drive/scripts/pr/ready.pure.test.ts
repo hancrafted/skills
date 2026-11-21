@@ -1,7 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { notIntegrationBranch, readyProblem, topicOf } from './ready.pure.ts';
+import { baseAheadProblem, notIntegrationBranch, readyProblem, topicOf } from './ready.pure.ts';
 
 describe('success cases', () => {
+  describe('baseAheadProblem', () => {
+    it('passes when the base branch is not ahead', () => {
+      // ARRANGE
+      const ahead = 0;
+      // ACT
+      const problem = baseAheadProblem('main', ahead);
+      // ASSERT
+      expect(problem).toBeNull();
+    });
+  });
   describe('readyProblem', () => {
     it('passes once review.md exists', () => {
       // ARRANGE
@@ -15,6 +25,19 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('baseAheadProblem', () => {
+    it('refuses with the count and says to sync then push', () => {
+      // ARRANGE
+      const expected = [
+        'origin/main has 3 commits the Integration branch lacks: run drive worktree sync, then drive push',
+        'origin/main has 1 commit the Integration branch lacks: run drive worktree sync, then drive push',
+      ];
+      // ACT
+      const problems = [3, 1].map((ahead) => baseAheadProblem('main', ahead));
+      // ASSERT
+      expect(problems).toEqual(expected);
+    });
+  });
   describe('readyProblem', () => {
     it('refuses without review.md and names the file', () => {
       // ARRANGE

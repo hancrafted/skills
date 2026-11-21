@@ -17,3 +17,9 @@ export function readyProblem(topic: string, reviewExists: boolean): string | nul
     ? null
     : `${reviewPath(topic)} does not exist: run the review (references/review.md) and log its verdicts before marking the PR ready`;
 }
+
+export function baseAheadProblem(base: string, ahead: number): string | null {
+  return ahead > 0
+    ? `origin/${base} has ${ahead} commit${ahead === 1 ? '' : 's'} the Integration branch lacks: run drive worktree sync, then drive push`
+    : null;
+}

@@ -94,9 +94,42 @@ const watch = (views: object[]) => {
   const { main } = fixture();
   return driveGroup(main, ['pr', 'watch', '7', '--poll-milliseconds', '10'], stubbedGh(views));
 };
+const readyFixture = () => {
+  const { main, root } = fixture();
+  drive(main, 'new', 'feat/x');
+  const tree = path.join(main, '.trees', 'feat-x');
+  mkdirSync(path.join(main, '.scratch', 'x'), { recursive: true });
+  writeFileSync(path.join(main, '.scratch', 'x', 'review.md'), 'review');
+  const dir = mkdtempSync(path.join(tmpdir(), 'drive-gh-'));
+  writeFileSync(
+    path.join(dir, 'gh'),
+    '#!/bin/sh\ncase "$*" in\n*headRefName*) echo feat/x;;\n*baseRefName*) echo main;;\n*) echo "gh $*" >> ' +
+      path.join(dir, 'calls') +
+      ';;\nesac\n',
+    { mode: 0o755 },
+  );
+  const env = { ...process.env, PATH: `${dir}:${process.env.PATH}` };
+  return { main, root, tree, env, calls: path.join(dir, 'calls') };
+};
+const advanceBase = (main: string) => {
+  writeFileSync(path.join(main, 'b.txt'), 'b');
+  git(main, 'add', '.');
+  git(main, 'commit', '-qm', 'base moves');
+  git(main, 'push', '-q', 'origin', 'main');
+};
 const open = { state: 'OPEN', mergeCommit: null, reviews: [], comments: [] };
 
 describe('success cases', () => {
+  describe('drive pr ready', () => {
+    it('marks the PR ready once the base branch is not ahead', () => {
+      // ARRANGE
+      const { tree, env, calls } = readyFixture();
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, readFileSync(calls, 'utf8').trim()]).toEqual([0, 'gh pr ready 7']);
+    });
+  });
   describe('drive worktree', () => {
     it('new makes a worktree under the configured folder and runs the install steps in it', () => {
       // ARRANGE
@@ -274,6 +307,23 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('drive pr ready', () => {
+    it('refuses while origin/<base> has commits the Integration branch lacks', () => {
+      // ARRANGE
+      const { main, tree, env, calls } = readyFixture();
+      advanceBase(main);
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining(
+          'origin/main has 1 commit the Integration branch lacks: run drive worktree sync, then drive push',
+        ),
+        false,
+      ]);
+    });
+  });
   describe('drive with a group it does not route', () => {
     it('exits non-zero and prints the usage naming every group', () => {
       // ARRANGE
