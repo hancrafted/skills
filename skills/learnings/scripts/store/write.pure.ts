@@ -139,10 +139,23 @@ Skills whose learning is turned off, one \`- <skill>\` bullet per line. \`learni
 
 export const LEARNINGS_README = renderLearningsReadme(TEMPLATE_DATE);
 
+function isNewer(stamped: string, current: string): boolean {
+  const a = stamped.split('.').map(Number);
+  const b = current.split('.').map(Number);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const diff = (a[i] ?? 0) - (b[i] ?? 0);
+    if (diff !== 0) return diff > 0;
+  }
+  return false;
+}
+
 export function migrateReadme(text: string, date: string): string | null {
-  const by = /^ {2}by: learnings@(\S+)$/m.exec(text);
-  if (by === null || by[1] === LEARNINGS_VERSION) return null;
-  return text
+  const front = /^---\r?\n[\s\S]*?\r?\n---/.exec(text)?.[0];
+  if (front === undefined) return null;
+  const by = /^ {2}by: learnings@(\S+)$/m.exec(front);
+  if (by === null || by[1] === LEARNINGS_VERSION || isNewer(by[1], LEARNINGS_VERSION)) return null;
+  const moved = front
     .replace(/^ {2}by: learnings@\S+$/m, `  by: learnings@${LEARNINGS_VERSION}`)
     .replace(/^ {2}at: .*$/m, `  at: ${date}`);
+  return moved + text.slice(front.length);
 }

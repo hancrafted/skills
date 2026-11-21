@@ -26,11 +26,11 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 1. Allowed keys: the spec's and Claude Code's documented ones (`when_to_use`, `argument-hint`, `arguments`, `disable-model-invocation`, `user-invocable`, `disallowed-tools`, `model`, `effort`, `context`, `agent`, `background`, `hooks`, `paths`, `shell`); any other key fails.[^spec][^cc]
 2. `name` matches the spec pattern — `cleanup`, `to-review` — and equals the folder name (📜 Rule: `skill-name-matches-folder`).[^spec]
 3. `description` is at most 1024 characters, third person, free of XML tags, and contains `Use when`.[^spec][^anthropic][^addy]
-4. `description` states what the skill does before `Use when` (config check `skill-description-purpose-first`) and never summarises the workflow.[^addy][^anthropic]
+4. `description` states what the skill does before `Use when` and never summarises the workflow.[^addy][^anthropic]
 
 ### 2. The body loads cheaply
 
-1. `SKILL.md` is at most 500 lines and about 5,000 tokens (📜 Rule: `skill-size-budget`); tokens are characters / 4.[^anthropic][^cc]
+1. `SKILL.md` is at most 500 lines and about 5,000 tokens (📜 Rule: `skill-size-budget`); tokens are ceil(characters / 4) of the whole `SKILL.md`.[^anthropic][^cc]
 2. Exactly one H1.[^house]
 3. Every reference is linked from `SKILL.md`; a reference fails only when it links a file `SKILL.md` does not (📜 Rule: `skill-links-one-level`).[^anthropic][^spec]
 4. A reference over 100 lines opens with a table of contents (📜 Rule: `skill-reference-toc`).[^anthropic]
@@ -88,7 +88,7 @@ Scope: authored skills under `skills/`; vendored skills in `.agents/skills/` are
 
 1. **Frontmatter:** `skills/markdown-harness.config.yaml` checks Decision 1 (except name equals folder) with `mh check`, in `npm run verify` and the pre-commit gate (`verify:commit`).
 2. **Rules** (`SKL-001-skill-package.rules.ts`, error): Decisions 1.2, 2.1 (lines and tokens), 2.3, 2.4 and 3.1 over `skills/*/`, run by `archgate check`.
-3. **Description opening:** the frontmatter config also fails a description that starts with `Use when` (Decision 1.4, `skill-description-purpose-first`); a config check, not an archgate rule, so it carries no 📜 marker.
+3. **Description opening:** the frontmatter config's rule `agentskills-spec` fails a description that starts with `Use when` (Decision 1.4, field `description`, its `pattern`); a config check, not an archgate rule, so it carries no 📜 marker.
 
 **Manual review duties:** 1.4 no workflow summary, 3.7 file naming and path style.
 

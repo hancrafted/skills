@@ -1,4 +1,7 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { parse } from 'yaml';
 import {
   addBullet,
   addMonth,
@@ -14,6 +17,8 @@ import {
 
 const OLD_README =
   '---\ntype: readme\ngenerated:\n  by: learnings@0.0.1\n  at: 2026-01-02\n---\n\n# Learnings\n\n## Off\n\n- drive\n';
+const stamped = (version: string, body = '') =>
+  `---\ntype: readme\ngenerated:\n  by: learnings@${version}\n  at: 2026-01-02\n---\n\n# Learnings\n${body}`;
 const SLUG = 'push-exits-zero';
 const TITLE = 'drive push exits 0 when the remote rejected the commit';
 
@@ -147,6 +152,15 @@ describe('success cases', () => {
       // ASSERT
       expect(migrated).toBe(expected);
     });
+    it('matches the version in the skill SKILL.md metadata', () => {
+      // ARRANGE
+      const skill = readFileSync(path.join(import.meta.dirname, '..', '..', 'SKILL.md'), 'utf8');
+      const front = /^---\n([\s\S]*?)\n---/.exec(skill)?.[1] ?? '';
+      // ACT
+      const version = (parse(front) as { metadata: { version: string } }).metadata.version;
+      // ASSERT
+      expect(LEARNINGS_VERSION).toBe(version);
+    });
   });
 });
 
@@ -177,6 +191,14 @@ describe('failure cases', () => {
     it('returns null for a README with no generated.by, which it cannot place', () => {
       // ARRANGE
       const text = 'edited\n';
+      // ACT
+      const migrated = migrateReadme(text, '2026-11-21');
+      // ASSERT
+      expect(migrated).toBeNull();
+    });
+    it('never downgrades a README stamped by a newer version', () => {
+      // ARRANGE
+      const text = stamped('99.0.0');
       // ACT
       const migrated = migrateReadme(text, '2026-11-21');
       // ASSERT
@@ -238,6 +260,23 @@ describe('edge cases', () => {
       const again = migrateReadme(current, '2026-12-01');
       // ASSERT
       expect(again).toBeNull();
+    });
+    it('compares versions as numbers, not text', () => {
+      // ARRANGE
+      const text = stamped('0.10.0');
+      // ACT
+      const migrated = migrateReadme(text, '2026-11-21');
+      // ASSERT
+      expect(migrated).toBeNull();
+    });
+
+    it('keeps the at replacement inside the front matter', () => {
+      // ARRANGE
+      const text = '---\ntype: readme\ngenerated:\n  by: learnings@0.0.1\n---\n\n# Learnings\n\n  at: body line\n';
+      // ACT
+      const migrated = migrateReadme(text, '2026-11-21') ?? '';
+      // ASSERT
+      expect(migrated).toContain('  at: body line\n');
     });
   });
 });

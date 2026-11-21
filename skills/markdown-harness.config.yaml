@@ -41,7 +41,7 @@ body-structure:
     - ruleId: skill-body-frame
       fileNames: [SKILL.md]
       undefinedHeadings: forbid
-      intent: 'An agent finds each part of a skill at the same place in every skill: what it is for, when to load it, the state it keeps, where it stops for a human, the steps, the excuses to refuse, the signs of drift and the evidence that ends the run. SKL-002 governs what goes inside each part.'
+      intent: "An agent finds each part of a skill at the same place in every skill: what it is for, when to load it, the state it keeps, where it stops for a human, the steps, the excuses to refuse, the signs of drift and the evidence that ends the run. SKL-002 governs what goes inside each part. Why each heading exists, and where this frame departs from Addy Osmani's: see docs/skills/skill-anatomy.md."
       headings:
         - purpose: heading
           level: 1

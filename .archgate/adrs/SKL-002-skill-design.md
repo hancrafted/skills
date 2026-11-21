@@ -73,7 +73,7 @@ Each decision cites its source in References; `[^house]` marks one with none.
 2. **DO** depend on a home's `README.md`, never on the skill that wrote it. (Decision 1)[^mattpocock]
 3. **DO** keep branch detail one link from `SKILL.md`. (Decision 1)[^anthropic]
 4. **DO** end every step with `_Done when:_` and an observable result. (Decision 1)[^addy]
-5. **DO** ask every question in one round before acting, and store answers that hold across runs. (Decision 1)[^cursor]
+5. **DO** ask in rounds, each question with a recommended answer, before acting, and store answers that hold across runs. (Decision 1)[^cursor]
 6. **DO** delete a sentence the model follows without it. (Decision 1)[^mattpocock]
 7. **DO** add a check when a learning recurs. (Decision 1)[^retro]
 8. **DO** list each gate as `<trigger>: <reason>` under `## Human gates`. (Decision 2, 📜 Rule: `skill-human-gates-section`)[^gpt5]

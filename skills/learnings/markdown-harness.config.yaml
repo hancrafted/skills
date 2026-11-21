@@ -1,5 +1,4 @@
-# One skill's learnings store (hancrafted/skills docs/decision-records/drive/0003-drive-learnings-are-records-and-failure-modes.md,
-# amended by 0008-learnings-move-to-the-learnings-skill.md): run once per skill with --root docs/learnings/<skill>, so
+# One skill's learnings store: run once per skill with --root docs/learnings/<skill>, so
 # folders are relative to it. `learnings check` holds what a field rule cannot: every record H2 names a failure-mode
 # file, a fixed failure mode cited after its fix carries a Regressed bullet, status and skip fields agree, and no
 # learnings.md sits beside a migrated store.
