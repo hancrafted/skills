@@ -34,7 +34,7 @@ Evidence from: <the log lines, failure modes or decisions behind it>
    | log mining, review support | `verify`'s                 |
    | Fortify evidence           | `evolve`'s                 |
 
-   The fidelity rule for a decision page, read from `docs/drive/review.md` and the items' rungs, applied as written: every item at `diagram` or below runs on `mid`; any item at rendering, mockup, visual prototype or interaction runs the whole page on `top`.
+   The fidelity rule for a decision page, read from `review.md` and the items' rungs, applied as written: every item at `diagram` or below runs on `mid`; any item at rendering, mockup, visual prototype or interaction runs the whole page on `top`.
 
 4. **Agent type.** Start every Subagent as `agentType` from `binding.yml`.
 5. **Cap.** Run at most the lower of `parallel.default` and `parallel.harnessCap` from `project.yml` at once; queue the rest and start the next the moment one finishes.
@@ -46,7 +46,7 @@ A Subagent's report with no **Merge** line means it stopped early: resume that S
 
 ## A decision page
 
-Reason's pages share one task shape. The brief passes `docs/drive/review.md` as the page skill's caller inputs, so it skips calibration, and names the items. The Subagent's _Done when_:
+Reason's pages share one task shape. The brief passes `review.md` (`drive status` reports whether it is filled; [setup](setup.md) "Optional inputs") as the page skill's caller inputs, so it skips calibration, and names the items. The Subagent's _Done when_:
 
 1. the page is built in the mode `review.md` gives for this use;
 2. it holds a screenshot at two widths (the review width and a narrower one), in light and dark, taken with the Binding's `visual-check` skill when a phase binds it under `verify`, else with the page skill's own verification;

@@ -57,7 +57,7 @@ Announce each phase and its branch changes before acting, and print `drive statu
 
 ## Entry check
 
-On every start or resume (a new session and a quota limit included), first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs and the tickets, and names the phase and the next stop. Also read the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet and tell the Operator the phase and next stop: before the gate wait for confirmation, after it continue.
+On every start or resume (a new session and a quota limit included), first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs, the tickets and the project inputs, and names the phase and the next stop. Also read the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet and tell the Operator the phase and next stop: before the gate wait for confirmation, after it continue.
 
 The phases and their transitions are drawn in [the workflow diagram](references/workflow.md).
 
@@ -67,7 +67,7 @@ Every project fact lives in `docs/drive/`; this skill knows none. Read it before
 
 - `binding.yml`: the **Binding**, each DRIVE phase's skills (`phases.<phase>.skills`), the Model tier its Subagents run on (`phases.<phase>.model`, `mid` or `top`), the agent type every agent uses (`agentType`) and the notify port (`notify.adapter`: `push-notification`, the harness's push notification, or `none`; absent means `push-notification`). A phase with no bound skill is done inline by you. Within a phase, pick a skill by its description.
 - `project.yml`: the project settings for worktrees (`worktree.*`), the parallel cap (`parallel.*`), the models behind each provider's tiers (`models`), the Decision docs' paths (`decisionDocs`) and the grill format (`grill.format`).
-- `profiles.md`: the project's rules for each Profile, and the kinds of live or scheduled things a change can touch. `enforcers.yml`: the Enforcers Fortify picks from. `review.md`: the calibration answers for every decision page. The records and failure modes are not here: they live in `docs/learnings/drive/`, owned by `/learnings` ([references/fortify.md](references/fortify.md)).
+- `profiles.md`: the project's rules per Profile and its live or scheduled kinds. `enforcers.yml`: the Enforcers Fortify picks from. `review.md`: the calibration for every decision page. The records and failure modes are not here: they live in `docs/learnings/drive/`, owned by `/learnings` ([references/fortify.md](references/fortify.md)).
 
 No folder yet, or a skill installed since setup: run setup first, [references/setup.md](references/setup.md).
 
@@ -100,16 +100,16 @@ These names override any worktree path or branch a Handoff or another skill name
 
 ### 1. Define (clarify)
 
-Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Read the file `grill.format` names in `project.yml` (`docs/agents/grilling-format.md`) and follow it: state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
+Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
 
-**Pre-flight.** Before the gate, list what the change touches that is live or scheduled; `docs/drive/profiles.md` names the kinds for this project. Settle each with the Operator now, and record it in `decisions.md`: it goes into the Decision PR body, and it is never first raised at the PR.
+**Pre-flight.** Before the gate, list what the change touches that is live or scheduled; the live or scheduled kinds are `profiles.md`'s, as `drive status` reports ("Optional inputs"). Settle each with the Operator now and record it in `decisions.md`; it goes into the Decision PR body, never first raised at the PR.
 
 _Done when:_ every requirement is a line in `decisions.md`, the pre-flight list is in it too, and the Operator agrees nothing is open.
 
 ### 2. Reason (specify)
 
 1. **Decision docs.** Write the Decision docs the Workflow changes yourself, in a `decisions/<topic>` worktree from the Integration branch. The paths are `decisionDocs` in `project.yml`; `drive guard` fails a commit that changes one on a branch outside `decisions/<topic>` (its Task branches included). A Workflow that changes no Decision doc says so in `decisions.md`. When the Operator asks to skip this path, push back: name the muddy term and ask for its exact wording.
-2. **Decision pages.** A page that settles open choices is a delegated task, [references/dispatch.md](references/dispatch.md) "A decision page", with `docs/drive/review.md` as the page skill's inputs.
+2. **Decision pages.** A page that settles open choices is a delegated task, [references/dispatch.md](references/dispatch.md) "A decision page", with `review.md` as the page skill's inputs ("Optional inputs").
 3. **Spec and tickets**, inline with the Reason skills. Ask the ticket skill, through its arguments, for a **Skills** line (only skills the Binding resolves) and a **Review after** line (`yes` with a reason, or `no`) on each ticket.
 4. **Decision PR.** Push `decisions/<topic>` with `drive push` and open its PR into the Integration branch. When no Decision doc changes, put the same body in the conversation and ask for explicit approval; that approval is the gate.
    The body follows [the Decision PR body](references/decision-pr.md).

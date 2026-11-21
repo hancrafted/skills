@@ -9,7 +9,7 @@ import {
   learningsCheckCommand,
   updateProjectConfig,
 } from './setup.pure.ts';
-import { REVIEW_STUB } from './stubs.pure.ts';
+import { PROFILES_STUB, REVIEW_STUB } from './stubs.pure.ts';
 const FACTS = {
   baseBranch: 'trunk',
   harnessCap: 20,
@@ -102,6 +102,15 @@ describe('success cases', () => {
       expect(REVIEW_STUB).toContain('# Drive review');
       for (const heading of ['Mode', 'Audience', 'Layout', 'Depth', 'Fidelity', 'Feedback route', 'Review width'])
         expect(REVIEW_STUB).toContain(`## ${heading}`);
+    });
+  });
+  describe('PROFILES_STUB', () => {
+    it('names the Profiles and the live or scheduled section', () => {
+      // ARRANGE
+      // ACT
+      // ASSERT
+      for (const heading of ['Architect', 'Implementer', 'Live or scheduled'])
+        expect(PROFILES_STUB).toContain(`## ${heading}`);
     });
   });
   describe('updateProjectConfig', () => {
