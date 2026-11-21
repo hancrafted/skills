@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+The Decision PR opens with new ADR prose that no ADR author has read. The Operator then asks for an adr-author review of each created ADR and fixes after the fact (skill-governance record, 2026-11-20).

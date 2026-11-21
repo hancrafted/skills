@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A Rationalizations row in a skill cites no incident, against SKL-002 3.4. Review 2 S6 found cleanup rows 1, 2, 6 and learnings rows 2, 4, 5 with none; they were removed in fix-final.

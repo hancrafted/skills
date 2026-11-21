@@ -4,13 +4,33 @@ All notable changes to the drive skill are documented in this file. The format f
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the skill follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.1.0] - 2026-11-22
+
+### Added
+
+- `drive status` prints the optional inputs: `Grill format` (filled or missing), `review.md` and `profiles.md` (filled, missing or empty)
+  (`Facts.inputs`). `references/setup.md` "Optional inputs" states the fallback and ask-once for each.
+- `assets/grilling-format.md`, the template drive uses when the project has no grilling format; `drive status` prints
+  `Grill format: missing (using drive's template)`.
+- `drive review quotes <report>` checks each quoted line in a review report against its file (exit 1, one line per bad
+  entry). A review report now requires a `## Contradictions` section; write `none` when empty.
+- A review report carries `Reviewed: <sha>`; `drive review quotes` reads each quoted file at that commit
+  (`git show <sha>:<path>`), so the result is the same from any checkout.
+- `drive pr ready` gains two refusals: `origin/<base>` is ahead of the Integration branch (it fetches both first), and a
+  review report quote does not match its file.
+- The setting names live in `core/settings.pure.ts` (`SETTING_NAMES`); a test fails on an unlisted setting name in
+  `skills/drive/**/*.md`, and the config, binding and model parsers read their keys from it.
+- The `PROFILES_STUB` gains a `## Live or scheduled` section.
 
 ### Changed
 
 - The failure-mode and skill catalog moved from `catalog/catalog.json` to `assets/catalog.json`; the Binding code reads it there.
 - `SKILL.md` fits the 5,000-token budget: the Subagent and Monitor instructions, the workflow diagram and the Decision PR body moved to `references/`.
 - The description says what drive does before `Use when`; `## Context` names `docs/agents/`; rationalization rows cite their incident.
+- Reason step 3 names `drive dispatch check --base <Integration branch> <tickets>` and when it runs: once the tickets are
+  filed, before the Decision PR. "Watch the gate" exit codes moved to `references/decision-pr.md`.
+- The `drive pr ready` ahead count reads `origin/<branch>`, and the message reads "origin/<base> has N commits
+  origin/<branch> lacks". Review and worktree instructions say to run in the Integration worktree.
 
 ## [2.0.0] - 2026-11-20
 

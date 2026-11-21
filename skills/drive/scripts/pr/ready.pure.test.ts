@@ -1,7 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { notIntegrationBranch, readyProblem, topicOf } from './ready.pure.ts';
+import { baseAheadProblem, notIntegrationBranch, quoteRefusal, readyProblem, topicOf } from './ready.pure.ts';
 
 describe('success cases', () => {
+  describe('baseAheadProblem', () => {
+    it('passes when the base branch is not ahead', () => {
+      // ARRANGE
+      const ahead = 0;
+      // ACT
+      const problem = baseAheadProblem('main', 'feat/x', ahead);
+      // ASSERT
+      expect(problem).toBeNull();
+    });
+  });
+  describe('quoteRefusal', () => {
+    it('passes when no quote problem was found', () => {
+      // ARRANGE
+      const problems: string[] = [];
+      // ACT
+      const refusal = quoteRefusal('sweep', problems);
+      // ASSERT
+      expect(refusal).toBeNull();
+    });
+  });
   describe('readyProblem', () => {
     it('passes once review.md exists', () => {
       // ARRANGE
@@ -15,6 +35,31 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('baseAheadProblem', () => {
+    it('refuses with the count and says to sync then push', () => {
+      // ARRANGE
+      const expected = [
+        'origin/main has 3 commits origin/feat/x lacks: run drive worktree sync, then drive push',
+        'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
+      ];
+      // ACT
+      const problems = [3, 1].map((ahead) => baseAheadProblem('main', 'feat/x', ahead));
+      // ASSERT
+      expect(problems).toEqual(expected);
+    });
+  });
+  describe('quoteRefusal', () => {
+    it('names the file and lists each bad quote on its own line', () => {
+      // ARRANGE
+      const problems = ['file not found: a.md', 'quote not on b.md:2: "x"'];
+      const expected =
+        '.scratch/sweep/review.md has contradiction quotes that do not check out (drive review quotes):\n- file not found: a.md\n- quote not on b.md:2: "x"';
+      // ACT
+      const refusal = quoteRefusal('sweep', problems);
+      // ASSERT
+      expect(refusal).toBe(expected);
+    });
+  });
   describe('readyProblem', () => {
     it('refuses without review.md and names the file', () => {
       // ARRANGE

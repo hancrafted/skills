@@ -3,11 +3,14 @@ import {
   derivePhase,
   type Facts,
   fortifyOfRecord,
+  grillFormatStateOf,
   lastCommand,
   mergedTicketsOf,
   pickIntegrationBranch,
+  profilesStateOf,
   recordFileOf,
   renderStatus,
+  reviewStateOf,
   specOfDecisionBody,
   ticketsOfBodies,
 } from './status.pure.ts';
@@ -23,11 +26,80 @@ const base: Facts = {
   tickets: [],
   mergedTickets: [],
   lastLog: null,
+  inputs: {
+    grillFormat: 'filled',
+    grillFormatPath: 'docs/agents/grilling-format.md',
+    review: 'filled',
+    profiles: 'filled',
+  },
 };
 const pr = (number: number, state: 'OPEN' | 'MERGED' | 'CLOSED', isDraft = false) => ({ number, state, isDraft });
 const allMerged = { ...base, decisionPr: pr(5, 'MERGED'), tickets: [1], mergedTickets: [1] };
 
 describe('success cases', () => {
+  describe('renderStatus', () => {
+    it.each([
+      ['filled', 'filled', 'filled'],
+      ['missing', 'empty', 'missing'],
+    ] as const)('prints grill format, review.md and profiles.md as %s, %s and %s', (grill, review, profiles) => {
+      // ARRANGE
+      const facts: Facts = {
+        ...base,
+        inputs: { grillFormat: grill, grillFormatPath: 'docs/g.md', review, profiles },
+      };
+      const grillLine =
+        grill === 'missing' ? "Grill format: missing (using drive's template)" : 'Grill format: filled (docs/g.md)';
+      const expected = [grillLine, `review.md: ${review}`, `profiles.md: ${profiles}`];
+      // ACT
+      const text = renderStatus(facts);
+      // ASSERT
+      for (const line of expected) expect(text).toContain(line);
+    });
+  });
+
+  describe('grillFormatStateOf', () => {
+    it.each([
+      [null, false, 'missing'],
+      ['docs/g.md', false, 'missing'],
+      ['docs/g.md', true, 'filled'],
+    ] as const)('maps path %s, exists %s to %s', (configured, exists, expected) => {
+      // ARRANGE
+      // ACT
+      const state = grillFormatStateOf(configured, exists);
+      // ASSERT
+      expect(state).toBe(expected);
+    });
+  });
+
+  describe('reviewStateOf', () => {
+    it.each([
+      [null, 'missing'],
+      ['# Drive review\n\n## Mode\n\n## Audience\n', 'empty'],
+      ['# Drive review\n\n## Mode\n\nStandalone HTML.\n\n## Audience\n', 'filled'],
+    ] as const)('reads %j as %s', (text, expected) => {
+      // ARRANGE
+      // ACT
+      const state = reviewStateOf(text);
+      // ASSERT
+      expect(state).toBe(expected);
+    });
+  });
+
+  describe('profilesStateOf', () => {
+    it.each([
+      [null, 'missing'],
+      ['# P\n\n## Architect\n\n- rule\n', 'empty'],
+      ['# P\n\n## Live or scheduled\n\n## Implementer\n- rule\n', 'empty'],
+      ['# P\n\n## Live or scheduled\n\n- CI on PRs\n', 'filled'],
+    ] as const)('reads %j as %s', (text, expected) => {
+      // ARRANGE
+      // ACT
+      const state = profilesStateOf(text);
+      // ASSERT
+      expect(state).toBe(expected);
+    });
+  });
+
   describe('derivePhase', () => {
     it.each([
       ['no Integration branch', { integrationBranch: null }, 'Define'],
@@ -211,6 +283,16 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  describe('renderStatus', () => {
+    it("names drive's template when no grill.format path is configured", () => {
+      // ARRANGE
+      const facts: Facts = { ...base, inputs: { ...base.inputs, grillFormat: 'missing', grillFormatPath: null } };
+      // ACT
+      const text = renderStatus(facts);
+      // ASSERT
+      expect(text).toContain("Grill format: missing (using drive's template)");
+    });
+  });
   describe('derivePhase', () => {
     it('says the Tickets section lists none when a merged Decision PR yields no ticket', () => {
       // ARRANGE

@@ -6,6 +6,8 @@ and the implementer's, which every Subagent brief points at. Write only what is 
 ## Architect
 
 ## Implementer
+
+## Live or scheduled
 `;
 
 export const REVIEW_STUB = `# Drive review

@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A ticket's Files line omits files its own rule flags, so ownership is extended mid-task. #82's brief missed two drive references; review 3 P2 found R1's frame-config intents pointing at docs/skills/skill-anatomy.md, owned by no ticket.

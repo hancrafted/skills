@@ -11,6 +11,15 @@ export interface PrFact {
   isDraft: boolean;
 }
 
+export type InputState = 'filled' | 'missing' | 'empty';
+
+export interface ProjectInputs {
+  grillFormat: Exclude<InputState, 'empty'>;
+  grillFormatPath: string | null;
+  review: InputState;
+  profiles: InputState;
+}
+
 export interface Facts {
   topic: string;
   epic: number | null;
@@ -23,6 +32,7 @@ export interface Facts {
   tickets: readonly number[];
   mergedTickets: readonly number[];
   lastLog: { t: string; cmd: string } | null;
+  inputs: ProjectInputs;
 }
 
 export interface Standing {
@@ -124,6 +134,14 @@ const prLine = (label: string, pr: PrFact | null, ghFailed: boolean): string => 
   return `${label}: #${pr.number} ${pr.state === 'OPEN' && pr.isDraft ? 'draft' : pr.state.toLowerCase()}`;
 };
 
+const inputLines = ({ grillFormat, grillFormatPath, review, profiles }: ProjectInputs): string[] => [
+  grillFormat === 'missing'
+    ? "Grill format: missing (using drive's template)"
+    : `Grill format: ${grillFormat} (${grillFormatPath ?? 'grill.format unset'})`,
+  `review.md: ${review}`,
+  `profiles.md: ${profiles}`,
+];
+
 export function renderStatus(facts: Facts): string {
   const { phase, next } = derivePhase(facts);
   const branch =
@@ -138,6 +156,7 @@ export function renderStatus(facts: Facts): string {
     prLine('Integration PR', facts.integrationPr, facts.ghFailed),
     `Tickets: ${facts.mergedTickets.filter((ticket) => facts.tickets.includes(ticket)).length}/${facts.tickets.length} merged`,
     `Last command: ${last}`,
+    ...inputLines(facts.inputs),
     `Next stop: ${next}`,
   ].join('\n');
 }
@@ -187,4 +206,25 @@ export function recordFileOf(files: readonly string[], topic: string): string | 
   const dated = (name: string): boolean =>
     /^\d{4}-\d{2}-\d{2}-$/.test(name.slice(0, 11)) && name.slice(11) === `${topic}.md`;
   return files.find((file) => dated(file.split('/').at(-1) ?? '')) ?? null;
+}
+
+export function grillFormatStateOf(configured: string | null, exists: boolean): 'filled' | 'missing' {
+  return configured !== null && exists ? 'filled' : 'missing';
+}
+
+const sectionBodies = (text: string): string[] =>
+  text
+    .split(/^## .*$/m)
+    .slice(1)
+    .map((body) => body.trim());
+
+export function reviewStateOf(text: string | null): InputState {
+  if (text === null) return 'missing';
+  return sectionBodies(text).some((body) => body !== '') ? 'filled' : 'empty';
+}
+
+export function profilesStateOf(text: string | null): InputState {
+  if (text === null) return 'missing';
+  const section = /^## Live or scheduled[ \t]*$([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(text);
+  return (section?.[1] ?? '').trim() === '' ? 'empty' : 'filled';
 }

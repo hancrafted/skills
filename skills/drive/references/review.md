@@ -23,6 +23,8 @@ Push the Integration branch after every merge with `drive push`, in the backgrou
 
 Run the Verify phase's review skill where a ticket's **Review after** line says `yes`, and once before the PR is marked ready; never after every small change. Give it the range since the last checkpoint and the spec. A review is read-only: it changes no file, and it does not report a check it did not run as an open finding; a check it could not run is listed as not run.
 
+Every review report records the commit it read, `Reviewed: <sha>` on one line (`git rev-parse HEAD` in the Integration worktree when the review starts), and ends with `## Contradictions`: one bullet per suspected pair of lines that contradict each other, in the form `- "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>)`, or `none`. The reviewer quotes files as they are at that commit, and looks in the changed skill and reference sections and against the repo. Save the report, then run `drive review quotes <report>` before triage. It reads each quoted file with `git show <sha>:<path>`, so a fix round that later changes those lines, or a different checkout, does not change the result. It fails, one line per bad entry, when `Reviewed:` is missing (unless the section is `none`) or names an unknown commit, a file is missing at that commit, a quote is not on its stated line, or an entry is malformed. Send a failing report back to the reviewer. `drive pr ready` runs the same check on `.scratch/<topic>/review.md` and refuses on failure.
+
 Triage every finding:
 
 | Verdict    | When                                      | Record                                |

@@ -107,6 +107,22 @@ describe('edge cases', () => {
     expect(verifyCommands.some((command) => command.includes('check:docs'))).toBe(true);
   });
 
+  it('fails the gate on archgate advisory findings, at every commit and in the full verify', () => {
+    // ARRANGE
+    const archgateCommands = (plan: Plan) =>
+      plan.phases
+        .flat()
+        .filter((step) => step.name === 'archgate')
+        .map((step) => step.command);
+    // ACT
+    const commitCommands = archgateCommands(COMMIT_PLAN);
+    const verifyCommands = archgateCommands(VERIFY_PLAN);
+    // ASSERT
+    expect(commitCommands).toHaveLength(1);
+    expect(commitCommands[0]).toContain('--strict');
+    expect(verifyCommands).toEqual(['npm run -s archgate:full']);
+  });
+
   it('reports a step that cannot start as failed, with the reason, while the rest of its phase finishes', async () => {
     // ARRANGE
     const { exec: inner, log } = fakeExec();

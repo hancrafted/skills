@@ -94,9 +94,63 @@ const watch = (views: object[]) => {
   const { main } = fixture();
   return driveGroup(main, ['pr', 'watch', '7', '--poll-milliseconds', '10'], stubbedGh(views));
 };
+const readyFixture = (gh: { base?: string; failing?: boolean } = {}) => {
+  const { main, root } = fixture();
+  drive(main, 'new', 'feat/x');
+  const tree = path.join(main, '.trees', 'feat-x');
+  git(tree, 'push', '-q', 'origin', 'feat/x');
+  mkdirSync(path.join(main, '.scratch', 'x'), { recursive: true });
+  writeFileSync(path.join(main, '.scratch', 'x', 'review.md'), '## Contradictions\n\nnone\n');
+  const dir = mkdtempSync(path.join(tmpdir(), 'drive-gh-'));
+  writeFileSync(
+    path.join(dir, 'gh'),
+    `#!/bin/sh\n${gh.failing === true ? 'echo gh is down >&2; exit 1\n' : ''}case "$*" in\n*headRefName*) echo feat/x;;\n*baseRefName*) echo ${gh.base ?? 'main'};;\n*) echo "gh $*" >> ` +
+      path.join(dir, 'calls') +
+      ';;\nesac\n',
+    { mode: 0o755 },
+  );
+  const env = { ...process.env, PATH: `${dir}:${process.env.PATH}` };
+  return { main, root, tree, env, calls: path.join(dir, 'calls') };
+};
+const reviewFixture = (section: string) => {
+  const { main } = fixture();
+  writeFileSync(path.join(main, 'rule.md'), 'Always run the check.\n');
+  git(main, 'add', 'rule.md');
+  git(main, 'commit', '-qm', 'rule');
+  const file = path.join(main, 'report.md');
+  writeFileSync(file, `Reviewed: ${git(main, 'rev-parse', 'HEAD').trim()}\n\n${section}`);
+  return { main, file };
+};
+const GOOD_PAIR = '- "Always run" (rule.md:1) vs "run the check" (rule.md:1)';
+const advanceBase = (main: string) => {
+  writeFileSync(path.join(main, 'b.txt'), 'b');
+  git(main, 'add', '.');
+  git(main, 'commit', '-qm', 'base moves');
+  git(main, 'push', '-q', 'origin', 'main');
+};
 const open = { state: 'OPEN', mergeCommit: null, reviews: [], comments: [] };
 
 describe('success cases', () => {
+  describe('drive review quotes', () => {
+    it('passes a report whose quotes sit on their stated lines', () => {
+      // ARRANGE
+      const { main, file } = reviewFixture(`## Contradictions\n\n${GOOD_PAIR}\n`);
+      // ACT
+      const result = driveGroup(main, ['review', 'quotes', file]);
+      // ASSERT
+      expect(result.status).toBe(0);
+    });
+  });
+  describe('drive pr ready', () => {
+    it('marks the PR ready once the base branch is not ahead', () => {
+      // ARRANGE
+      const { tree, env, calls } = readyFixture();
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, readFileSync(calls, 'utf8').trim()]).toEqual([0, 'gh pr ready 7']);
+    });
+  });
   describe('drive worktree', () => {
     it('new makes a worktree under the configured folder and runs the install steps in it', () => {
       // ARRANGE
@@ -274,6 +328,85 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('drive review quotes', () => {
+    it('exits non-zero with one line per bad entry', () => {
+      // ARRANGE
+      const { main, file } = reviewFixture(
+        '## Contradictions\n\n- "nope" (rule.md:1) vs "Always" (gone.md:1)\n- loose text\n',
+      );
+      const expected = [
+        expect.stringMatching(/^✖ quote not on rule.md:1 at [0-9a-f]{40}: "nope"$/),
+        expect.stringMatching(/^✖ file not found at [0-9a-f]{40}: gone.md$/),
+        '✖ malformed entry, expected - "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>): - loose text',
+      ];
+      // ACT
+      const result = driveGroup(main, ['review', 'quotes', file]);
+      // ASSERT
+      expect([result.status, result.stderr.trim().split('\n')]).toEqual([1, expected]);
+    });
+  });
+  describe('drive pr ready', () => {
+    it('refuses while review.md has a quote that is not on its stated line', () => {
+      // ARRANGE
+      const { main, tree, env, calls } = readyFixture();
+      writeFileSync(
+        path.join(main, '.scratch', 'x', 'review.md'),
+        '## Contradictions\n\n- "a" (gone.md:1) vs "b" (gone.md:2)\n',
+      );
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining('.scratch/x/review.md has contradiction quotes that do not check out'),
+        false,
+      ]);
+    });
+    it('refuses after a sync that was never pushed, because origin/<Integration branch> still lacks the base commits', () => {
+      // ARRANGE
+      const { main, tree, env, calls } = readyFixture();
+      advanceBase(main);
+      git(tree, 'fetch', '-q', 'origin');
+      git(tree, 'merge', '-q', '--no-edit', 'origin/main');
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining(
+          'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
+        ),
+        false,
+      ]);
+    });
+    it.each([
+      ['gh cannot read the PR', { failing: true }, 'gh pr view 7 failed'],
+      ['the PR reports no base branch', { base: "''" }, 'PR 7 reports no base branch'],
+    ])('ends with one line, not a stack trace, when %s', (_name, gh, message) => {
+      // ARRANGE
+      const { tree, env } = readyFixture(gh);
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr]).toEqual([1, expect.stringContaining(message)]);
+      expect(result.stderr).not.toContain('    at ');
+    });
+    it('refuses while origin/<base> has commits the Integration branch lacks', () => {
+      // ARRANGE
+      const { main, tree, env, calls } = readyFixture();
+      advanceBase(main);
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining(
+          'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
+        ),
+        false,
+      ]);
+    });
+  });
   describe('drive with a group it does not route', () => {
     it('exits non-zero and prints the usage naming every group', () => {
       // ARRANGE

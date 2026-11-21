@@ -45,7 +45,7 @@ export const COMMIT_PLAN: Plan = {
   label: 'verify:commit',
   phases: [
     [script('lint-staged')],
-    [{ name: 'archgate', command: 'archgate check' }],
+    [{ name: 'archgate', command: 'archgate check --strict' }],
     [TYPECHECK, TEST, script('skills', 'check:skills')],
   ],
 };

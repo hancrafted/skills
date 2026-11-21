@@ -12,3 +12,10 @@ and the implementer's, which every Subagent brief points at. Write only what is 
 
 - Verify with `npm run verify`, `npm run test:slow` and `npm run archgate:full`; commit with the `/commit` skill.
 - Never edit installed skills (`.agents/skills/*` that are not symlinks into `skills/`).
+
+## Live or scheduled
+
+- Pre-commit and pre-push gates: `verify:commit` on commit; `npm run verify` and the changed slow tests on pre-push.
+- CI on pull requests.
+- Installed skill copies in other repos: the consumers listed in `skills-lock.json`.
+- Scheduled jobs: `nightly.yml` (daily 03:00 UTC, the slow lane) and `security.yml` (Mondays 03:00 UTC, the dependency, config and secret scan).

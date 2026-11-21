@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+After the Decision PR opens, the Operator reverses a structural decision (Q41, no body rules for SKILL.md) because the options were never shown against the existing skills. SKL-002 was rewritten before merge (skill-governance record, 2026-11-20).

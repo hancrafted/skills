@@ -2,7 +2,7 @@
 type: failure-mode
 stale_after: 2026-12-21
 title: 'skill instructions assume an optional project input is present'
-enforcer: 'check: drive setup verifies every project.yml key and file the skill names'
+enforcer: 'test-runner: test:slow, skills/drive/scripts/core/settings.slow.test.ts fails on any setting name drive markdown mentions that the config code does not list'
 status: ticket
 ticket: https://github.com/hancrafted/skills/issues/95
 ---

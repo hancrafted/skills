@@ -1,11 +1,20 @@
 import { type Document, isMap, isSeq, parseDocument, type YAMLMap, type YAMLSeq } from 'yaml';
 import catalogData from '../../assets/catalog.json' with { type: 'json' };
+import {
+  ADAPTER_KEY,
+  AGENT_TYPE_KEY,
+  MODEL_KEY,
+  NOTIFY_KEY,
+  PHASES,
+  PHASES_KEY,
+  SKILLS_KEY,
+  TIERS,
+} from './settings.pure.ts';
 import { isRecord, isText, openMapping } from './yaml.pure.ts';
 
-export const PHASES = ['define', 'reason', 'implement', 'verify', 'evolve'] as const;
+export { PHASES, TIERS };
 export type Phase = (typeof PHASES)[number];
 
-export const TIERS = ['mid', 'top'] as const;
 export type Tier = (typeof TIERS)[number];
 export const isTier = (value: unknown): value is Tier => (TIERS as readonly unknown[]).includes(value);
 
@@ -93,24 +102,24 @@ function seqAt(parent: YAMLMap, key: string, doc: Document): YAMLSeq {
 const names = (seq: YAMLSeq): string[] => seq.items.map((item) => String((item as { value?: unknown }).value ?? item));
 
 function seedMissing(doc: Document, root: YAMLMap, seed: SeedOptions): void {
-  if (!root.has('agentType')) root.set('agentType', seed.agentType ?? DEFAULT_AGENT_TYPE);
-  const notify = mapAt(root, 'notify', doc);
-  if (!notify.has('adapter')) notify.set('adapter', DEFAULT_NOTIFY_ADAPTER);
-  const phases = mapAt(root, 'phases', doc);
+  if (!root.has(AGENT_TYPE_KEY)) root.set(AGENT_TYPE_KEY, seed.agentType ?? DEFAULT_AGENT_TYPE);
+  const notify = mapAt(root, NOTIFY_KEY, doc);
+  if (!notify.has(ADAPTER_KEY)) notify.set(ADAPTER_KEY, DEFAULT_NOTIFY_ADAPTER);
+  const phases = mapAt(root, PHASES_KEY, doc);
   for (const phase of PHASES) {
     const node = mapAt(phases, phase, doc);
-    if (!node.has('model')) node.set('model', seed.tier ?? PHASE_TIERS[phase]);
-    seqAt(node, 'skills', doc);
+    if (!node.has(MODEL_KEY)) node.set(MODEL_KEY, seed.tier ?? PHASE_TIERS[phase]);
+    seqAt(node, SKILLS_KEY, doc);
   }
 }
 
 function offerNewSkills(doc: Document, root: YAMLMap, detected: readonly DetectedSkill[]): void {
-  const phases = mapAt(root, 'phases', doc);
+  const phases = mapAt(root, PHASES_KEY, doc);
   const seen = seqAt(root, 'seen', doc);
   const offered = new Set(names(seen));
   for (const skill of detected.filter((candidate) => !offered.has(candidate.name))) {
     for (const phase of phasesOf(skill)) {
-      const skills = seqAt(mapAt(phases, phase, doc), 'skills', doc);
+      const skills = seqAt(mapAt(phases, phase, doc), SKILLS_KEY, doc);
       if (!names(skills).includes(skill.name)) skills.add(doc.createNode(skill.name));
     }
     seen.add(doc.createNode(skill.name));
@@ -133,29 +142,30 @@ export function updateBinding(
   if (existing === null) doc.commentBefore = HEADER;
   seedMissing(doc, root, seed);
   offerNewSkills(doc, root, detected);
-  const phases = mapAt(root, 'phases', doc);
-  for (const phase of PHASES) settleInlineNote(seqAt(mapAt(phases, phase, doc), 'skills', doc));
+  const phases = mapAt(root, PHASES_KEY, doc);
+  for (const phase of PHASES) settleInlineNote(seqAt(mapAt(phases, phase, doc), SKILLS_KEY, doc));
   return doc.toString();
 }
 
 function readPhase(phase: Phase, value: unknown): PhaseBinding | { error: string } {
-  if (!isRecord(value)) return { error: `phases.${phase} must be a mapping` };
-  const skills = value.skills ?? [];
-  if (!isTier(value.model))
+  if (!isRecord(value)) return { error: `${PHASES_KEY}.${phase} must be a mapping` };
+  const skills = value[SKILLS_KEY] ?? [];
+  const model = value[MODEL_KEY];
+  if (!isTier(model))
     return {
-      error: `phases.${phase}.model must be a tier: ${TIERS.join(' or ')}`,
+      error: `${PHASES_KEY}.${phase}.${MODEL_KEY} must be a tier: ${TIERS.join(' or ')}`,
     };
   if (!Array.isArray(skills) || !skills.every((item) => typeof item === 'string'))
-    return { error: `phases.${phase}.skills must be a list of skill names` };
+    return { error: `${PHASES_KEY}.${phase}.${SKILLS_KEY} must be a list of skill names` };
   return {
-    model: value.model,
+    model,
     skills: skills as string[],
     inline: skills.length === 0,
   };
 }
 
 function readPhases(root: Record<string, unknown>): Record<Phase, PhaseBinding> | { error: string } {
-  const section = isRecord(root.phases) ? root.phases : {};
+  const section = isRecord(root[PHASES_KEY]) ? root[PHASES_KEY] : {};
   const phases = {} as Record<Phase, PhaseBinding>;
   for (const phase of PHASES) {
     const read = readPhase(phase, section[phase]);
@@ -173,11 +183,11 @@ export function readBinding(text: string): Binding | { error: string } {
 }
 
 function readRoot(root: Record<string, unknown>): Binding | { error: string } {
-  const { agentType } = root;
-  if (!isText(agentType)) return { error: 'agentType must be a non-empty string' };
+  const agentType = root[AGENT_TYPE_KEY];
+  if (!isText(agentType)) return { error: `${AGENT_TYPE_KEY} must be a non-empty string` };
   const phases = readPhases(root);
   if ('error' in phases) return phases;
-  const notify = readNotify(root.notify);
+  const notify = readNotify(root[NOTIFY_KEY]);
   return 'error' in notify ? notify : { agentType, phases, notify };
 }
 
@@ -185,9 +195,10 @@ const isNotifyAdapter = (value: unknown): value is NotifyAdapter =>
   (NOTIFY_ADAPTERS as readonly unknown[]).includes(value);
 
 function readNotify(section: unknown): Binding['notify'] | { error: string } {
-  const adapter = isRecord(section) ? (section.adapter ?? DEFAULT_NOTIFY_ADAPTER) : DEFAULT_NOTIFY_ADAPTER;
-  if (section !== undefined && section !== null && !isRecord(section)) return { error: 'notify must be a mapping' };
+  const adapter = isRecord(section) ? (section[ADAPTER_KEY] ?? DEFAULT_NOTIFY_ADAPTER) : DEFAULT_NOTIFY_ADAPTER;
+  if (section !== undefined && section !== null && !isRecord(section))
+    return { error: `${NOTIFY_KEY} must be a mapping` };
   return isNotifyAdapter(adapter)
     ? { adapter }
-    : { error: `notify.adapter '${String(adapter)}' is unknown; expected ${NOTIFY_ADAPTERS.join(', ')}` };
+    : { error: `${NOTIFY_KEY}.${ADAPTER_KEY} '${String(adapter)}' is unknown; expected ${NOTIFY_ADAPTERS.join(', ')}` };
 }
