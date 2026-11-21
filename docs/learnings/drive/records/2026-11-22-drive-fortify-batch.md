@@ -34,3 +34,8 @@ The Workflow that shipped drive 2.1.0 from the Fortify picks of skill-governance
 ## worktree-starts-behind-integration-branch
 
 - **Evidence:** The #110 Subagent reported: 'Worktree was behind the Integration branch (not containing it), so I fast-forwarded it first' (110-reason-dispatch-check.report.md, Trade-offs); brief Rule 1 makes each Subagent confirm containment by hand
+
+## gate-check-reads-state-the-fix-round-changes
+
+- **Evidence:** drive pr ready 113 refused: review.md's Contradictions quotes lines as they were before the fix round, which then removed them, and run from the main checkout branch-only files reported 'file not found'; Q10 made the quote check read the checkout, so every review, fix, ready cycle with a contradiction failed; fixed in #111's I2 task by reading files at Reviewed: <sha> (decisions.md INTERRUPT I2; i2-reviewed-sha.report.md)
+- **Correction:** I2 (Operator: 1): the review report records Reviewed: <sha>; drive review quotes reads each quoted file at that commit

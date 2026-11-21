@@ -112,11 +112,13 @@ const readyFixture = (gh: { base?: string; failing?: boolean } = {}) => {
   const env = { ...process.env, PATH: `${dir}:${process.env.PATH}` };
   return { main, root, tree, env, calls: path.join(dir, 'calls') };
 };
-const reviewFixture = (report: string) => {
+const reviewFixture = (section: string) => {
   const { main } = fixture();
   writeFileSync(path.join(main, 'rule.md'), 'Always run the check.\n');
+  git(main, 'add', 'rule.md');
+  git(main, 'commit', '-qm', 'rule');
   const file = path.join(main, 'report.md');
-  writeFileSync(file, report);
+  writeFileSync(file, `Reviewed: ${git(main, 'rev-parse', 'HEAD').trim()}\n\n${section}`);
   return { main, file };
 };
 const GOOD_PAIR = '- "Always run" (rule.md:1) vs "run the check" (rule.md:1)';
@@ -333,8 +335,8 @@ describe('failure cases', () => {
         '## Contradictions\n\n- "nope" (rule.md:1) vs "Always" (gone.md:1)\n- loose text\n',
       );
       const expected = [
-        '✖ quote not on rule.md:1: "nope"',
-        '✖ file not found: gone.md',
+        expect.stringMatching(/^✖ quote not on rule.md:1 at [0-9a-f]{40}: "nope"$/),
+        expect.stringMatching(/^✖ file not found at [0-9a-f]{40}: gone.md$/),
         '✖ malformed entry, expected - "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>): - loose text',
       ];
       // ACT

@@ -14,6 +14,8 @@ All notable changes to the drive skill are documented in this file. The format f
   `Grill format: missing (using drive's template)`.
 - `drive review quotes <report>` checks each quoted line in a review report against its file (exit 1, one line per bad
   entry). A review report now requires a `## Contradictions` section; write `none` when empty.
+- A review report carries `Reviewed: <sha>`; `drive review quotes` reads each quoted file at that commit
+  (`git show <sha>:<path>`), so the result is the same from any checkout.
 - `drive pr ready` gains two refusals: `origin/<base>` is ahead of the Integration branch (it fetches both first), and a
   review report quote does not match its file.
 - The setting names live in `core/settings.pure.ts` (`SETTING_NAMES`); a test fails on an unlisted setting name in

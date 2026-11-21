@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { CONTRADICTIONS_HEADING, quoteProblems } from './quotes.pure.ts';
+import { CONTRADICTIONS_HEADING, quoteProblems, type CommitSource } from './quotes.pure.ts';
 
 const FILES: Record<string, string> = {
   'skills/a/one.md': 'first line\nAlways run the check.\nthird',
   'skills/a/two.md': 'Never run the check.\nsecond',
 };
-const read = (file: string): string | null => FILES[file] ?? null;
+const SHA = 'abc1234';
+const source: CommitSource = {
+  knows: (sha) => sha === SHA,
+  show: (sha, file) => (sha === SHA ? (FILES[file] ?? null) : null),
+};
+const read = source;
 const report = (...entries: string[]): string =>
-  `# Review\n\n## Findings\n\nx\n\n${CONTRADICTIONS_HEADING}\n\n${entries.join('\n')}\n`;
+  `# Review\n\nReviewed: ${SHA}\n\n## Findings\n\nx\n\n${CONTRADICTIONS_HEADING}\n\n${entries.join('\n')}\n`;
 const PAIR = '- "Always run the check." (skills/a/one.md:2) vs "Never run the check." (skills/a/two.md:1)';
 
 describe('success cases', () => {
@@ -36,7 +41,7 @@ describe('failure cases', () => {
     it('names a quote that is not on the stated line', () => {
       // ARRANGE
       const entry = '- "Always run the check." (skills/a/one.md:3) vs "Never run the check." (skills/a/two.md:1)';
-      const expected = ['quote not on skills/a/one.md:3: "Always run the check."'];
+      const expected = ['quote not on skills/a/one.md:3 at abc1234: "Always run the check."'];
       // ACT
       const problems = quoteProblems(report(entry), read);
       // ASSERT
@@ -45,7 +50,7 @@ describe('failure cases', () => {
     it('names a missing file', () => {
       // ARRANGE
       const entry = '- "Always run the check." (skills/a/one.md:2) vs "Never run the check." (skills/a/gone.md:1)';
-      const expected = ['file not found: skills/a/gone.md'];
+      const expected = [`file not found at ${SHA}: skills/a/gone.md`];
       // ACT
       const problems = quoteProblems(report(entry), read);
       // ASSERT
@@ -72,6 +77,55 @@ describe('failure cases', () => {
 });
 
 describe('edge cases', () => {
+  describe('reviewed commit', () => {
+    it('reads each quoted file at the Reviewed commit, not at any checkout', () => {
+      // ARRANGE
+      const seen: string[] = [];
+      const spy: CommitSource = {
+        knows: source.knows,
+        show: (sha, file) => (seen.push(`${sha}:${file}`), source.show(sha, file)),
+      };
+      // ACT
+      const problems = quoteProblems(report(PAIR), spy);
+      // ASSERT
+      expect(problems).toEqual([]);
+      expect(seen).toEqual([`${SHA}:skills/a/one.md`, `${SHA}:skills/a/two.md`]);
+    });
+    it('fails when the Reviewed line is missing', () => {
+      // ARRANGE
+      const text = report(PAIR).replace(`Reviewed: ${SHA}\n`, '');
+      // ACT
+      const problems = quoteProblems(text, source);
+      // ASSERT
+      expect(problems).toEqual([
+        'the report has no "Reviewed: <sha>" line before "## Contradictions"; add the commit you reviewed',
+      ]);
+    });
+    it('lets none pass without a Reviewed line', () => {
+      // ARRANGE
+      const text = report('none').replace(`Reviewed: ${SHA}\n`, '');
+      // ACT
+      const problems = quoteProblems(text, source);
+      // ASSERT
+      expect(problems).toEqual([]);
+    });
+    it('fails on an unknown sha, once', () => {
+      // ARRANGE
+      const text = report(PAIR).replace(SHA, 'deadbee');
+      // ACT
+      const problems = quoteProblems(text, source);
+      // ASSERT
+      expect(problems).toEqual(['unknown commit deadbee in "Reviewed:"']);
+    });
+    it('names a file missing at the commit', () => {
+      // ARRANGE
+      const entry = '- "Always run the check." (skills/a/one.md:2) vs "x" (skills/a/new.md:1)';
+      // ACT
+      const problems = quoteProblems(report(entry), source);
+      // ASSERT
+      expect(problems).toEqual([`file not found at ${SHA}: skills/a/new.md`]);
+    });
+  });
   describe('quoteProblems', () => {
     it('reports every bad entry, one line each, and ignores text after the section', () => {
       // ARRANGE
@@ -94,7 +148,7 @@ describe('edge cases', () => {
   it('reads the last Contradictions section outside code fences', () => {
     // ARRANGE
     const example = `${CONTRADICTIONS_HEADING}\n\n- "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>)`;
-    const text = `# Review\n\n\`\`\`\n${example}\n\`\`\`\n\n${CONTRADICTIONS_HEADING}\n\n${PAIR}\n`;
+    const text = `# Review\n\nReviewed: ${SHA}\n\n\`\`\`\n${example}\n\`\`\`\n\n${CONTRADICTIONS_HEADING}\n\n${PAIR}\n`;
     // ACT
     const problems = quoteProblems(text, read);
     // ASSERT
