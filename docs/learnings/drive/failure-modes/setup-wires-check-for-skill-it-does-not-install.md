@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+`drive setup` writes `learnings check` into check:docs without installing learnings, so check:docs fails in a repo with drive alone (review 1 spec finding 1, fixed by #81).

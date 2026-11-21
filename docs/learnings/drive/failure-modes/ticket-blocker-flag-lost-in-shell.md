@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A ticket is created without its blocker. `gh issue create ${3:+--blocked-by $3}` passed the flag as one word in zsh, so #80 had no blocker until it was fixed by hand.

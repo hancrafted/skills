@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+The main checkout's .git/config reads `core.bare=true` after a test or parallel Subagent run. It happened twice, GIT_DIR inheritance was proven possible and the cause was not found. Review 2 S5: tests/harness-hooks.test.ts:19 passes inherited GIT_* to a real drive guard.

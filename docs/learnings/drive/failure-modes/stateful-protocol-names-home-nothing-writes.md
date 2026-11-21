@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A stateful skill's Context names a home that no README or setup writes. Review 2 S2, S3: drive SKILL.md named docs/learnings/drive/ and docs/decision-records/ with no README behind them, and learnings SKILL.md told the agent to run a setup it lacked.
