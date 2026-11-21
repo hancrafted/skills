@@ -13,8 +13,8 @@ frontmatter:
         description:
           presence: required
           maxLength: 1024
-          pattern: '^(?!I )(?!You )(?![\s\S]*<\/?[A-Za-z][^>]*>)(?=[\s\S]*Use when)'
-          intent: 'At most 1024 characters, third person (not opening with I or You), no XML tags, and a Use when trigger.'
+          pattern: '^(?!I )(?!You )(?!Use when)(?![\s\S]*<\/?[A-Za-z][^>]*>)(?=[\s\S]*Use when)'
+          intent: 'At most 1024 characters, third person (not opening with I or You), no XML tags, and a Use when trigger that comes after what the skill does (never the opening words).'
         license: { intent: 'A license name or a bundled license file.' }
         compatibility: { maxLength: 500, intent: 'Environment requirements, only when the skill has any.' }
         metadata: { intent: 'A map of string keys to string values that the spec does not define.' }

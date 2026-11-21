@@ -138,6 +138,37 @@ describe('skill-size-budget', () => {
   });
 });
 
+describe('skill-size-budget tokens', () => {
+  it('passes at exactly 5,000 estimated tokens', async () => {
+    // ARRANGE
+    const files = { 'skills/a/SKILL.md': 'x'.repeat(20_000) };
+    // ACT
+    const violations = await run('skill-size-budget', files);
+    // ASSERT
+    expect(violations).toEqual([]);
+  });
+
+  it('fails at 5,001 estimated tokens, rounding up', async () => {
+    // ARRANGE
+    const files = { 'skills/a/SKILL.md': 'x'.repeat(20_001) };
+    // ACT
+    const violations = await run('skill-size-budget', files);
+    // ASSERT
+    expect(violations).toHaveLength(1);
+    expect(violations[0].message).toContain('5001 tokens');
+    expect(violations[0].message).toContain('(SKL-001 [skill-size-budget])');
+  });
+
+  it('reports lines and tokens separately when both are over', async () => {
+    // ARRANGE
+    const files = { 'skills/a/SKILL.md': `${'y'.repeat(30)}\n`.repeat(701) };
+    // ACT
+    const violations = await run('skill-size-budget', files);
+    // ASSERT
+    expect(violations).toHaveLength(2);
+  });
+});
+
 describe('skill-links-one-level', () => {
   const skill = '# T\n\nSee [setup](references/setup.md) and [more](references/more.md).\n';
 
@@ -166,12 +197,39 @@ describe('skill-links-one-level', () => {
     expect(violations).toEqual([]);
   });
 
-  it('fails when a reference links to a sibling reference', async () => {
+  it('passes a sideways link between two references SKILL.md links', async () => {
     // ARRANGE
     const files = {
       'skills/a/SKILL.md': skill,
       'skills/a/references/setup.md': 'first\nSee [more](more.md).\n',
       'skills/a/references/more.md': 'text\n',
+    };
+    // ACT
+    const violations = await run('skill-links-one-level', files);
+    // ASSERT
+    expect(violations).toEqual([]);
+  });
+
+  it('passes a link from a reference to a file SKILL.md also links', async () => {
+    // ARRANGE
+    const files = {
+      'skills/a/SKILL.md': `${skill}Words in [glossary](GLOSSARY.md).\n`,
+      'skills/a/references/setup.md': '[g](../GLOSSARY.md)\n',
+      'skills/a/references/more.md': 'text\n',
+    };
+    // ACT
+    const violations = await run('skill-links-one-level', files);
+    // ASSERT
+    expect(violations).toEqual([]);
+  });
+
+  it('fails when a reference links a file SKILL.md does not link', async () => {
+    // ARRANGE
+    const files = {
+      'skills/a/SKILL.md': skill,
+      'skills/a/references/setup.md': 'first\nSee [deep](deep.md).\n',
+      'skills/a/references/more.md': 'text\n',
+      'skills/a/references/deep.md': 'text\n',
     };
     // ACT
     const violations = await run('skill-links-one-level', files);
@@ -245,12 +303,22 @@ describe('skill-allowed-layout', () => {
       'skills/a/markdown-harness.config.yaml': 'x',
       'skills/a/scripts/run.ts': 'x',
       'skills/a/references/r.md': 'x',
-      'skills/a/catalog/c.json': 'x',
+      'skills/a/assets/c.json': 'x',
     };
     // ACT
     const violations = await run('skill-allowed-layout', files);
     // ASSERT
     expect(violations).toEqual([]);
+  });
+
+  it('fails on a catalog folder, which moved to assets', async () => {
+    // ARRANGE
+    const files = { 'skills/a/catalog/c.json': 'x' };
+    // ACT
+    const violations = await run('skill-allowed-layout', files);
+    // ASSERT
+    expect(violations).toHaveLength(1);
+    expect(violations[0].message).toContain('skills/a/catalog/');
   });
 
   it('fails on an unknown top-level file', async () => {

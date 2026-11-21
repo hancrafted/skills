@@ -6,9 +6,11 @@ const SKILL_FILES_GLOB = 'skills/*/**';
 const REFERENCE_GLOB = 'skills/*/references/**/*.md';
 
 const MAX_BODY_LINES = 500;
+const MAX_BODY_TOKENS = 5000;
+const CHARS_PER_TOKEN = 4;
 const TOC_THRESHOLD_LINES = 100;
 
-const ALLOWED_FOLDERS = new Set(['scripts', 'references', 'assets', 'agents', 'evals', 'catalog']);
+const ALLOWED_FOLDERS = new Set(['scripts', 'references', 'assets', 'agents', 'evals']);
 const ALLOWED_FILES = new Set([
   'SKILL.md',
   'GLOSSARY.md',
@@ -41,6 +43,10 @@ function lineCount(source: string): number {
   const lines = source.split('\n');
   if (lines[lines.length - 1] === '') lines.pop();
   return lines.length;
+}
+
+function estimateTokens(source: string): number {
+  return Math.ceil(source.length / CHARS_PER_TOKEN);
 }
 
 function localLinks(source: string): { target: string; line: number }[] {
@@ -94,33 +100,44 @@ export default {
     },
 
     'skill-size-budget': {
-      description: `SKILL.md is at most ${MAX_BODY_LINES} lines, so loading a skill stays cheap.`,
+      description: `SKILL.md is at most ${MAX_BODY_LINES} lines and about ${MAX_BODY_TOKENS} tokens (characters / ${CHARS_PER_TOKEN}, rounded up), so loading a skill stays cheap and compaction keeps all of it.`,
       severity: 'error',
       async check(ctx) {
         for (const file of await ctx.glob(SKILL_FILE_GLOB)) {
-          const lines = lineCount(await ctx.readFile(file));
-          if (lines <= MAX_BODY_LINES) continue;
-          ctx.report.violation({
-            message: `SKILL.md has ${lines} lines, over the ${MAX_BODY_LINES}-line budget — move branch detail into references/ (SKL-001 [skill-size-budget]).`,
-            file,
-            line: MAX_BODY_LINES + 1,
-          });
+          const source = await ctx.readFile(file);
+          const lines = lineCount(source);
+          if (lines > MAX_BODY_LINES) {
+            ctx.report.violation({
+              message: `SKILL.md has ${lines} lines, over the ${MAX_BODY_LINES}-line budget — move branch detail into references/ (SKL-001 [skill-size-budget]).`,
+              file,
+              line: MAX_BODY_LINES + 1,
+            });
+          }
+          const tokens = estimateTokens(source);
+          if (tokens > MAX_BODY_TOKENS) {
+            ctx.report.violation({
+              message: `SKILL.md is about ${tokens} tokens (characters / ${CHARS_PER_TOKEN}), over the ${MAX_BODY_TOKENS}-token budget — move branch detail into references/ (SKL-001 [skill-size-budget]).`,
+              file,
+              line: 1,
+            });
+          }
         }
       },
     },
 
     'skill-links-one-level': {
       description:
-        'References are linked straight from SKILL.md; a linked markdown file never links on to another file of the skill.',
+        'Every reference is linked from SKILL.md; a linked markdown file fails only when it links a file of the skill that SKILL.md does not link.',
       severity: 'error',
       async check(ctx) {
         for (const skillFile of await ctx.glob(SKILL_FILE_GLOB)) {
           const linked = new Set<string>();
           for (const { target } of localLinks(await ctx.readFile(skillFile))) {
             const path = resolve(skillFile, target);
-            if (path.endsWith('.md') && path !== skillFile) linked.add(path);
+            if (path !== skillFile) linked.add(path);
           }
           for (const reference of linked) {
+            if (!reference.endsWith('.md')) continue;
             let source: string;
             try {
               source = await ctx.readFile(reference);
@@ -129,9 +146,9 @@ export default {
             }
             for (const { target, line } of localLinks(source)) {
               const path = resolve(reference, target);
-              if (path === reference || skillOf(path) !== skillOf(skillFile)) continue;
+              if (path === reference || skillOf(path) !== skillOf(skillFile) || linked.has(path)) continue;
               ctx.report.violation({
-                message: `${reference} links on to ${path} — link it from SKILL.md instead, references go one level deep (SKL-001 [skill-links-one-level]).`,
+                message: `${reference} links ${path}, which SKILL.md does not link — link it from SKILL.md (SKL-001 [skill-links-one-level]).`,
                 file: reference,
                 line,
               });
@@ -180,7 +197,7 @@ export default {
           seen.add(key);
           if (isFolder ? ALLOWED_FOLDERS.has(entry) : ALLOWED_FILES.has(entry)) continue;
           ctx.report.violation({
-            message: `skills/${key}${isFolder ? '/' : ''} is not in the allowed layout — use SKILL.md, scripts/, references/, assets/, agents/, evals/, catalog/, GLOSSARY.md, CHANGELOG.md, package.json or markdown-harness.config.yaml (SKL-001 [skill-allowed-layout]).`,
+            message: `skills/${key}${isFolder ? '/' : ''} is not in the allowed layout — use SKILL.md, scripts/, references/, assets/, agents/, evals/, GLOSSARY.md, CHANGELOG.md, package.json or markdown-harness.config.yaml (SKL-001 [skill-allowed-layout]).`,
             file,
           });
         }

@@ -78,7 +78,7 @@ describe('failure cases', () => {
 
   it('fails a description longer than 1024 characters', () => {
     // ARRANGE
-    const frontmatter = `name: sample\ndescription: Use when asked. ${'x'.repeat(1024)}`;
+    const frontmatter = `name: sample\ndescription: Does a thing. Use when asked. ${'x'.repeat(1024)}`;
     // ACT
     const result = checkSkill(frontmatter);
     // ASSERT
@@ -93,6 +93,7 @@ describe('failure cases', () => {
     ['contains a closing XML tag', 'Does a thing</b>. Use when asked.'],
     ['opens with I', 'I do a thing. Use when asked.'],
     ['opens with You', 'You do a thing. Use when asked.'],
+    ['opens with Use when', 'Use when the user asks for a thing.'],
   ])('fails a description that %s', (_label, description) => {
     // ARRANGE
     const frontmatter = `name: sample\ndescription: '${description}'`;
