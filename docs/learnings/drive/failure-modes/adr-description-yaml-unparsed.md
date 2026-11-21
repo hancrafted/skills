@@ -11,4 +11,4 @@ ticket: https://github.com/hancrafted/skills/issues/95
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+archgate lists an ADR as unparsed. The SKL-002 description held an unescaped apostrophe in single-quoted YAML, and stayed unparsed until #80 fixed it.

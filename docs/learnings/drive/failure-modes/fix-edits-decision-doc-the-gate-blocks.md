@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A review fix reaches a Decision doc (skills/learnings/GLOSSARY.md:9) and the pre-commit gate refuses the commit off a decisions branch. The fix was deferred to #102 (review 3 P3).

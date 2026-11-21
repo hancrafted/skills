@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A CLI argument is joined into a file path. Review 1 finding 1: `learnings record --skill ../../escape` wrote escape/records at the repo root and `--failure ../../../pwn` wrote docs/pwn.md, both with exit 0.

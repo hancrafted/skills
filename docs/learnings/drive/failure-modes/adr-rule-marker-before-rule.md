@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+An ADR carries a rule marker for a rule that does not exist yet, and GEN-001 fails it. The workaround was a `planned rule:` marker, a departure from the GEN-001 form (skill-governance record, 2026-11-20).

@@ -11,4 +11,4 @@ ticket: https://github.com/hancrafted/skills/issues/95
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+The Integration branch never syncs the base branch, so base commits land in a retired path. Review 2 S1: origin/main 5de5bb2 (PR #85) added 28 files under docs/drive/learnings/ after this branch moved the store; git merge-tree merged cleanly and kept them in the retired store.

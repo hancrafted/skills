@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+ADR prose names a check that no rule or config defines. Review 3 S2: #96 put `skill-description-purpose-first` into SKL-001 Decision 1.4; it was dropped in fix-review-3.

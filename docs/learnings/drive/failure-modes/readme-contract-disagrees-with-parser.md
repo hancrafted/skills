@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A README states a format its parser does not read. Review 1 findings 2 and 6b: docs/learnings/README.md said the Off list is one skill per line, but the parser read only `- ` bullets, and the README template was copied into code.

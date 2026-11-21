@@ -10,4 +10,4 @@ status: proposed
 
 ## Symptom
 
-TODO: what an Operator or reviewer observes.
+A Subagent's report gives a figure counted another way than the rule it cites. Review 3 S4/S5: #97 reported token estimates from bytes / 4 while SKL-001 says ceil(characters / 4); the figure was re-measured by the rule and passed.
