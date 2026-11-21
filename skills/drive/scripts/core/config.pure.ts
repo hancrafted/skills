@@ -1,5 +1,6 @@
 import { parse } from 'yaml';
 import { readModels, type ModelsConfig } from './models.pure.ts';
+import { GRILL_KEYS, PARALLEL_KEYS, WORKTREE_KEYS } from './settings.pure.ts';
 import { isRecord, isText } from './yaml.pure.ts';
 
 export const CONFIG_PATH = 'docs/drive/project.yml';
@@ -60,7 +61,7 @@ export const defaultsFor = (entry: string): WorktreeConfig => ({
 const isTextList = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((item) => typeof item === 'string');
 
-const KEYS = Object.keys(defaultsFor('')) as (keyof WorktreeConfig)[];
+const KEYS: readonly (keyof WorktreeConfig)[] = WORKTREE_KEYS;
 
 function problem(key: keyof WorktreeConfig, value: unknown): string | null {
   if (value === undefined || value === null) return null;
@@ -70,7 +71,7 @@ function problem(key: keyof WorktreeConfig, value: unknown): string | null {
 }
 
 function readWorktree(section: Record<string, unknown>, entry: string): WorktreeConfig | { error: string } {
-  const unknown = Object.keys(section).find((key) => !(KEYS as string[]).includes(key));
+  const unknown = Object.keys(section).find((key) => !(KEYS as readonly string[]).includes(key));
   if (unknown !== undefined)
     return {
       error: `unknown worktree key '${unknown}'; expected ${KEYS.join(', ')}`,
@@ -121,8 +122,8 @@ function readRest(root: Record<string, unknown>): Omit<DriveConfig, 'worktree'> 
 function readGrill(section: unknown): GrillConfig | { error: string } {
   const body = section ?? {};
   if (!isRecord(body)) return { error: `grill in ${CONFIG_PATH} must be a mapping` };
-  const unknown = Object.keys(body).find((key) => key !== 'format');
-  if (unknown !== undefined) return { error: `unknown grill key '${unknown}'; expected format` };
+  const unknown = Object.keys(body).find((key) => !(GRILL_KEYS as readonly string[]).includes(key));
+  if (unknown !== undefined) return { error: `unknown grill key '${unknown}'; expected ${GRILL_KEYS.join(', ')}` };
   return readGrillFormat(body.format ?? null);
 }
 
@@ -134,10 +135,10 @@ const isCount = (value: unknown): value is number => Number.isInteger(value) && 
 function readParallel(section: unknown): ParallelConfig | { error: string } {
   if (section === undefined || section === null) return { ...PARALLEL_DEFAULTS };
   if (!isRecord(section)) return { error: `parallel in ${CONFIG_PATH} must be a mapping` };
-  const unknown = Object.keys(section).find((key) => key !== 'default' && key !== 'harnessCap');
+  const unknown = Object.keys(section).find((key) => !(PARALLEL_KEYS as readonly string[]).includes(key));
   if (unknown !== undefined)
     return {
-      error: `unknown parallel key '${unknown}'; expected default, harnessCap`,
+      error: `unknown parallel key '${unknown}'; expected ${PARALLEL_KEYS.join(', ')}`,
     };
   const merged = {
     ...PARALLEL_DEFAULTS,
