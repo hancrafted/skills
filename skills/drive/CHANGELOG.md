@@ -8,14 +8,14 @@ All notable changes to the drive skill are documented in this file. The format f
 
 ### Added
 
-- `drive status` prints the optional inputs: `Grill format`, `review.md` and `profiles.md`, each filled, missing or empty
+- `drive status` prints the optional inputs: `Grill format` (filled or missing), `review.md` and `profiles.md` (filled, missing or empty)
   (`Facts.inputs`). `references/setup.md` "Optional inputs" states the fallback and ask-once for each.
 - `assets/grilling-format.md`, the template drive uses when the project has no grilling format; `drive status` prints
   `Grill format: missing (using drive's template)`.
 - `drive review quotes <report>` checks each quoted line in a review report against its file (exit 1, one line per bad
   entry). A review report now requires a `## Contradictions` section; write `none` when empty.
-- `drive pr ready` now refuses in three cases: the review report is missing, `origin/<base>` is ahead of the Integration
-  branch (it fetches both first), and a review report quote does not match its file.
+- `drive pr ready` gains two refusals: `origin/<base>` is ahead of the Integration branch (it fetches both first), and a
+  review report quote does not match its file.
 - The setting names live in `core/settings.pure.ts` (`SETTING_NAMES`); a test fails on an unlisted setting name in
   `skills/drive/**/*.md`, and the config, binding and model parsers read their keys from it.
 - The `PROFILES_STUB` gains a `## Live or scheduled` section.
@@ -29,8 +29,6 @@ All notable changes to the drive skill are documented in this file. The format f
   filed, before the Decision PR. "Watch the gate" exit codes moved to `references/decision-pr.md`.
 - The `drive pr ready` ahead count reads `origin/<branch>`, and the message reads "origin/<base> has N commits
   origin/<branch> lacks". Review and worktree instructions say to run in the Integration worktree.
-- The profiles file lists `nightly.yml` and `security.yml` among the project's CI.
-- The failure modes under `docs/learnings/drive/failure-modes/` have their Symptom filled from their records' evidence.
 
 ## [2.0.0] - 2026-11-20
 
