@@ -1,7 +1,9 @@
 ---
 title: 'A skill reference states two rules that contradict each other or the repo'
 enforcer: 'review: the Orchestrator applies /writing-for-agents to every changed reference section'
-status: proposed
+status: fixed
+fixed-by: https://github.com/hancrafted/skills/pull/92
+fixed-on: 2026-11-21
 ---
 
 # A skill reference states two rules that contradict each other or the repo

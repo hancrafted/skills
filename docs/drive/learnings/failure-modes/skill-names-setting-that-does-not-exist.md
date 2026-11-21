@@ -1,10 +1,11 @@
 ---
-title: 'The drive skill names a project setting and file that do not exist'
+title: 'skill instructions assume an optional project input is present'
 enforcer: 'check: drive setup verifies every project.yml key and file the skill names'
-status: proposed
+status: ticket
+ticket: https://github.com/hancrafted/skills/issues/95
 ---
 
-# The drive skill names a project setting and file that do not exist
+# skill instructions assume an optional project input is present
 
 ## Symptom
 
