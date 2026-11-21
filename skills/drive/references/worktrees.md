@@ -39,7 +39,7 @@ When the OS drops a metadata file (`.DS_Store`) into the folder mid-delete, `don
 | 12   | merged; lists the tickets still open |
 | 13   | closed unmerged                      |
 
-`drive pr ready <number>` marks the draft ready and refuses without `.scratch/<topic>/review.md`.
+`drive pr ready <number>` marks the draft ready. It refuses (exit 1) without `.scratch/<topic>/review.md`, and, after fetching, while `origin/<base>` has commits the Integration branch lacks: the message names the count and says to run `drive worktree sync`, then `drive push`. It never syncs.
 
 ## How a Subagent finishes
 
