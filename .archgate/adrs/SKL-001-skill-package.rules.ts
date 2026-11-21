@@ -130,11 +130,19 @@ export default {
         'Every reference is linked from SKILL.md; a linked markdown file fails only when it links a file of the skill that SKILL.md does not link.',
       severity: 'error',
       async check(ctx) {
+        const references = await ctx.glob(REFERENCE_GLOB);
         for (const skillFile of await ctx.glob(SKILL_FILE_GLOB)) {
           const linked = new Set<string>();
           for (const { target } of localLinks(await ctx.readFile(skillFile))) {
             const path = resolve(skillFile, target);
             if (path !== skillFile) linked.add(path);
+          }
+          for (const orphan of references) {
+            if (skillOf(orphan) !== skillOf(skillFile) || linked.has(orphan)) continue;
+            ctx.report.violation({
+              message: `${orphan} is not linked from SKILL.md — link it from SKILL.md or delete it (SKL-001 [skill-links-one-level]).`,
+              file: orphan,
+            });
           }
           for (const reference of linked) {
             if (!reference.endsWith('.md')) continue;

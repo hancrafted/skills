@@ -234,8 +234,25 @@ describe('skill-links-one-level', () => {
     // ACT
     const violations = await run('skill-links-one-level', files);
     // ASSERT
+    const deep = violations.filter((v) => v.file === 'skills/a/references/setup.md');
+    expect(deep).toHaveLength(1);
+    expect(deep[0]).toMatchObject({ line: 2 });
+    expect(deep[0].message).toContain('(SKL-001 [skill-links-one-level])');
+  });
+
+  it('fails a reference that SKILL.md does not link', async () => {
+    // ARRANGE
+    const files = {
+      'skills/a/SKILL.md': skill,
+      'skills/a/references/setup.md': 'text\n',
+      'skills/a/references/more.md': 'text\n',
+      'skills/a/references/orphan.md': 'text\n',
+    };
+    // ACT
+    const violations = await run('skill-links-one-level', files);
+    // ASSERT
     expect(violations).toHaveLength(1);
-    expect(violations[0]).toMatchObject({ file: 'skills/a/references/setup.md', line: 2 });
+    expect(violations[0]).toMatchObject({ file: 'skills/a/references/orphan.md' });
     expect(violations[0].message).toContain('(SKL-001 [skill-links-one-level])');
   });
 
