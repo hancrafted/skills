@@ -111,10 +111,11 @@ _Done when:_ every requirement is a line in `decisions.md`, the pre-flight list 
 1. **Decision docs.** Write the Decision docs the Workflow changes yourself, in a `decisions/<topic>` worktree from the Integration branch. The paths are `decisionDocs` in `project.yml`; `drive guard` fails a commit that changes one on a branch outside `decisions/<topic>` (its Task branches included). A Workflow that changes no Decision doc says so in `decisions.md`. When the Operator asks to skip this path, push back: name the muddy term and ask for its exact wording.
 2. **Decision pages.** A page that settles open choices is a delegated task, [references/dispatch.md](references/dispatch.md) "A decision page", with `review.md` as the page skill's inputs ("Optional inputs").
 3. **Spec and tickets**, inline with the Reason skills. Ask the ticket skill, through its arguments, for a **Skills** line (only skills the Binding resolves) and a **Review after** line (`yes` with a reason, or `no`) on each ticket.
+   Once they are filed, run `drive dispatch check --base <Integration branch> <tickets>`; fix a failure on the tracker before the Decision PR.
 4. **Decision PR.** Push `decisions/<topic>` with `drive push` and open its PR into the Integration branch. When no Decision doc changes, put the same body in the conversation and ask for explicit approval; that approval is the gate.
    The body follows [the Decision PR body](references/decision-pr.md).
 
-5. **Watch the gate.** Run `drive pr watch <number>` in the background and notify the Operator through the Binding's notify port that the gate waits. Merged (exit 0): run `drive worktree sync --base <Integration branch>` in the Integration worktree (it takes the remote's commits) and go to Implement. A review comment (exit 3): grill input; revise on `decisions/<topic>`, `drive push`, answer on the PR starting the reply with `<!-- drive -->` (the watch skips such comments), and watch again. Closed unmerged (exit 2): the Workflow stops; tell the Operator.
+5. **Watch the gate.** Run `drive pr watch <number>` in the background and notify the Operator through the Binding's notify port that the gate waits. Each exit code: [Watch the gate](references/decision-pr.md#watch-the-gate). Merged (exit 0): go to Implement.
 
 _Done when:_ the Operator passed the Decision gate (the Decision PR merged, or the chat approval given), the Integration branch holds the Decision docs, and every ticket is on the tracker with its Skills and Review after lines.
 
