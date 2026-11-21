@@ -91,4 +91,30 @@ describe('edge cases', () => {
       expect(problems).toEqual(expected);
     });
   });
+  it('reads the last Contradictions section outside code fences', () => {
+    // ARRANGE
+    const example = `${CONTRADICTIONS_HEADING}\n\n- "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>)`;
+    const text = `# Review\n\n\`\`\`\n${example}\n\`\`\`\n\n${CONTRADICTIONS_HEADING}\n\n${PAIR}\n`;
+    // ACT
+    const problems = quoteProblems(text, read);
+    // ASSERT
+    expect(problems).toEqual([]);
+  });
+  it('reads the last Contradictions section when a section of that name comes earlier', () => {
+    // ARRANGE
+    const text = `${report('- bad')}\n## Notes\n\nx\n\n${CONTRADICTIONS_HEADING}\n\nnone\n`;
+    // ACT
+    const problems = quoteProblems(text, read);
+    // ASSERT
+    expect(problems).toEqual([]);
+  });
+  it('treats a blank quote as malformed, so it cannot match any line', () => {
+    // ARRANGE
+    const entry = '- " " (skills/a/one.md:1) vs "  " (skills/a/one.md:2)';
+    // ACT
+    const problems = quoteProblems(report(entry), read);
+    // ASSERT
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('malformed entry');
+  });
 });

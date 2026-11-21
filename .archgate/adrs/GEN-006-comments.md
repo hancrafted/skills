@@ -129,6 +129,24 @@ Existing comments were retired in one sweep; every authored code file is now gov
 | `decision:`  | an Archgate ADR section, or a Decision record path |
 | `tech-debt:` | an issue URL in this repo                          |
 
+### Decision details
+
+Qualifications the Decision's short form drops; each binds as part of the Decision item it names.
+
+1. §1.2: out-of-scope files keep their reasons beside their entries.
+2. §1.3: the commit gate checks staged files; pre-push and CI check every file.
+3. §1.4: a finding names the comment's position and says what to do instead.
+4. §2.1: delete applies when the comment restates the code; a test is one named for the invariant.
+5. §2.2: names have no length cap.
+6. §3.2: a security invariant is a test or a lint rule, never a pointer.
+7. §3.4: a rejected alternative goes to its ADR's options, or to the commit body when too local for one.
+8. §5.1: the pointer sits on its own line, directly above the code.
+9. §5.3: the section is a Decision anchor n, item m: a § outside the Decision section fails.
+10. §5.4: an external URL fails.
+11. §5.5: the issue holds the cost.
+12. §6.1: no directive in any form; the lint config entry states its reason.
+13. §7.2: the staged check picks files by the index but reads the working copy, so unstaged hunks are included.
+
 **Known gaps:** name quality and a missing pointer are checked by review only.
 
 **Exceptions:** raise a separate ADR; human approval required.

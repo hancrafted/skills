@@ -18,4 +18,4 @@ and the implementer's, which every Subagent brief points at. Write only what is 
 - Pre-commit and pre-push gates: `verify:commit` on commit, `npm run test:slow` before push.
 - CI on pull requests.
 - Installed skill copies in other repos: the consumers listed in `skills-lock.json`.
-- Scheduled jobs: none.
+- Scheduled jobs: `nightly.yml` (daily 03:00 UTC, the slow lane) and `security.yml` (Mondays 03:00 UTC, the dependency, config and secret scan).

@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { COMMIT_PLAN, runPlan, VERIFY_PLAN, type Exec, type Plan } from './verify.pure.ts';
 
@@ -115,8 +114,6 @@ describe('edge cases', () => {
         .flat()
         .filter((step) => step.name === 'archgate')
         .map((step) => step.command);
-    const fullScript = (JSON.parse(readFileSync('package.json', 'utf8')) as { scripts: Record<string, string> })
-      .scripts['archgate:full'];
     // ACT
     const commitCommands = archgateCommands(COMMIT_PLAN);
     const verifyCommands = archgateCommands(VERIFY_PLAN);
@@ -124,7 +121,6 @@ describe('edge cases', () => {
     expect(commitCommands).toHaveLength(1);
     expect(commitCommands[0]).toContain('--strict');
     expect(verifyCommands).toEqual(['npm run -s archgate:full']);
-    expect(fullScript).toContain('--strict');
   });
 
   it('reports a step that cannot start as failed, with the reason, while the rest of its phase finishes', async () => {

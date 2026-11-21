@@ -52,4 +52,13 @@ describe('edge cases', () => {
       expect(lines).toContain(exitCodes);
     });
   });
+  it('names every refusal of ready in the usage text', () => {
+    // ARRANGE
+    const refusals = ['review.md', '## Contradictions', 'origin/<base>', 'worktree sync', 'drive push'];
+    // ACT
+    const ready = USAGE.split('\n').filter((line) => line.startsWith('ready refuses'));
+    // ASSERT
+    expect(ready).toHaveLength(1);
+    expect(refusals.filter((word) => !(ready[0] ?? '').includes(word))).toEqual([]);
+  });
 });

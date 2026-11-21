@@ -94,16 +94,17 @@ const watch = (views: object[]) => {
   const { main } = fixture();
   return driveGroup(main, ['pr', 'watch', '7', '--poll-milliseconds', '10'], stubbedGh(views));
 };
-const readyFixture = () => {
+const readyFixture = (gh: { base?: string; failing?: boolean } = {}) => {
   const { main, root } = fixture();
   drive(main, 'new', 'feat/x');
   const tree = path.join(main, '.trees', 'feat-x');
+  git(tree, 'push', '-q', 'origin', 'feat/x');
   mkdirSync(path.join(main, '.scratch', 'x'), { recursive: true });
   writeFileSync(path.join(main, '.scratch', 'x', 'review.md'), '## Contradictions\n\nnone\n');
   const dir = mkdtempSync(path.join(tmpdir(), 'drive-gh-'));
   writeFileSync(
     path.join(dir, 'gh'),
-    '#!/bin/sh\ncase "$*" in\n*headRefName*) echo feat/x;;\n*baseRefName*) echo main;;\n*) echo "gh $*" >> ' +
+    `#!/bin/sh\n${gh.failing === true ? 'echo gh is down >&2; exit 1\n' : ''}case "$*" in\n*headRefName*) echo feat/x;;\n*baseRefName*) echo ${gh.base ?? 'main'};;\n*) echo "gh $*" >> ` +
       path.join(dir, 'calls') +
       ';;\nesac\n',
     { mode: 0o755 },
@@ -359,6 +360,35 @@ describe('failure cases', () => {
         false,
       ]);
     });
+    it('refuses after a sync that was never pushed, because origin/<Integration branch> still lacks the base commits', () => {
+      // ARRANGE
+      const { main, tree, env, calls } = readyFixture();
+      advanceBase(main);
+      git(tree, 'fetch', '-q', 'origin');
+      git(tree, 'merge', '-q', '--no-edit', 'origin/main');
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining(
+          'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
+        ),
+        false,
+      ]);
+    });
+    it.each([
+      ['gh cannot read the PR', { failing: true }, 'gh pr view 7 failed'],
+      ['the PR reports no base branch', { base: "''" }, 'PR 7 reports no base branch'],
+    ])('ends with one line, not a stack trace, when %s', (_name, gh, message) => {
+      // ARRANGE
+      const { tree, env } = readyFixture(gh);
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr]).toEqual([1, expect.stringContaining(message)]);
+      expect(result.stderr).not.toContain('    at ');
+    });
     it('refuses while origin/<base> has commits the Integration branch lacks', () => {
       // ARRANGE
       const { main, tree, env, calls } = readyFixture();
@@ -369,7 +399,7 @@ describe('failure cases', () => {
       expect([result.status, result.stderr, existsSync(calls)]).toEqual([
         1,
         expect.stringContaining(
-          'origin/main has 1 commit the Integration branch lacks: run drive worktree sync, then drive push',
+          'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
         ),
         false,
       ]);

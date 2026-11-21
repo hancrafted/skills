@@ -4,6 +4,7 @@ import { configDefaults, defineConfig } from 'vitest/config';
 // Disk-read inputs rerun the whole slow lane; Vitest matches these against absolute paths.
 const TRIGGERS = [
   'package-lock.json',
+  'package.json',
   'skills/**',
   'docs/learnings/**',
   'tests/skills-frontmatter/**',

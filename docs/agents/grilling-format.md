@@ -10,7 +10,7 @@ The round format for sessions with `/wayfinder`, `/grill-with-docs` and `/grilli
 ## Each round
 
 1. An optional reply to the previous decision, or an introduction.
-2. One question, labelled W (wayfinder) or H (grill-with-docs).
+2. One question that starts with a W word (what, which, why, where, who) or with How.
 3. Numbered options, at least 2-3.
 4. A Recommendation at the end, with the reason.
 
