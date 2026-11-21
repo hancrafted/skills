@@ -1,7 +1,15 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { capture, fail, run } from '../core/index.ts';
-import { baseAheadProblem, notIntegrationBranch, readyProblem, reviewPath, topicOf } from './ready.pure.ts';
+import { checkedQuoteProblems } from '../review/index.ts';
+import {
+  baseAheadProblem,
+  notIntegrationBranch,
+  quoteRefusal,
+  readyProblem,
+  reviewPath,
+  topicOf,
+} from './ready.pure.ts';
 
 export function runReady(number: string): void {
   const branch = capture('gh', ['pr', 'view', number, '--json', 'headRefName', '--jq', '.headRefName']);
@@ -10,6 +18,8 @@ export function runReady(number: string): void {
   const root = path.dirname(path.resolve(capture('git', ['rev-parse', '--git-common-dir'])));
   const problem = readyProblem(topic, existsSync(path.join(root, reviewPath(topic))));
   if (problem !== null) fail(problem);
+  const quotes = quoteRefusal(topic, checkedQuoteProblems(path.join(root, reviewPath(topic))));
+  if (quotes !== null) fail(quotes);
   const base = capture('gh', ['pr', 'view', number, '--json', 'baseRefName', '--jq', '.baseRefName']);
   const fetched = run('git', ['fetch', '--quiet', 'origin', base]);
   if (fetched.status !== 0) fail(`git fetch origin ${base} failed:\n${fetched.stderr}`);
