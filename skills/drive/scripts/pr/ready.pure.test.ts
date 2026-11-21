@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { baseAheadProblem, notIntegrationBranch, readyProblem, topicOf } from './ready.pure.ts';
+import { baseAheadProblem, notIntegrationBranch, quoteRefusal, readyProblem, topicOf } from './ready.pure.ts';
 
 describe('success cases', () => {
   describe('baseAheadProblem', () => {
@@ -10,6 +10,16 @@ describe('success cases', () => {
       const problem = baseAheadProblem('main', ahead);
       // ASSERT
       expect(problem).toBeNull();
+    });
+  });
+  describe('quoteRefusal', () => {
+    it('passes when no quote problem was found', () => {
+      // ARRANGE
+      const problems: string[] = [];
+      // ACT
+      const refusal = quoteRefusal('sweep', problems);
+      // ASSERT
+      expect(refusal).toBeNull();
     });
   });
   describe('readyProblem', () => {
@@ -36,6 +46,18 @@ describe('failure cases', () => {
       const problems = [3, 1].map((ahead) => baseAheadProblem('main', ahead));
       // ASSERT
       expect(problems).toEqual(expected);
+    });
+  });
+  describe('quoteRefusal', () => {
+    it('names the file and lists each bad quote on its own line', () => {
+      // ARRANGE
+      const problems = ['file not found: a.md', 'quote not on b.md:2: "x"'];
+      const expected =
+        '.scratch/sweep/review.md has contradiction quotes that do not check out (drive review quotes):\n- file not found: a.md\n- quote not on b.md:2: "x"';
+      // ACT
+      const refusal = quoteRefusal('sweep', problems);
+      // ASSERT
+      expect(refusal).toBe(expected);
     });
   });
   describe('readyProblem', () => {

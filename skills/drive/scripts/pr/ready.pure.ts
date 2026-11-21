@@ -23,3 +23,9 @@ export function baseAheadProblem(base: string, ahead: number): string | null {
     ? `origin/${base} has ${ahead} commit${ahead === 1 ? '' : 's'} the Integration branch lacks: run drive worktree sync, then drive push`
     : null;
 }
+
+export function quoteRefusal(topic: string, problems: readonly string[]): string | null {
+  return problems.length === 0
+    ? null
+    : `${reviewPath(topic)} has contradiction quotes that do not check out (drive review quotes):\n${problems.map((problem) => `- ${problem}`).join('\n')}`;
+}

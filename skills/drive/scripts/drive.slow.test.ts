@@ -99,7 +99,7 @@ const readyFixture = () => {
   drive(main, 'new', 'feat/x');
   const tree = path.join(main, '.trees', 'feat-x');
   mkdirSync(path.join(main, '.scratch', 'x'), { recursive: true });
-  writeFileSync(path.join(main, '.scratch', 'x', 'review.md'), 'review');
+  writeFileSync(path.join(main, '.scratch', 'x', 'review.md'), '## Contradictions\n\nnone\n');
   const dir = mkdtempSync(path.join(tmpdir(), 'drive-gh-'));
   writeFileSync(
     path.join(dir, 'gh'),
@@ -111,6 +111,14 @@ const readyFixture = () => {
   const env = { ...process.env, PATH: `${dir}:${process.env.PATH}` };
   return { main, root, tree, env, calls: path.join(dir, 'calls') };
 };
+const reviewFixture = (report: string) => {
+  const { main } = fixture();
+  writeFileSync(path.join(main, 'rule.md'), 'Always run the check.\n');
+  const file = path.join(main, 'report.md');
+  writeFileSync(file, report);
+  return { main, file };
+};
+const GOOD_PAIR = '- "Always run" (rule.md:1) vs "run the check" (rule.md:1)';
 const advanceBase = (main: string) => {
   writeFileSync(path.join(main, 'b.txt'), 'b');
   git(main, 'add', '.');
@@ -120,6 +128,16 @@ const advanceBase = (main: string) => {
 const open = { state: 'OPEN', mergeCommit: null, reviews: [], comments: [] };
 
 describe('success cases', () => {
+  describe('drive review quotes', () => {
+    it('passes a report whose quotes sit on their stated lines', () => {
+      // ARRANGE
+      const { main, file } = reviewFixture(`## Contradictions\n\n${GOOD_PAIR}\n`);
+      // ACT
+      const result = driveGroup(main, ['review', 'quotes', file]);
+      // ASSERT
+      expect(result.status).toBe(0);
+    });
+  });
   describe('drive pr ready', () => {
     it('marks the PR ready once the base branch is not ahead', () => {
       // ARRANGE
@@ -307,7 +325,40 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('drive review quotes', () => {
+    it('exits non-zero with one line per bad entry', () => {
+      // ARRANGE
+      const { main, file } = reviewFixture(
+        '## Contradictions\n\n- "nope" (rule.md:1) vs "Always" (gone.md:1)\n- loose text\n',
+      );
+      const expected = [
+        '✖ quote not on rule.md:1: "nope"',
+        '✖ file not found: gone.md',
+        '✖ malformed entry, expected - "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>): - loose text',
+      ];
+      // ACT
+      const result = driveGroup(main, ['review', 'quotes', file]);
+      // ASSERT
+      expect([result.status, result.stderr.trim().split('\n')]).toEqual([1, expected]);
+    });
+  });
   describe('drive pr ready', () => {
+    it('refuses while review.md has a quote that is not on its stated line', () => {
+      // ARRANGE
+      const { main, tree, env, calls } = readyFixture();
+      writeFileSync(
+        path.join(main, '.scratch', 'x', 'review.md'),
+        '## Contradictions\n\n- "a" (gone.md:1) vs "b" (gone.md:2)\n',
+      );
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining('.scratch/x/review.md has contradiction quotes that do not check out'),
+        false,
+      ]);
+    });
     it('refuses while origin/<base> has commits the Integration branch lacks', () => {
       // ARRANGE
       const { main, tree, env, calls } = readyFixture();
