@@ -21,3 +21,6 @@ models:
 decisionDocs:
   - docs/decision-records/**
   - '**/GLOSSARY*.md'
+# Grill format: the file that sets the shape of each grill round.
+grill:
+  format: docs/agents/grilling-format.md
