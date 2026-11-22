@@ -2,7 +2,8 @@
 type: record
 workflow: drive-fortify-batch
 date: 2026-11-22
-fortify: pending
+fortify: skipped
+skip-reason: 'Operator: skip. Orchestrator grounds: most new failure modes have count 1; both smells are covered (#61, the 2.1.0 quote check); Fortify ran in the previous Workflow.'
 ---
 
 # drive-fortify-batch
