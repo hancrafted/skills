@@ -39,6 +39,8 @@ Once the pitch settles, write the eight fields once, from the pitch and the answ
 
 On approval, write it to `decisions.md` as `### Intent statement (confirmed <date>)`, the pitch first, then the fields. `drive status` reads that heading. It heads the spec's `## Intent` section and the shared brief ([dispatch.md](dispatch.md) "The shared brief").
 
+_Done when:_ `decisions.md` holds the confirmed statement heading.
+
 ## Grill first
 
 1. Run the requirements grill with the grill format. Its opening lines use the first pitch as an unapproved working draft.
