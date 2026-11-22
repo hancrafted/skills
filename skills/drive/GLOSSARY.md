@@ -13,8 +13,23 @@ The words of `/drive`: one Orchestrator works with the Operator and hands execut
 **Workflow**: the orchestrated process `/drive` runs for one topic, through the five DRIVE phases, from the first grilling question to the merged Integration branch and its Fortify.
 _Avoid_: pipeline, process, flow
 
-**DRIVE**: the five phases of a Workflow, each named by its verb: **D**efine (_clarify_: requirements, grilling), **R**eason (_specify_: design, architecture, Decision docs, spec, tickets), **I**mplement (_codify_: the code), **V**erify (_verify_: review, integration, CI), **E**volve (_fortify_: Fortify). A skill may serve several phases and a phase several skills.
+**DRIVE**: the five phases of a Workflow, each named by its verb: **D**efine (_clarify_: intent, requirements, grilling), **R**eason (_specify_: design, architecture, Decision docs, spec, tickets), **I**mplement (_codify_: the code), **V**erify (_verify_: review, integration, CI), **E**volve (_fortify_: Fortify). A skill may serve several phases and a phase several skills.
 _Avoid_: stage, step, SDLC
+
+**Intent**: the Operator's why for one Workflow, settled in Define before any spec: who really uses the result, what impact it should have, why now. Built in the **Intent step**, which is not a grill: each turn asks one open question, with no options and no recommendation, and shows the updated Intent pitch, until the Operator approves it or gives up. Every later question and agent holds scope changes against it; a change to it restarts the Workflow.
+_Avoid_: intent engineering, goal, vision, requirements
+
+**Intent pitch**: the Intent in a couple of plain lines, an elevator pitch, printed as `INTENT:` on every turn of the Intent step for the Operator to edit.
+_Avoid_: guess, summary, hypothesis
+
+**Intent statement**: the approved Intent pitch plus eight fields (Outcome, User, Why now, Success, Constraint, Out of scope, Appetite, Tradeoff order), written once as the read-back. It heads the spec and the shared brief. Appetite is a feel for size, never a measure.
+_Avoid_: charter, brief, PRD
+
+**Top-down mode**: a Workflow that refines the Intent first, then grills the requirements.
+_Avoid_: intent-first
+
+**Bottom-up mode**: a Workflow that grills first, then drafts the Intent from the grill's decisions, sharpens it until approved, and rechecks every grill decision against it. The Operator picks the mode after the Orchestrator's first Intent pitch; it is a `Mode:` line in the decisions log.
+_Avoid_: grill-first
 
 **Fortify**: the Evolve phase. The Workflow's record is written automatically at the end of Verify; after the Operator merges the Integration branch, the Orchestrator asks once whether to Fortify now or skip. A skip is recorded with its reason. On a yes, on a branch from the base branch, it gathers what went wrong into 2–3 quick wins and 2–3 architectural options, each naming one narrow failure mode and its Enforcer, and the recommended architectural option becomes drive's single open `fortify` ticket (labels `fortify` and `skill:drive`; the cap is one per skill), where the Operator picks a quick win when triaging it. Fortify blocks nothing.
 _Avoid_: retro, retrospective (`/retro` is one evidence source), lessons learned
