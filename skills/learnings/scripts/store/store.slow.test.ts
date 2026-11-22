@@ -201,7 +201,7 @@ describe('success cases', () => {
       runLearnings(root, flags);
       const migrated = readFileSync(path.join(root, 'docs/learnings/README.md'), 'utf8');
       // ASSERT
-      expect(migrated).toBe(old.replace('learnings@0.0.1', 'learnings@0.2.0').replace('2026-01-02', TODAY));
+      expect(migrated).toBe(old.replace('learnings@0.0.1', 'learnings@0.3.0').replace('2026-01-02', TODAY));
     });
   });
 
@@ -385,7 +385,7 @@ describe('edge cases', () => {
         '---',
         'type: readme',
         'generated:',
-        '  by: learnings@0.2.0',
+        '  by: learnings@0.3.0',
         `  at: ${TODAY}`,
         '---',
       ]);

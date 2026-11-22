@@ -1,8 +1,8 @@
 ---
 type: readme
 generated:
-  by: learnings@0.2.0
-  at: 2026-11-21
+  by: learnings@0.3.0
+  at: 2026-11-22
 ---
 
 # Learnings

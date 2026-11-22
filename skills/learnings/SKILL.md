@@ -3,7 +3,7 @@ name: learnings
 description: Keeps one append-only store of failure modes per skill, counts how often each recurs from its records and files a repeated one upstream. Use when a skill's last step asks "Record learnings from this run?", when recording what went wrong in a run of any skill, when listing the failure modes a skill keeps hitting, or when a repeated failure should be filed upstream.
 compatibility: git, gh for `file-upstream`, and Node.js 22.18 or later for the learnings CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
-  version: '0.2.0'
+  version: '0.3.0'
   state: stateful
 ---
 

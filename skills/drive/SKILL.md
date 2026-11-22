@@ -3,7 +3,7 @@ name: drive
 description: Runs a multi-agent Workflow on one Integration branch, where an Orchestrator decides with the Operator and delegates execution to Subagents. Use when a grill starts, when a spec or its tickets are to be implemented, or when asked to drive or orchestrate, work on an integration branch or delegate to subagents.
 compatibility: git, and Node.js 22.18 or later for the drive CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
-  version: '2.1.0'
+  version: '2.2.0'
   state: stateful
 ---
 
