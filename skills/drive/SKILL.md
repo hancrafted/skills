@@ -79,22 +79,10 @@ Do inline only what needs your context and leaves no diff in the repo: grilling,
 
 Delegate to a Subagent everything else that lands in the repo or runs checks: code, decision pages, PR bodies, fixes, log mining, Fortify evidence. Run long commands in the background.
 
-## The topic folder
+## Topic folder and branches
 
-Each Workflow keeps its memory in `.scratch/<topic>/` (gitignored), so it survives compaction and new sessions:
-
-- `brief.md`: the shared brief every Subagent reads first.
-- `decisions.md`: the decisions log. Write each settled term and decision in its exact wording the moment it settles, and each Operator correction under **Corrections** at once.
-- `<task>.brief.md` and `<task>.report.md`: one **Handoff** per task, [references/dispatch.md](references/dispatch.md).
-- `drive.log.jsonl`: written by the CLI and the Subagent hooks; `drive transcript --topic <topic>` reads the sessions it links. `monitor.md`: the monitor's findings, below.
-
-## Branches
-
-- **Integration branch**: `<type>/<slug>`, in its own worktree, so the main checkout stays on the base branch and several Orchestrators can run side by side. `<type>` is a Conventional Commits type, or one `docs/drive/profiles.md` admits. Create it first, when the Workflow starts, and push the empty branch with `drive push` (Define).
-- **Task branch**: `<type>/<slug>--<issue>-<task>`, or `<type>/<slug>--<task>` without a ticket, started with `--base <type>/<slug>`.
-- **Decision docs**: `decisions/<topic>`, from the Integration branch, through the Decision PR into the Integration branch; `decisions` is a `<type>` like any other. The Decision docs reach the base branch with the Integration branch's PR.
-
-These names override any worktree path or branch a Handoff or another skill names, and the self-merge below replaces any skill's merger or per-ticket PR.
+- Topic folder: [worktrees.md](references/worktrees.md#the-topic-folder)
+- Branches: [worktrees.md](references/worktrees.md#branches)
 
 ## Workflow
 
