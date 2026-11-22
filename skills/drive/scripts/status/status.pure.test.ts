@@ -26,6 +26,8 @@ const base: Facts = {
   tickets: [],
   mergedTickets: [],
   lastLog: null,
+  mode: 'grill-first',
+  intent: 'confirmed',
   inputs: {
     grillFormat: 'filled',
     grillFormatPath: 'docs/agents/grilling-format.md',
@@ -97,6 +99,52 @@ describe('success cases', () => {
       const state = profilesStateOf(text);
       // ASSERT
       expect(state).toBe(expected);
+    });
+  });
+
+  describe('renderStatus mode and intent', () => {
+    it.each([
+      ['intent-first', 'unconfirmed', 'Mode: intent-first', 'Intent: unconfirmed'],
+      ['grill-first', 'confirmed', 'Mode: grill-first', 'Intent: confirmed'],
+      [null, 'missing', 'Mode: missing', 'Intent: missing'],
+    ] as const)('prints mode %s and intent %s', (mode, intent, ...lines) => {
+      // ARRANGE
+      const facts: Facts = { ...base, mode, intent };
+      // ACT
+      const text = renderStatus(facts);
+      // ASSERT
+      for (const line of lines) expect(text).toContain(line);
+    });
+  });
+
+  describe('derivePhase intent stop', () => {
+    it.each([
+      ['intent-first', 'unconfirmed', 'confirm the intent', 'before any grill'],
+      ['intent-first', 'missing', 'confirm the intent', 'before any grill'],
+      ['grill-first', 'unconfirmed', 'confirm the intent', 'before Reason'],
+      ['grill-first', 'missing', 'confirm the intent', 'before Reason'],
+      [null, 'missing', 'mode missing', 'Mode: intent-first|grill-first'],
+      [null, 'confirmed', 'mode missing', 'Mode: intent-first|grill-first'],
+    ] as const)('in Define with mode %s and intent %s names %s and %s', (mode, intent, ...named) => {
+      // ARRANGE
+      const facts: Facts = { ...base, mode, intent };
+      // ACT
+      const standing = derivePhase(facts);
+      // ASSERT
+      expect(standing.phase).toBe('Define');
+      for (const phrase of named) expect(standing.next).toContain(phrase);
+    });
+
+    it.each([
+      ['intent-first', 'confirmed'],
+      ['grill-first', 'confirmed'],
+    ] as const)('does not ask to confirm a confirmed intent (%s)', (mode, intent) => {
+      // ARRANGE
+      const facts: Facts = { ...base, mode, intent };
+      // ACT
+      const standing = derivePhase(facts);
+      // ASSERT
+      expect(standing.next).not.toContain('confirm the intent');
     });
   });
 

@@ -4,7 +4,13 @@ All notable changes to the learnings skill are documented in this file. The form
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the skill follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2026-11-22
+
+### Added
+
+- A record may carry one optional `## Intent` section, first after the title: bullets `**Turns:**`, `**Moved:**`, `**Outcome:**`, `**Drift:**` and an optional `**Bets:**`. `learnings check` and the record rule in `markdown-harness.config.yaml` fail a second section, a misplaced one or an unlabelled bullet. Existing records pass unchanged.
+
+## [0.2.0] - 2026-11-21
 
 ### Added
 

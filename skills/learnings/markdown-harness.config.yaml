@@ -98,6 +98,17 @@ body-structure:
             level: 1,
             intent: 'The Workflow topic, as in front matter workflow. At most one short paragraph under it: the Workflow in a sentence.',
           }
+        - purpose: heading
+          level: 2
+          presence: optional
+          allowed:
+            [
+              {
+                title: Intent,
+                intent: "The drive Workflow's Intent block, at most once, first after the title and before any failure mode. Bullets open with **Turns:** (how many turns the Intent step took), **Moved:** (how far the pitch moved from first to last), **Outcome:** (confirmed or gave up), **Drift:** (drift found later, and whether it was real, or none) and, optionally, **Bets:** (each scope change placed against the intent, and whether it paid off). Fortify judges the Intent method from these after about three records.",
+              },
+            ]
+          mayHold: [unordered-list]
         - purpose: enumeration
           level: 2
           minCount: 0

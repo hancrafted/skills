@@ -31,6 +31,17 @@ drive depends on `/learnings`. Setup never creates a store: `/learnings` and For
 
 Setup seeds each phase's `model` from `PHASE_TIERS` in `scripts/core/binding.pure.ts`: reason and verify `top`, the rest `mid`. `project.yml` maps each tier to a provider's model (`models: { claude: { mid: sonnet, top: opus } }`); add an entry for another provider and its harness resolves the tiers the same way. Change a phase's tier in `binding.yml` when experience shows its Subagents need more or less, and log why in a record under `docs/learnings/drive/records/`. The Orchestrator's own session override, when the Operator gives one, beats the Binding for that session.
 
+## The grilling format step
+
+`drive setup` never writes the grill format; the Orchestrator does, as a prose step, once per project (and again when the Operator asks). `drive status` reports `filled` or `missing`.
+
+1. Read the repo: its skills, docs, ADRs and recent tickets.
+2. Start from [assets/grilling-format.md](../assets/grilling-format.md). For each default bucket (Contract, Architecture, Workflow), propose two or three examples from this repo; the Operator may rename a bucket or add one.
+3. Ask the calibration questions: which buckets to focus on, and what the Orchestrator may decide alone (the "Decided without asking" list).
+4. Show the draft. On the Operator's yes, write `docs/agents/grilling-format.md` and set `grill.format: docs/agents/grilling-format.md` in `docs/drive/project.yml`.
+
+_Done when:_ `drive status` reports the grill format `filled`.
+
 ## The review file
 
 `review.md` holds the calibration answers for every decision page: mode, audience, layout, depth, fidelity, feedback route and review width. Setup writes the empty template once; the Operator fills it. Reason and Fortify pass it to the page skill as the caller's inputs.

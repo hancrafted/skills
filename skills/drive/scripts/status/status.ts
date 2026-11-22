@@ -1,6 +1,17 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { DECISIONS_PREFIX, DRIVE_FOLDER, fail, loadConfig, logPath, mainRootOf, parseLog, run } from '../core/index.ts';
+import {
+  DECISIONS_PREFIX,
+  DRIVE_FOLDER,
+  fail,
+  loadConfig,
+  logPath,
+  mainRootOf,
+  parseLog,
+  run,
+  SCRATCH,
+} from '../core/index.ts';
+import { intentStateOf, modeOf, STATUS_USAGE } from './intent.pure.ts';
 import {
   type Facts,
   fortifyOfRecord,
@@ -95,10 +106,15 @@ function inputFacts(root: string, grillFormat: string | null): ProjectInputs {
   };
 }
 
+function decisionsText(topic: string, root: string, cwd: string): string | null {
+  return readIfExists(path.join(mainRootOf(cwd) ?? root, SCRATCH, topic, 'decisions.md'));
+}
+
 function gather(topic: string, cwd: string, scriptsRoot: string): Facts {
   const root = run('git', ['rev-parse', '--show-toplevel'], { cwd }).stdout.trim();
   const { worktree, grill } = loadConfig(root, scriptsRoot);
   const branches = branchesOf(cwd);
+  const decisions = decisionsText(topic, root, cwd);
   const integrationBranch = pickIntegrationBranch(branches, topic, worktree.remote);
   return {
     topic,
@@ -108,12 +124,14 @@ function gather(topic: string, cwd: string, scriptsRoot: string): Facts {
     pushed: branches.includes(`${worktree.remote}/${integrationBranch}`),
     mergedTickets: ticketFacts(integrationBranch, cwd),
     lastLog: lastCommand(readLog(topic, cwd)),
+    mode: modeOf(decisions),
+    intent: intentStateOf(decisions),
     inputs: inputFacts(root, grill.format),
   };
 }
 
 export function runStatus(argv: readonly string[], scriptsRoot: string): void {
   const [topic] = argv;
-  if (topic === undefined || topic.startsWith('-')) fail('usage: drive status <topic>');
+  if (topic === undefined || topic.startsWith('-')) fail(STATUS_USAGE);
   console.log(renderStatus(gather(topic, process.cwd(), scriptsRoot)));
 }

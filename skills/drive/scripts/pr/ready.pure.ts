@@ -31,3 +31,9 @@ export function quoteRefusal(topic: string, problems: readonly string[]): string
     ? null
     : `${reviewPath(topic)} has contradiction quotes that do not check out (drive review quotes):\n${problems.map((problem) => `- ${problem}`).join('\n')}`;
 }
+
+export function intentDriftProblem(body: string): string | null {
+  return /^## Intent drift[ \t]*$/m.test(body)
+    ? null
+    : 'the PR body has no `## Intent drift` section: add one (say "none" if the Workflow held its intent) before marking the PR ready';
+}

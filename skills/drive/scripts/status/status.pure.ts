@@ -1,5 +1,6 @@
 import { isIntegrationBranch, ticketOfMergeSubject, topicSlugOf } from '../core/index.ts';
 import { closesIn } from '../pr/index.ts';
+import type { IntentState, Mode } from './intent.pure.ts';
 
 export type Phase = 'Define' | 'Reason' | 'Implement' | 'Verify' | 'Evolve' | 'Done' | 'Stopped';
 
@@ -32,6 +33,8 @@ export interface Facts {
   tickets: readonly number[];
   mergedTickets: readonly number[];
   lastLog: { t: string; cmd: string } | null;
+  mode: Mode | null;
+  intent: IntentState;
   inputs: ProjectInputs;
 }
 
@@ -74,6 +77,11 @@ const evolve: Rule = ({ integrationPr, fortify }) => {
 const ghDown: Rule = ({ ghFailed }) =>
   ghFailed ? { phase: 'Stopped', next: 'gh failed (auth or offline): fix it and rerun `drive status`' } : null;
 
+const confirmIntent = (mode: Mode): string =>
+  mode === 'intent-first'
+    ? 'confirm the intent (an Intent statement in decisions.md) before any grill'
+    : 'grill, then confirm the intent (an Intent statement in decisions.md) before Reason';
+
 const define: Rule = ({ integrationBranch, pushed }) =>
   integrationBranch === null || !pushed
     ? { phase: 'Define', next: 'create and push the Integration branch, then grill' }
@@ -87,10 +95,17 @@ const reason: Rule = ({ decisionPr }) =>
       }
     : null;
 
+const intentNext = ({ mode, intent }: Facts): string => {
+  if (mode === null)
+    return 'mode missing: add `Mode: intent-first|grill-first` to decisions.md, then confirm the intent';
+  if (intent === 'confirmed') return 'settle the requirements, then write the Decision docs and tickets';
+  return confirmIntent(mode);
+};
+
 const grilling: Rule = (facts) =>
   facts.decisionPr?.state === 'MERGED' || facts.tickets.length > 0
     ? null
-    : { phase: 'Define', next: 'settle the requirements, then write the Decision docs and tickets' };
+    : { phase: 'Define', next: intentNext(facts) };
 
 const verify: Rule = (facts) =>
   allMerged(facts) ? { phase: 'Verify', next: verifyNext(facts.integrationPr, facts.epic) } : null;
@@ -154,6 +169,8 @@ export function renderStatus(facts: Facts): string {
     `Integration branch: ${branch}`,
     prLine('Decision PR', facts.decisionPr, facts.ghFailed),
     prLine('Integration PR', facts.integrationPr, facts.ghFailed),
+    `Mode: ${facts.mode ?? 'missing'}`,
+    `Intent: ${facts.intent}`,
     `Tickets: ${facts.mergedTickets.filter((ticket) => facts.tickets.includes(ticket)).length}/${facts.tickets.length} merged`,
     `Last command: ${last}`,
     ...inputLines(facts.inputs),

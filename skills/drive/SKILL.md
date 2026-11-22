@@ -3,7 +3,7 @@ name: drive
 description: Runs a multi-agent Workflow on one Integration branch, where an Orchestrator decides with the Operator and delegates execution to Subagents. Use when a grill starts, when a spec or its tickets are to be implemented, or when asked to drive or orchestrate, work on an integration branch or delegate to subagents.
 compatibility: git, and Node.js 22.18 or later for the drive CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
-  version: '2.1.0'
+  version: '2.2.0'
   state: stateful
 ---
 
@@ -27,7 +27,7 @@ You are the **Orchestrator** of one Workflow: the architect the Operator talks t
 Homes this skill reads or writes:
 
 - `docs/drive/`: the skill home, written only by drive: setup answers, calibration and the version record in its `README.md`.
-- `docs/agents/`: the domain home shared with the engineering skills, read only: the grill format, the tracker and the triage labels, each described by the folder's files.
+- `docs/agents/`: the domain home shared with the engineering skills, read only except for one file: setup writes `docs/agents/grilling-format.md` once. The rest is the tracker and the triage labels, each described by the folder's files.
 
 Context protocol (SKL-003), identical in every stateful skill:
 
@@ -71,7 +71,7 @@ Every project fact lives in `docs/drive/`; this skill knows none. Read it before
 
 No folder yet, or a skill installed since setup: run setup first, [references/setup.md](references/setup.md).
 
-The `drive` CLI is `node scripts/drive.ts` in this skill's folder; `worktree.invoke` in `project.yml` names how the project calls `drive worktree`. Use those commands for every worktree and merge: [references/worktrees.md](references/worktrees.md).
+The `drive` CLI is `node scripts/drive.ts` in this skill's folder; `worktree.invoke` in `project.yml` names how the project calls `drive worktree`. Use them for every worktree and merge: [worktrees.md](references/worktrees.md). Also [topic folder](references/worktrees.md#the-topic-folder), [branches](references/worktrees.md#branches).
 
 ## Inline or delegated
 
@@ -79,38 +79,21 @@ Do inline only what needs your context and leaves no diff in the repo: grilling,
 
 Delegate to a Subagent everything else that lands in the repo or runs checks: code, decision pages, PR bodies, fixes, log mining, Fortify evidence. Run long commands in the background.
 
-## The topic folder
-
-Each Workflow keeps its memory in `.scratch/<topic>/` (gitignored), so it survives compaction and new sessions:
-
-- `brief.md`: the shared brief every Subagent reads first.
-- `decisions.md`: the decisions log. Write each settled term and decision in its exact wording the moment it settles, and each Operator correction under **Corrections** at once.
-- `<task>.brief.md` and `<task>.report.md`: one **Handoff** per task, [references/dispatch.md](references/dispatch.md).
-- `drive.log.jsonl`: written by the CLI and the Subagent hooks; `drive transcript --topic <topic>` reads the sessions it links. `monitor.md`: the monitor's findings, below.
-
-## Branches
-
-- **Integration branch**: `<type>/<slug>`, in its own worktree, so the main checkout stays on the base branch and several Orchestrators can run side by side. `<type>` is a Conventional Commits type, or one `docs/drive/profiles.md` admits. Create it first, when the Workflow starts, and push the empty branch with `drive push` (Define).
-- **Task branch**: `<type>/<slug>--<issue>-<task>`, or `<type>/<slug>--<task>` without a ticket, started with `--base <type>/<slug>`.
-- **Decision docs**: `decisions/<topic>`, from the Integration branch, through the Decision PR into the Integration branch; `decisions` is a `<type>` like any other. The Decision docs reach the base branch with the Integration branch's PR.
-
-These names override any worktree path or branch a Handoff or another skill names, and the self-merge below replaces any skill's merger or per-ticket PR.
-
 ## Workflow
 
 ### 1. Define (clarify)
 
-Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"; when missing, [drive's template](assets/grilling-format.md), said once): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
+Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Then run the Intent step, before the grill or the spec: [references/intent.md](references/intent.md). Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"; when missing, [drive's template](assets/grilling-format.md), said once): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
 
 **Pre-flight.** Before the gate, list what the change touches that is live or scheduled; the live or scheduled kinds are `profiles.md`'s, as `drive status` reports ("Optional inputs"). Settle each with the Operator now and record it in `decisions.md`; it goes into the Decision PR body, never first raised at the PR.
 
-_Done when:_ every requirement is a line in `decisions.md`, the pre-flight list is in it too, and the Operator agrees nothing is open.
+_Done when:_ the Operator approved the Intent statement, every requirement is a line in `decisions.md`, the pre-flight list is in it too, and the Operator agrees nothing is open.
 
 ### 2. Reason (specify)
 
 1. **Decision docs.** Write the Decision docs the Workflow changes yourself, in a `decisions/<topic>` worktree from the Integration branch. The paths are `decisionDocs` in `project.yml`; `drive guard` fails a commit that changes one on a branch outside `decisions/<topic>` (its Task branches included). A Workflow that changes no Decision doc says so in `decisions.md`. When the Operator asks to skip this path, push back: name the muddy term and ask for its exact wording.
 2. **Decision pages.** A page that settles open choices is a delegated task, [references/dispatch.md](references/dispatch.md) "A decision page", with `review.md` as the page skill's inputs ("Optional inputs").
-3. **Spec and tickets**, inline with the Reason skills. Ask the ticket skill, through its arguments, for a **Skills** line (only skills the Binding resolves) and a **Review after** line (`yes` with a reason, or `no`) on each ticket.
+3. **Spec and tickets**, inline with the Reason skills. The spec opens with the Intent statement, and each ticket names the part of it that it serves (two separate outcomes split it; none is cut or logged as a bet). Ask the ticket skill, through its arguments, for a **Skills** line (only skills the Binding resolves) and a **Review after** line (`yes` with a reason, or `no`) on each ticket.
    Once they are filed, run `drive dispatch check --base <Integration branch> <tickets>`; fix a failure on the tracker before the Decision PR.
 4. **Decision PR.** Push `decisions/<topic>` with `drive push` and open its PR into the Integration branch. When no Decision doc changes, put the same body in the conversation and ask for explicit approval; that approval is the gate.
    The body follows [the Decision PR body](references/decision-pr.md).
@@ -121,7 +104,7 @@ _Done when:_ the Operator passed the Decision gate (the Decision PR merged, or t
 
 ### 3. Implement (codify)
 
-The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
+The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Drift against the Intent: [references/intent.md](references/intent.md) "After approval". Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
 
 At an interrupt, notify the Operator through the Binding's notify port, say what stopped and what you need, and wait.
 
@@ -131,7 +114,7 @@ _Done when:_ every ticket's task is merged and checked, or reverted with its rea
 
 Push after every merge with `drive push`, in the background ([references/worktrees.md](references/worktrees.md) "push" holds its rules). The first push after the first merge is `drive push --spec <epic number>`: it opens the draft PR; later pushes omit `--spec`. Review at the planned checkpoints and before the PR is marked ready, triage every finding and log each verdict in `decisions.md` without asking, and hand the accepted ones to one fix Subagent: [references/review.md](references/review.md). CI red twice after a fix round is an interrupt.
 
-Then delegate the Workflow's record ([references/fortify.md](references/fortify.md) "The record"): it is the PR's last commit, with `fortify: pending`. Save the final review as `.scratch/<topic>/review.md`, and run `drive pr ready <number>` in the Integration worktree. It marks the PR ready or refuses for one of three reasons ([worktrees.md](references/worktrees.md)).
+Then delegate the Workflow's record ([references/fortify.md](references/fortify.md) "The record"): it is the PR's last commit, with `fortify: pending`. Save the final review as `.scratch/<topic>/review.md`, and run `drive pr ready <number>` in the Integration worktree. It marks the PR ready or refuses for one of four reasons ([worktrees.md](references/worktrees.md)).
 
 Watch the PR in the background with `drive pr watch <number> --integration` and notify the Operator through the notify port that the PR is ready. The PR body lists the verdicts, so the Operator contests them there. The exit codes are in [references/worktrees.md](references/worktrees.md) "pr watch"; you act on them like this: 10, fix it as the next Implement task; 11, `drive worktree sync` the Integration branch and push; 12, close the leftover tickets and ask the Fortify question (Evolve); 13, the Workflow stops, tell the Operator.
 

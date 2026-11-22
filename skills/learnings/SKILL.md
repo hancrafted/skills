@@ -3,7 +3,7 @@ name: learnings
 description: Keeps one append-only store of failure modes per skill, counts how often each recurs from its records and files a repeated one upstream. Use when a skill's last step asks "Record learnings from this run?", when recording what went wrong in a run of any skill, when listing the failure modes a skill keeps hitting, or when a repeated failure should be filed upstream.
 compatibility: git, gh for `file-upstream`, and Node.js 22.18 or later for the learnings CLI in scripts/ (it runs TypeScript directly). The consuming repo provides the `yaml` npm package (and `@hancrafted/markdown-harness` for `check:docs`); the scripts import it at runtime.
 metadata:
-  version: '0.2.0'
+  version: '0.3.0'
   state: stateful
 ---
 
@@ -60,6 +60,10 @@ _Done when:_ the command prints `recorded <path>`.
 Run `learnings check`: it validates every skill's store, and it runs in the repo's docs check beside `mh check --root docs/learnings/<skill> --config skills/learnings/markdown-harness.config.yaml`.
 
 _Done when:_ it prints a line per store and no `✖`.
+
+## The Intent section
+
+A record may carry one `## Intent` section, first after the title and before any failure mode: the Workflow's Intent block, written by the skill that ran the Workflow (drive). It holds labelled bullets: `**Turns:**` (how many turns the Intent step took), `**Moved:**` (how far the pitch moved first to last), `**Outcome:**` (confirmed or gave up), `**Drift:**` (drift found later and whether it was real, or none) and, optionally, `**Bets:**` (each scope change the Operator placed against the intent, and whether it paid off). It is not a failure mode, so it cites no file and counts toward nothing. `learnings check` and `mh check` fail a second one, a misplaced one or an unlabelled bullet; a record without one passes.
 
 ## Commands
 

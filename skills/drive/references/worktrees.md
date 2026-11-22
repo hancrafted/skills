@@ -39,7 +39,7 @@ When the OS drops a metadata file (`.DS_Store`) into the folder mid-delete, `don
 | 12   | merged; lists the tickets still open |
 | 13   | closed unmerged                      |
 
-`drive pr ready <number>` marks the draft ready. It refuses (exit 1) in three cases: `.scratch/<topic>/review.md` is missing; a `## Contradictions` quote does not check out at the commit the report names in `Reviewed: <sha>` (`drive review quotes`), or that line is missing; or, after fetching both, `origin/<base>` has commits `origin/<Integration branch>` lacks, so a sync that was never pushed still refuses: the message names the count and says to run `drive worktree sync`, then `drive push`. It never syncs.
+`drive pr ready <number>` marks the draft ready. It refuses (exit 1) in four cases: `.scratch/<topic>/review.md` is missing; a `## Contradictions` quote does not check out at the commit the report names in `Reviewed: <sha>` (`drive review quotes`), or that line is missing; the PR body has no `## Intent drift` section; or, after fetching both, `origin/<base>` has commits `origin/<Integration branch>` lacks, so a sync that was never pushed still refuses: the message names the count and says to run `drive worktree sync`, then `drive push`. It never syncs.
 
 ## How a Subagent finishes
 
@@ -52,3 +52,20 @@ When the brief says the task merges by PR, stop after the first item and report;
 ## Spikes
 
 A spike leaves no worktree behind: commit it, write `git diff <Integration branch>...<spike branch>` to `.scratch/<topic>/<spike>.patch`, then `drive worktree done <spike branch>` and `git branch -D <spike branch>` in the same turn.
+
+## The topic folder
+
+Each Workflow keeps its memory in `.scratch/<topic>/` (gitignored), so it survives compaction and new sessions:
+
+- `brief.md`: the shared brief every Subagent reads first.
+- `decisions.md`: the decisions log. Write each settled term and decision in its exact wording the moment it settles, and each Operator correction under **Corrections** at once.
+- `<task>.brief.md` and `<task>.report.md`: one **Handoff** per task, [references/dispatch.md](dispatch.md).
+- `drive.log.jsonl`: written by the CLI and the Subagent hooks; `drive transcript --topic <topic>` reads the sessions it links. `monitor.md`: the monitor's findings ([monitor.md](monitor.md)).
+
+## Branches
+
+- **Integration branch**: `<type>/<slug>`, in its own worktree, so the main checkout stays on the base branch and several Orchestrators can run side by side. `<type>` is a Conventional Commits type, or one `docs/drive/profiles.md` admits. Create it first, when the Workflow starts, and push the empty branch with `drive push` (Define).
+- **Task branch**: `<type>/<slug>--<issue>-<task>`, or `<type>/<slug>--<task>` without a ticket, started with `--base <type>/<slug>`.
+- **Decision docs**: `decisions/<topic>`, from the Integration branch, through the Decision PR into the Integration branch; `decisions` is a `<type>` like any other. The Decision docs reach the base branch with the Integration branch's PR.
+
+These names override any worktree path or branch a Handoff or another skill names, and the self-merge ([How a Subagent finishes](#how-a-subagent-finishes)) replaces any skill's merger or per-ticket PR.
