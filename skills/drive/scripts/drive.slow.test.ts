@@ -94,7 +94,7 @@ const watch = (views: object[]) => {
   const { main } = fixture();
   return driveGroup(main, ['pr', 'watch', '7', '--poll-milliseconds', '10'], stubbedGh(views));
 };
-const readyFixture = (gh: { base?: string; failing?: boolean } = {}) => {
+const readyFixture = (gh: { base?: string; failing?: boolean; body?: string } = {}) => {
   const { main, root } = fixture();
   drive(main, 'new', 'feat/x');
   const tree = path.join(main, '.trees', 'feat-x');
@@ -104,7 +104,7 @@ const readyFixture = (gh: { base?: string; failing?: boolean } = {}) => {
   const dir = mkdtempSync(path.join(tmpdir(), 'drive-gh-'));
   writeFileSync(
     path.join(dir, 'gh'),
-    `#!/bin/sh\n${gh.failing === true ? 'echo gh is down >&2; exit 1\n' : ''}case "$*" in\n*headRefName*) echo feat/x;;\n*baseRefName*) echo ${gh.base ?? 'main'};;\n*) echo "gh $*" >> ` +
+    `#!/bin/sh\n${gh.failing === true ? 'echo gh is down >&2; exit 1\n' : ''}case "$*" in\n*headRefName*) echo feat/x;;\n*baseRefName*) echo ${gh.base ?? 'main'};;\n*body*) echo '${gh.body ?? '## Intent drift\\n\\nnone'}';;\n*) echo "gh $*" >> ` +
       path.join(dir, 'calls') +
       ';;\nesac\n',
     { mode: 0o755 },
@@ -376,6 +376,18 @@ describe('failure cases', () => {
         expect.stringContaining(
           'origin/main has 1 commit origin/feat/x lacks: run drive worktree sync, then drive push',
         ),
+        false,
+      ]);
+    });
+    it('refuses a PR body with no `## Intent drift` section and names the fix', () => {
+      // ARRANGE
+      const { tree, env, calls } = readyFixture({ body: '## Summary' });
+      // ACT
+      const result = driveGroup(tree, ['pr', 'ready', '7'], env);
+      // ASSERT
+      expect([result.status, result.stderr, existsSync(calls)]).toEqual([
+        1,
+        expect.stringContaining('no `## Intent drift` section'),
         false,
       ]);
     });

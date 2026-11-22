@@ -4,6 +4,7 @@ import { capture, fail, run } from '../core/index.ts';
 import { checkedQuoteProblems } from '../review/index.ts';
 import {
   baseAheadProblem,
+  intentDriftProblem,
   noBaseBranch,
   notIntegrationBranch,
   quoteRefusal,
@@ -26,6 +27,11 @@ function commitsMissingOnOrigin(base: string, branch: string): number {
   return Number(counted.stdout.trim());
 }
 
+function failOnIntentDrift(number: string): void {
+  const drift = intentDriftProblem(ghField(number, 'body'));
+  if (drift !== null) fail(drift);
+}
+
 export function runReady(number: string): void {
   const branch = ghField(number, 'headRefName');
   const topic = topicOf(branch);
@@ -35,6 +41,7 @@ export function runReady(number: string): void {
   if (problem !== null) fail(problem);
   const quotes = quoteRefusal(topic, checkedQuoteProblems(path.join(root, reviewPath(topic))));
   if (quotes !== null) fail(quotes);
+  failOnIntentDrift(number);
   const base = ghField(number, 'baseRefName');
   if (base === '') fail(noBaseBranch(number));
   const behind = baseAheadProblem(base, branch, commitsMissingOnOrigin(base, branch));
