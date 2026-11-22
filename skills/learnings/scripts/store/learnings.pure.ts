@@ -1,4 +1,5 @@
 import { parse } from 'yaml';
+import { type IntentSection, intentProblems, splitIntent } from './intent.pure.ts';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -32,6 +33,7 @@ export interface LearningsRecord {
   fortify: 'engaged' | 'skipped' | 'pending';
   skipReason: string | null;
   citations: Citation[];
+  intents: IntentSection[];
 }
 
 export interface CitationRow {
@@ -112,10 +114,7 @@ export function parseRecord(file: string, text: string): LearningsRecord | { err
   if (!isText(data.workflow) || !isText(data.date)) return { error: `${where}: workflow and date are required` };
   if (data.fortify !== 'engaged' && data.fortify !== 'skipped' && data.fortify !== 'pending')
     return { error: `${where}: fortify must be engaged, skipped or pending` };
-  const citations = topLevelHeadings(body, 2).map(({ text: slug, lines }) => ({
-    slug,
-    bullets: lines.filter((line) => line.startsWith('- ')).map((line) => line.slice(2).trim()),
-  }));
+  const { citations, intents } = splitIntent(topLevelHeadings(body, 2));
   return {
     file,
     workflow: data.workflow,
@@ -123,6 +122,7 @@ export function parseRecord(file: string, text: string): LearningsRecord | { err
     fortify: data.fortify,
     skipReason: optionalText(data['skip-reason']),
     citations,
+    intents,
   };
 }
 
@@ -224,7 +224,11 @@ function recordProblems(record: LearningsRecord, bySlug: ReadonlyMap<string, Fai
   if (record.fortify !== 'skipped' && record.skipReason !== null)
     problems.push(`${where}: skip-reason belongs only to fortify skipped`);
   const context = { record, seen: new Set<string>(), bySlug, skill };
-  return [...problems, ...record.citations.flatMap((citation) => citationProblems(context, citation))];
+  return [
+    ...problems,
+    ...intentProblems(`${RECORDS_FOLDER}/${record.file}`, record.intents),
+    ...record.citations.flatMap((citation) => citationProblems(context, citation)),
+  ];
 }
 
 export function storeProblems({ skill, modes, records, legacyFileExists }: Store): string[] {

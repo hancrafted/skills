@@ -50,6 +50,31 @@ const VALID_RECORD = [
   '- **Regressed:** #68 did not hold: the null exit skips ls-remote. (source: monitor)',
   '',
 ].join('\n');
+const INTENT_SECTION = [
+  '## Intent',
+  '',
+  '- **Turns:** 5',
+  '- **Moved:** far',
+  '- **Outcome:** confirmed',
+  '- **Drift:** none',
+  '',
+];
+const withIntent = (sections: readonly (readonly string[])[], afterMode = false): string => {
+  const mode = ['## push-exits-zero', '', '- **Evidence:** e', ''];
+  const body = afterMode ? [mode, ...sections] : [...sections, mode];
+  return [
+    '---',
+    'type: record',
+    'workflow: sweep',
+    'date: 2026-11-19',
+    'fortify: pending',
+    '---',
+    '',
+    '# sweep',
+    '',
+    ...body.flat(),
+  ].join('\n');
+};
 const INVALID_RECORD = [
   '---',
   'type: record',
@@ -230,6 +255,18 @@ describe('success cases', () => {
       expect(reports).toEqual(expected);
     });
   });
+  describe('the skill-shipped markdown-harness config for an Intent section', () => {
+    it('passes a record whose one Intent section comes first', () => {
+      // ARRANGE
+      const expected = { governedFiles: 2, invalidFiles: 0 };
+      // ACT
+      const { exit, report } = checkStore(withIntent([INTENT_SECTION]));
+      // ASSERT
+      expect(exit).toBe(0);
+      expect(report.result.summary).toMatchObject(expected);
+    });
+  });
+
   describe('the skill-shipped markdown-harness config', () => {
     it('passes a well-formed record and failure mode', () => {
       // ARRANGE
@@ -244,6 +281,22 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  describe('the skill-shipped markdown-harness config for an Intent section', () => {
+    it('fails a record with two Intent sections, and one placed after a failure mode', () => {
+      // ARRANGE
+      const expectedTwice = ['BODY_STRUCTURE__HEADING_REPEATED '];
+      const expectedLate = ['BODY_STRUCTURE__HEADING_OUT_OF_ORDER '];
+      // ACT
+      const twice = checkStore(withIntent([INTENT_SECTION, INTENT_SECTION]));
+      const late = checkStore(withIntent([INTENT_SECTION], true));
+      // ASSERT
+      expect(twice.exit).toBe(1);
+      expect(violationsOf(twice.report)).toEqual(expectedTwice);
+      expect(late.exit).toBe(1);
+      expect(violationsOf(late.report)).toEqual(expectedLate);
+    });
+  });
+
   describe('drive learnings', () => {
     it('check fails a record H2 with no failure-mode file and a learnings.md beside the store', () => {
       // ARRANGE

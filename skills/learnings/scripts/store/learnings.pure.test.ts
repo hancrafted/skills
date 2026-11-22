@@ -47,6 +47,11 @@ const record = (date: string, workflow: string, citations: LearningsRecord['cita
   fortify: 'engaged',
   skipReason: null,
   citations,
+  intents: [],
+});
+const intent = (position: number, ...bullets: string[]) => ({
+  position,
+  bullets: bullets.length === 0 ? ['**Turns:** 5'] : bullets,
 });
 const evidence = (slug: string, ...bullets: string[]) => ({
   slug,
@@ -67,6 +72,46 @@ const MODES = [
 ];
 
 describe('success cases', () => {
+  it('reads an Intent section apart from the citations, with its place among the H2s', () => {
+    // ARRANGE
+    const text = recordText(
+      ['workflow: demo', 'date: 2026-11-19', 'fortify: pending'],
+      [
+        '# demo',
+        '',
+        '## Intent',
+        '',
+        '- **Turns:** 5',
+        '- **Outcome:** confirmed',
+        '',
+        `## ${GUARD}`,
+        '',
+        '- **Evidence:** e',
+      ],
+    );
+    const expected = {
+      ...record('2026-11-19', 'demo', [evidence(GUARD, '**Evidence:** e')]),
+      fortify: 'pending',
+      intents: [intent(0, '**Turns:** 5', '**Outcome:** confirmed')],
+    };
+    // ACT
+    const parsed = parseRecord('2026-11-19-demo.md', text);
+    // ASSERT
+    expect(parsed).toEqual(expected);
+  });
+
+  it('passes a record with one Intent section first, and a record with none', () => {
+    // ARRANGE
+    const records = [
+      { ...record('2026-11-19', 'with', [evidence(GUARD)]), intents: [intent(0, '**Turns:** 5', '**Drift:** none')] },
+      record('2026-11-20', 'without', [evidence(GUARD)]),
+    ];
+    // ACT
+    const problems = storeProblems({ modes: MODES, records, skill: 'drive', legacyFileExists: false });
+    // ASSERT
+    expect(problems).toEqual([]);
+  });
+
   it('reads a failure mode with its status fields from front matter', () => {
     // ARRANGE
     const text = failureModeText([
@@ -201,6 +246,24 @@ describe('success cases', () => {
 });
 
 describe('failure cases', () => {
+  it('fails a record with two Intent sections, one placed after a failure mode, or one with an unlabelled bullet', () => {
+    // ARRANGE
+    const records = [
+      { ...record('2026-11-19', 'twice', []), intents: [intent(0), intent(0)] },
+      { ...record('2026-11-20', 'late', [evidence(GUARD)]), intents: [intent(1)] },
+      { ...record('2026-11-21', 'loose', []), intents: [intent(0, 'plain text bullet')] },
+    ];
+    const expected = [
+      'records/2026-11-19-twice.md: ## Intent appears twice; keep one Intent section per record',
+      'records/2026-11-20-late.md: ## Intent comes after a failure mode; place it first, right after the title',
+      'records/2026-11-21-loose.md: ## Intent has a bullet that opens with none of **Turns:**, **Moved:**, **Outcome:**, **Drift:**',
+    ];
+    // ACT
+    const problems = storeProblems({ modes: MODES, records, skill: 'drive', legacyFileExists: false });
+    // ASSERT
+    expect(problems).toEqual(expected);
+  });
+
   it('names a record H2 that has no failure-mode file, and points at learnings similar --skill', () => {
     // ARRANGE
     const records = [record('2026-11-19', 'sweep', [evidence('no-such-mode')])];
