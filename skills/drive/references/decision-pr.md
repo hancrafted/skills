@@ -1,15 +1,19 @@
 # Decision PR body
 
-The Decision PR's body holds these sections, filled from the spec, the tickets, the pre-flight and the run terms. Post the Tickets list only after `drive dispatch check` has passed on them.
+The Decision PR's body holds these sections, filled from the approved Intent statement, the spec, the tickets, the pre-flight and the run terms. At the gate the Operator also checks that the spec still serves the Intent; say so in the body, and name any scope the spec grew, cut or changed as a bet against it. Post the Tickets list only after `drive dispatch check` has passed on them.
 
 ```markdown
+## Intent
+
+<the approved Intent statement: the pitch, then the eight fields>
+
 ## Spec
 
 <tracker ref>
 
 ## Tickets
 
-- <ref> <title> (Skills: <skills> · Review after: <yes: reason | no>)
+- <ref> <title> (Serves: <part of the Intent> · Skills: <skills> · Review after: <yes: reason | no>)
 
 ## Live or scheduled
 

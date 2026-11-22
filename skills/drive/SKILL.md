@@ -57,7 +57,7 @@ Announce each phase and its branch changes before acting, and print `drive statu
 
 ## Entry check
 
-On every start or resume, first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs, the tickets and the project inputs, and names the phase and the next stop. Also read the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet and tell the Operator the phase and next stop: before the gate wait for confirmation, after it continue.
+On every start or resume (a new session and a quota limit included), first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs, the tickets and the project inputs, and names the phase and the next stop. Also read the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet and tell the Operator the phase and next stop: before the gate wait for confirmation, after it continue.
 
 The phases and their transitions are drawn in [the workflow diagram](references/workflow.md).
 
@@ -83,17 +83,17 @@ Delegate to a Subagent everything else that lands in the repo or runs checks: co
 
 ### 1. Define (clarify)
 
-Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"; when missing, [drive's template](assets/grilling-format.md), said once): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
+Every grill starts /drive. Create the Integration branch first and push it empty, in the background. Then run the Intent step, before the grill or the spec: [references/intent.md](references/intent.md). Follow the grill format `drive status` reports ([references/setup.md](references/setup.md) "Optional inputs"; when missing, [drive's template](assets/grilling-format.md), said once): state each round's questions in full, with options and examples, and explain every term no glossary defines. Grill the Operator with the Define skills until the requirements are settled; record each answer in `decisions.md`. A grill that changes nothing in the repo ends here, with its topic folder.
 
 **Pre-flight.** Before the gate, list what the change touches that is live or scheduled; the live or scheduled kinds are `profiles.md`'s, as `drive status` reports ("Optional inputs"). Settle each with the Operator now and record it in `decisions.md`; it goes into the Decision PR body, never first raised at the PR.
 
-_Done when:_ every requirement is a line in `decisions.md`, the pre-flight list is in it too, and the Operator agrees nothing is open.
+_Done when:_ the Operator approved the Intent statement, every requirement is a line in `decisions.md`, the pre-flight list is in it too, and the Operator agrees nothing is open.
 
 ### 2. Reason (specify)
 
 1. **Decision docs.** Write the Decision docs the Workflow changes yourself, in a `decisions/<topic>` worktree from the Integration branch. The paths are `decisionDocs` in `project.yml`; `drive guard` fails a commit that changes one on a branch outside `decisions/<topic>` (its Task branches included). A Workflow that changes no Decision doc says so in `decisions.md`. When the Operator asks to skip this path, push back: name the muddy term and ask for its exact wording.
 2. **Decision pages.** A page that settles open choices is a delegated task, [references/dispatch.md](references/dispatch.md) "A decision page", with `review.md` as the page skill's inputs ("Optional inputs").
-3. **Spec and tickets**, inline with the Reason skills. Ask the ticket skill, through its arguments, for a **Skills** line (only skills the Binding resolves) and a **Review after** line (`yes` with a reason, or `no`) on each ticket.
+3. **Spec and tickets**, inline with the Reason skills. The spec opens with the Intent statement, and each ticket names the part of it that it serves (two separate outcomes split it; none is cut or logged as a bet). Ask the ticket skill, through its arguments, for a **Skills** line (only skills the Binding resolves) and a **Review after** line (`yes` with a reason, or `no`) on each ticket.
    Once they are filed, run `drive dispatch check --base <Integration branch> <tickets>`; fix a failure on the tracker before the Decision PR.
 4. **Decision PR.** Push `decisions/<topic>` with `drive push` and open its PR into the Integration branch. When no Decision doc changes, put the same body in the conversation and ask for explicit approval; that approval is the gate.
    The body follows [the Decision PR body](references/decision-pr.md).
@@ -104,7 +104,7 @@ _Done when:_ the Operator passed the Decision gate (the Decision PR merged, or t
 
 ### 3. Implement (codify)
 
-The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
+The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Each agent records drift against the Intent as an `Intent:` line, never an interrupt ([references/intent.md](references/intent.md)). Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
 
 At an interrupt, notify the Operator through the Binding's notify port, say what stopped and what you need, and wait.
 
