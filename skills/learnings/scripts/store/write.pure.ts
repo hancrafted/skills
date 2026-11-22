@@ -113,8 +113,8 @@ export function offSkills(readme: string): string[] {
   return names;
 }
 
-export const LEARNINGS_VERSION = '0.2.0';
-const TEMPLATE_DATE = '2026-11-21';
+export const LEARNINGS_VERSION = '0.3.0';
+const TEMPLATE_DATE = '2026-11-22';
 
 export const renderLearningsReadme = (date: string): string => `---
 type: readme

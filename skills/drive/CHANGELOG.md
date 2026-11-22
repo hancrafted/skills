@@ -4,6 +4,30 @@ All notable changes to the drive skill are documented in this file. The format f
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the skill follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-11-22
+
+### Added
+
+- An Intent step at the start of Define (`references/intent.md`): the Operator approves a statement of the why, in the problem
+  space, before the spec. A Workflow runs intent first or grill first; a scope change after approval is a bet placed against
+  the Intent, and a Subagent reports drift in an `Intent:` line that the Orchestrator raises before Implement.
+- `drive status` prints `Mode:` (`intent-first` or `grill-first`) and `Intent:` (`confirmed` or not); it reads the last Intent
+  statement heading, so a later statement supersedes an earlier one. Define stops until the Intent is confirmed.
+- `drive pr ready` refuses a PR body without `## Intent drift`; the Decision PR body gains `## Intent`.
+- The brief gains Intent and a rule that a Subagent never edits Decision docs; the report and the review gain an `Intent:` line.
+- `drive setup` proposes the project grilling format from the template and calibrates it
+  (`references/setup.md` "The grilling format step"); the template restates the Intent statement each round and judges
+  later questions against it.
+- A Workflow record may log `Bet:` lines; the learnings `## Intent` section takes an optional `**Bets:**` bullet.
+
+### Changed
+
+- `SKILL.md` moved Branches and the topic folder to `references/worktrees.md` and keeps a 1,500-character margin under the
+  budget; each moved section left one pointer line.
+- `SKILL.md` Context says setup writes `docs/agents/grilling-format.md`.
+- SKL-002 now reads that an interview may run in rounds or one question at a time and no longer requires a recommended
+  answer per question; drive's grilling format follows it.
+
 ## [2.1.0] - 2026-11-22
 
 ### Added
