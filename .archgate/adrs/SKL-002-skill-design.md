@@ -29,7 +29,7 @@ Each decision cites its source in References; `[^house]` marks one with none.
 2. **Self-contained.** Read only the skill's folder and a contract file; call another skill by name and skip it when absent. Read a home's `README.md`, not the skill that wrote it.[^spec][^addy][^mattpocock]
 3. **Progressive disclosure.** `SKILL.md` holds what every branch needs; what only some branches reach sits one link away.[^anthropic][^addy][^mattpocock]
 4. **Specific and checkable.** Each step names a command or artifact and ends `_Done when:_` with something observable: "`check` prints one line per store", not "the store is valid".[^addy][^mattpocock]
-5. **Decide before acting.** An interview skill asks in rounds, each question with a recommended answer; after the decision point it stops only at a listed gate.[^cursor][^gpt5]
+5. **Decide before acting.** Settle impactful decisions early, so the rest runs unblocked: interview the user until you reach a shared understanding, in rounds or one question at a time. After the decision point, stop only at a listed gate.[^cursor][^gpt5]
 6. **Every line changes behaviour.** Cut what the model does anyway or what one model's mistake alone justifies; state the target, not a ban; one term per concept, imperative mood, nothing time-sensitive.[^addy][^mattpocock][^anthropic]
 7. **Encode lessons as structure.** A recurring learning becomes a check before it becomes prose.[^cursor][^retro]
 
@@ -73,7 +73,7 @@ Each decision cites its source in References; `[^house]` marks one with none.
 2. **DO** depend on a home's `README.md`, never on the skill that wrote it. (Decision 1)[^mattpocock]
 3. **DO** keep branch detail one link from `SKILL.md`. (Decision 1)[^anthropic]
 4. **DO** end every step with `_Done when:_` and an observable result. (Decision 1)[^addy]
-5. **DO** ask in rounds, each question with a recommended answer, before acting, and store answers that hold across runs. (Decision 1)[^cursor]
+5. **DO** interview until shared understanding, in rounds or one question at a time, before acting, and store answers that hold across runs. (Decision 1)[^cursor]
 6. **DO** delete a sentence the model follows without it. (Decision 1)[^mattpocock]
 7. **DO** add a check when a learning recurs. (Decision 1)[^retro]
 8. **DO** list each gate as `<trigger>: <reason>` under `## Human gates`. (Decision 2, 📜 Rule: `skill-human-gates-section`)[^gpt5]
@@ -94,7 +94,7 @@ Each decision cites its source in References; `[^house]` marks one with none.
 **Positive:**
 
 1. **Checkable rules:** each design rule has an example a reviewer can flag against.
-2. **Unattended runs:** after the first round of questions a skill runs to its end or a declared gate.
+2. **Unattended runs:** after the interview a skill runs to its end or a declared gate.
 3. **Predictable bodies:** every skill has the same sections in the same order.
 
 **Negative:**
