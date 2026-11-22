@@ -61,6 +61,10 @@ Run `learnings check`: it validates every skill's store, and it runs in the repo
 
 _Done when:_ it prints a line per store and no `✖`.
 
+## The Intent section
+
+A record may carry one `## Intent` section, first after the title and before any failure mode: the Workflow's Intent block, written by the skill that ran the Workflow (drive). It holds labelled bullets: `**Turns:**` (how many turns the Intent step took), `**Moved:**` (how far the pitch moved first to last), `**Outcome:**` (confirmed or gave up) and `**Drift:**` (drift found later and whether it was real, or none). It is not a failure mode, so it cites no file and counts toward nothing. `learnings check` and `mh check` fail a second one, a misplaced one or an unlabelled bullet; a record without one passes.
+
 ## Commands
 
 | Command                                                 | What it does                                                                                                   |
