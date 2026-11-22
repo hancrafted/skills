@@ -6,7 +6,7 @@ export const STATUS_USAGE = [
   'usage: drive status <topic>',
   'It reads .scratch/<topic>/decisions.md for two markers:',
   '  Mode: intent-first|grill-first   a line of its own; absent means "mode missing"',
-  '  ### Intent statement (confirmed <date>)   a heading; "(unconfirmed)" or no date means unconfirmed; no heading means missing',
+  '  ### Intent statement (confirmed <date>)   a heading; the last one counts; "(confirmed)" with or without a date is confirmed, any other ending is unconfirmed; no heading means missing',
 ].join('\n');
 
 export function modeOf(text: string | null): Mode | null {
@@ -15,7 +15,8 @@ export function modeOf(text: string | null): Mode | null {
 }
 
 export function intentStateOf(text: string | null): IntentState {
-  const heading = /^#{1,6}[ \t]+Intent statement\b(.*)$/m.exec(text ?? '');
-  if (heading === null) return 'missing';
-  return /\(confirmed\b/.test(heading[1] ?? '') ? 'confirmed' : 'unconfirmed';
+  const headings = [...(text ?? '').matchAll(/^#{1,6}[ \t]+Intent statement\b(.*)$/gm)];
+  const last = headings.at(-1);
+  if (last === undefined) return 'missing';
+  return /\(confirmed\b/.test(last[1] ?? '') ? 'confirmed' : 'unconfirmed';
 }

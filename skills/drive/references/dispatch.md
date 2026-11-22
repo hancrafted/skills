@@ -74,7 +74,7 @@ Profile: the implementer's, in <path to this skill>/references/profiles.md, exte
 4. Verify with <the project's quick and full verification commands>; commit the project's way.
 5. Run `git status` before staging; report any change you did not make and leave it unstaged.
 6. Finish as <path to this skill>/references/worktrees.md "How a Subagent finishes" says.
-7. Hold your work against the Intent; a scope change you must make, or a contradiction you meet, goes in the report's **Intent** line, not to the Operator.
+7. Hold your work against the Intent; record drift as the report's **Intent** line ([intent.md](intent.md) "After approval").
 8. Never push (and never pipe `drive push`), open a PR or run the pre-push verification; never edit installed skills; never edit Decision docs: propose terms under **Terms** instead.
 
 ## Report

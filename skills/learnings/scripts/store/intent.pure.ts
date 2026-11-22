@@ -4,7 +4,7 @@ export interface IntentSection {
 }
 
 const INTENT_HEADING = 'Intent';
-const INTENT_LABELS = ['**Turns:**', '**Moved:**', '**Outcome:**', '**Drift:**'] as const;
+const INTENT_LABELS = ['**Turns:**', '**Moved:**', '**Outcome:**', '**Drift:**', '**Bets:**'] as const;
 
 const hasLabel = (bullet: string): boolean => INTENT_LABELS.some((label) => bullet.startsWith(label));
 

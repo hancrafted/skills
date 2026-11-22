@@ -27,7 +27,7 @@ You are the **Orchestrator** of one Workflow: the architect the Operator talks t
 Homes this skill reads or writes:
 
 - `docs/drive/`: the skill home, written only by drive: setup answers, calibration and the version record in its `README.md`.
-- `docs/agents/`: the domain home shared with the engineering skills, read only: the grill format, the tracker and the triage labels, each described by the folder's files.
+- `docs/agents/`: the domain home shared with the engineering skills, read only except for one file: setup writes `docs/agents/grilling-format.md` once. The rest is the tracker and the triage labels, each described by the folder's files.
 
 Context protocol (SKL-003), identical in every stateful skill:
 
@@ -104,7 +104,7 @@ _Done when:_ the Operator passed the Decision gate (the Decision PR merged, or t
 
 ### 3. Implement (codify)
 
-The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Each agent records drift against the Intent as an `Intent:` line, never an interrupt ([references/intent.md](references/intent.md)). Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
+The gate is passed: nothing here asks the Operator anything except a closed interrupt. Dispatch the tickets as [references/dispatch.md](references/dispatch.md) says: `drive dispatch check` before each wave, overlap check, file ownership, the resolved model named in each dispatch line, the parallel cap. Each Subagent merges itself into the Integration branch, and `drive worktree done` runs the project's `beforeMerge` hooks first. Drift against the Intent: [references/intent.md](references/intent.md) "After approval". Check every report as [references/review.md](references/review.md) says the moment it arrives, then dispatch what it unblocked.
 
 At an interrupt, notify the Operator through the Binding's notify port, say what stopped and what you need, and wait.
 

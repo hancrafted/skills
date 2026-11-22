@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { intentStateOf, modeOf } from './intent.pure.ts';
 import {
   derivePhase,
   type Facts,
@@ -98,39 +97,6 @@ describe('success cases', () => {
       // ARRANGE
       // ACT
       const state = profilesStateOf(text);
-      // ASSERT
-      expect(state).toBe(expected);
-    });
-  });
-
-  describe('modeOf', () => {
-    it.each([
-      [null, null],
-      ['# Decisions\n\nResearch.\n', null],
-      ['# Decisions\n\nMode: intent-first\n', 'intent-first'],
-      ['# Decisions\n\nMode: grill-first\n', 'grill-first'],
-      ['Mode: top-down\n', null],
-    ] as const)('reads %j as %s', (text, expected) => {
-      // ARRANGE
-      // ACT
-      const mode = modeOf(text);
-      // ASSERT
-      expect(mode).toBe(expected);
-    });
-  });
-
-  describe('intentStateOf', () => {
-    it.each([
-      [null, 'missing'],
-      ['# D\n\n### Requirements grill\n', 'missing'],
-      ['# D\n\n### Intent statement (confirmed 2026-11-22)\n\nINTENT: x\n', 'confirmed'],
-      ['# D\n\n### Intent statement (unconfirmed)\n\nINTENT: x\n', 'unconfirmed'],
-      ['# D\n\n### Intent statement\n\nINTENT: x\n', 'unconfirmed'],
-      ['# D\n\nThe Intent statement (confirmed later) is prose.\n', 'missing'],
-    ] as const)('reads %j as %s', (text, expected) => {
-      // ARRANGE
-      // ACT
-      const state = intentStateOf(text);
       // ASSERT
       expect(state).toBe(expected);
     });

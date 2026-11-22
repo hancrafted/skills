@@ -18,6 +18,8 @@ The step always runs, scaled: when the request already answers most fields, it i
 2. Ask which order: refine the intent first (intent first), or start the requirements grill (grill first). Either way no Reason work starts without an approved Intent statement.
 3. Write `Mode: intent-first` or `Mode: grill-first` as a line of its own at the top of `decisions.md`. `drive status` reads it; without it the next stop is "mode missing".
 
+_Done when:_ the Operator saw a first pitch and `decisions.md` has the `Mode:` line.
+
 ## Each turn
 
 Not a grill: no options, no recommendation, no examples to pick from. Each turn is one open question, then the updated `INTENT:` pitch. The Operator answers, edits the pitch directly, or both.
@@ -26,6 +28,8 @@ Not a grill: no options, no recommendation, no examples to pick from. Each turn 
 - Ask about what the pitch still leaves open (user, impact, why now, success, limits).
 - Log each answer in `decisions.md` as it comes.
 - Repeat until the Operator approves the pitch or gives up.
+
+_Done when:_ the Operator approved the pitch or gave up.
 
 **Giving up.** Stop the Workflow: no grill, no spec. Write `### Intent statement (unconfirmed)` in `decisions.md` with the latest pitch and the open points, and tell the Operator.
 
@@ -42,13 +46,15 @@ On approval, write it to `decisions.md` as `### Intent statement (confirmed <dat
 3. Recheck every grill decision against the approved statement and mark each: kept as a deliberate bet, dropped, or grilled again. Log the marks in `decisions.md`.
 4. Reason starts only after step 3.
 
+_Done when:_ the statement is approved and `decisions.md` marks every grill decision.
+
 ## After approval
 
 - The statement replaces the grill format's two opening lines. Judge each later question against it: one that would widen, cut or change the scope says so, and the Operator decides it as a bet.
 - Each ticket names the part of the intent it serves. A ticket serving two separate outcomes splits; one serving none is cut or logged in `decisions.md` as a deliberate bet.
-- Before Implement, every agent (you and each Subagent) checks its actions against the statement and raises a drift concern to the Operator.
-- From Implement on, nobody interrupts the Operator: every agent records drift or contradiction as an `Intent:` line in its report ([dispatch.md](dispatch.md) "The report"; [review.md](review.md)), and you gather them under `## Intent drift` in the Integration PR's body.
-- Do not judge whether a scope change is good: it is a bet, stated and recorded.
+- Every agent checks its actions against the statement. A Subagent never interrupts the Operator: it records drift or a contradiction as the `Intent:` line of its report ([dispatch.md](dispatch.md) "The report"; [review.md](review.md)).
+- Before Implement, you raise your own drift concern, or one a Subagent's report carries, to the Operator at once. From Implement on, nobody interrupts the Operator: you gather every `Intent:` line under `## Intent drift` in the Integration PR's body.
+- Do not judge whether a scope change is good: it is a bet, stated and recorded. Log each one in `decisions.md` as `Bet: <the scope change>`; Fortify reads them for the record's `**Bets:**` bullet.
 
 ## A changed intent
 
@@ -61,6 +67,8 @@ After Implement started:
 3. Recheck every ticket and merged task against the new statement: keep, change or revert it, with the reason in `decisions.md`.
 4. A new Decision gate follows.
 
+_Done when:_ the new statement is approved and `decisions.md` holds a verdict for every ticket and merged task.
+
 ## The record's Intent section
 
-The Workflow's record carries one `## Intent` section ([fortify.md](fortify.md) "The record"): turns, how far the pitch moved from first to last, confirmed or gave up, and the drift found later and whether it was real. Collect these from `decisions.md` as the Workflow runs.
+The Workflow's record carries one `## Intent` section ([fortify.md](fortify.md) "The record"): turns, how far the pitch moved from first to last, confirmed or gave up, the drift found later and whether it was real, and the bets placed and whether each paid off (`**Bets:**`, optional). Collect these from `decisions.md` as the Workflow runs.

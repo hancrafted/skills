@@ -35,6 +35,7 @@ flowchart TD
   N --> M([Operator contests triage and merges the PR])
   I -->|intent changed: running Subagents finish, recheck, new gate| P
   R -->|intent changed| P
+  V -->|intent changed: same recheck, new gate| P
   I -.->|interrupt| NI([Notify, wait for the Operator])
   V -.->|interrupt| NI
   M --> F["5 Evolve: fortify<br/>from the base branch, blocks nothing"]
