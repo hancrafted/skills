@@ -16,7 +16,7 @@ All notable changes to the drive skill are documented in this file. The format f
 - `drive pr ready` refuses a PR body without `## Intent drift`; the Decision PR body gains `## Intent`.
 - The brief gains Intent and a rule that a Subagent never edits Decision docs; the report and the review gain an `Intent:` line.
 - `drive setup` proposes the project grilling format from the template and calibrates it
-  (`references/setup.md` "The grilling format step"); the template restates the Intent statement each round and judges
+  (`references/setup.md` "The grilling format step"); the template restates the Intent statement in the first round and judges
   later questions against it.
 - A Workflow record may log `Bet:` lines; the learnings `## Intent` section takes an optional `**Bets:**` bullet.
 

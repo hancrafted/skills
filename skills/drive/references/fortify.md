@@ -21,7 +21,7 @@ When the review report exists and before `drive pr ready`, delegate the record t
 
 - every line under **Corrections** in `.scratch/<topic>/decisions.md`, yours included (list there each point where you departed from this skill or the Decision docs, with its cause, marked as yours), copied verbatim;
 - `drive transcript --topic <topic> --tools`, which extracts the Operator's turns, the questions asked, tool failures and interrupts (and with `--tools` every tool call and Skill invocation) of every session the topic's hook log links. It exits non-zero with a notice when the log links no session; the hook logs your session too once a Subagent has started, otherwise run `drive transcript <session-id>` over your own: the newest `.jsonl` transcript path in `drive.log.jsonl`, or the id the Operator gives;
-- the Intent block, as the record's one `## Intent` section, first after the title (`learnings` SKILL.md, "The Intent section"): turns, how far the pitch moved, confirmed or gave up, and the drift found later with whether it was real, from `decisions.md` and the PR body's "Intent drift" section;
+- the Intent block, as the record's one `## Intent` section, first after the title (`learnings` SKILL.md, "The Intent section"): turns, how far the pitch moved, confirmed or gave up, and the drift found later with whether it was real, from `decisions.md` and the PR body's "Intent drift" section, plus a `**Bets:**` bullet when `decisions.md` holds `Bet:` lines: each scope change, with whether it paid off;
 - `.scratch/<topic>/monitor.md`, when a monitor ran: each finding folded in as a bullet ending `(source: monitor)`;
 - the review report `.scratch/<topic>/review.md` and the CI runs.
 

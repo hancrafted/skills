@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { intentStateOf, modeOf, STATUS_USAGE } from './intent.pure.ts';
 
+const CONFIRMED_MARKER = '(confirmed)';
+
 describe('success cases', () => {
   describe('modeOf', () => {
     it.each([
@@ -82,6 +84,6 @@ describe('edge cases', () => {
     // ACT
     const usage = STATUS_USAGE;
     // ASSERT
-    expect(usage).toContain('(confirmed)');
+    expect(usage).toContain(CONFIRMED_MARKER);
   });
 });
