@@ -57,7 +57,7 @@ Announce each phase and its branch changes before acting, and print `drive statu
 
 ## Entry check
 
-On every start or resume (a new session and a quota limit included), first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs, the tickets and the project inputs, and names the phase and the next stop. Also read the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet and tell the Operator the phase and next stop: before the gate wait for confirmation, after it continue.
+On every start or resume, first check that `/learnings` is installed (`skills/learnings/SKILL.md`, or the same under `.agents/skills/` or `.claude/skills/`). If it is missing, stop and tell the Operator: drive cannot run without it; install it with `npx skills add hancrafted/skills --skill learnings`, or run `drive setup --approve-learnings`. Then run `drive status <topic>`: it reads the topic folder, the branches, the PRs, the tickets and the project inputs, and names the phase and the next stop. Also read the decisions log and the spec on the tracker. A Decision PR still open means you are back at the gate: restart `drive pr watch` on it. Start at the first phase whose _Done when_ is unmet and tell the Operator the phase and next stop: before the gate wait for confirmation, after it continue.
 
 The phases and their transitions are drawn in [the workflow diagram](references/workflow.md).
 
@@ -71,18 +71,13 @@ Every project fact lives in `docs/drive/`; this skill knows none. Read it before
 
 No folder yet, or a skill installed since setup: run setup first, [references/setup.md](references/setup.md).
 
-The `drive` CLI is `node scripts/drive.ts` in this skill's folder; `worktree.invoke` in `project.yml` names how the project calls `drive worktree`. Use those commands for every worktree and merge: [references/worktrees.md](references/worktrees.md).
+The `drive` CLI is `node scripts/drive.ts` in this skill's folder; `worktree.invoke` in `project.yml` names how the project calls `drive worktree`. Use them for every worktree and merge: [worktrees.md](references/worktrees.md). Also [topic folder](references/worktrees.md#the-topic-folder), [branches](references/worktrees.md#branches).
 
 ## Inline or delegated
 
 Do inline only what needs your context and leaves no diff in the repo: grilling, the spec and tickets (they go to the tracker), checking reports, reverting a failed merge, `drive push` and opening PRs. The one diff you write yourself is the Decision docs, on their own branch.
 
 Delegate to a Subagent everything else that lands in the repo or runs checks: code, decision pages, PR bodies, fixes, log mining, Fortify evidence. Run long commands in the background.
-
-## Topic folder and branches
-
-- Topic folder: [worktrees.md](references/worktrees.md#the-topic-folder)
-- Branches: [worktrees.md](references/worktrees.md#branches)
 
 ## Workflow
 
