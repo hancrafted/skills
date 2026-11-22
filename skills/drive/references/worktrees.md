@@ -60,7 +60,7 @@ Each Workflow keeps its memory in `.scratch/<topic>/` (gitignored), so it surviv
 - `brief.md`: the shared brief every Subagent reads first.
 - `decisions.md`: the decisions log. Write each settled term and decision in its exact wording the moment it settles, and each Operator correction under **Corrections** at once.
 - `<task>.brief.md` and `<task>.report.md`: one **Handoff** per task, [references/dispatch.md](dispatch.md).
-- `drive.log.jsonl`: written by the CLI and the Subagent hooks; `drive transcript --topic <topic>` reads the sessions it links. `monitor.md`: the monitor's findings, below.
+- `drive.log.jsonl`: written by the CLI and the Subagent hooks; `drive transcript --topic <topic>` reads the sessions it links. `monitor.md`: the monitor's findings ([monitor.md](monitor.md)).
 
 ## Branches
 
@@ -68,4 +68,4 @@ Each Workflow keeps its memory in `.scratch/<topic>/` (gitignored), so it surviv
 - **Task branch**: `<type>/<slug>--<issue>-<task>`, or `<type>/<slug>--<task>` without a ticket, started with `--base <type>/<slug>`.
 - **Decision docs**: `decisions/<topic>`, from the Integration branch, through the Decision PR into the Integration branch; `decisions` is a `<type>` like any other. The Decision docs reach the base branch with the Integration branch's PR.
 
-These names override any worktree path or branch a Handoff or another skill names, and the self-merge below replaces any skill's merger or per-ticket PR.
+These names override any worktree path or branch a Handoff or another skill names, and the self-merge ([How a Subagent finishes](#how-a-subagent-finishes)) replaces any skill's merger or per-ticket PR.
