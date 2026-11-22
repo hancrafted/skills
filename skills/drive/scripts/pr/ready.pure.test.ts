@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { baseAheadProblem, notIntegrationBranch, quoteRefusal, readyProblem, topicOf } from './ready.pure.ts';
+import {
+  baseAheadProblem,
+  intentDriftProblem,
+  notIntegrationBranch,
+  quoteRefusal,
+  readyProblem,
+  topicOf,
+} from './ready.pure.ts';
 
 describe('success cases', () => {
   describe('baseAheadProblem', () => {
@@ -32,9 +39,36 @@ describe('success cases', () => {
       expect(problem).toBeNull();
     });
   });
+  describe('intentDriftProblem', () => {
+    it.each([
+      ['## Intent drift\n\nnone\n'],
+      ['## Summary\n\nx\n\n## Intent drift\n\nThe grill cut scope.\n\n## Tests\n'],
+      ['## Intent drift'],
+    ])('passes a body with the section: %j', (body) => {
+      // ARRANGE
+      // ACT
+      const problem = intentDriftProblem(body);
+      // ASSERT
+      expect(problem).toBeNull();
+    });
+  });
 });
 
 describe('failure cases', () => {
+  describe('intentDriftProblem', () => {
+    it.each([[''], ['## Summary\n\nx\n'], ['Intent drift: none'], ['### Intent drift\n']])(
+      'refuses a body without the section and names the fix: %j',
+      (body) => {
+        // ARRANGE
+        const expected =
+          'the PR body has no `## Intent drift` section: add one (say "none" if the Workflow held its intent) before marking the PR ready';
+        // ACT
+        const problem = intentDriftProblem(body);
+        // ASSERT
+        expect(problem).toBe(expected);
+      },
+    );
+  });
   describe('baseAheadProblem', () => {
     it('refuses with the count and says to sync then push', () => {
       // ARRANGE

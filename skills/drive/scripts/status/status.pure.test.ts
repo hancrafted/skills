@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { intentStateOf, modeOf } from './intent.pure.ts';
 import {
   derivePhase,
   type Facts,
@@ -26,6 +27,8 @@ const base: Facts = {
   tickets: [],
   mergedTickets: [],
   lastLog: null,
+  mode: 'grill-first',
+  intent: 'confirmed',
   inputs: {
     grillFormat: 'filled',
     grillFormatPath: 'docs/agents/grilling-format.md',
@@ -97,6 +100,85 @@ describe('success cases', () => {
       const state = profilesStateOf(text);
       // ASSERT
       expect(state).toBe(expected);
+    });
+  });
+
+  describe('modeOf', () => {
+    it.each([
+      [null, null],
+      ['# Decisions\n\nResearch.\n', null],
+      ['# Decisions\n\nMode: intent-first\n', 'intent-first'],
+      ['# Decisions\n\nMode: grill-first\n', 'grill-first'],
+      ['Mode: top-down\n', null],
+    ] as const)('reads %j as %s', (text, expected) => {
+      // ARRANGE
+      // ACT
+      const mode = modeOf(text);
+      // ASSERT
+      expect(mode).toBe(expected);
+    });
+  });
+
+  describe('intentStateOf', () => {
+    it.each([
+      [null, 'missing'],
+      ['# D\n\n### Requirements grill\n', 'missing'],
+      ['# D\n\n### Intent statement (confirmed 2026-11-22)\n\nINTENT: x\n', 'confirmed'],
+      ['# D\n\n### Intent statement (unconfirmed)\n\nINTENT: x\n', 'unconfirmed'],
+      ['# D\n\n### Intent statement\n\nINTENT: x\n', 'unconfirmed'],
+      ['# D\n\nThe Intent statement (confirmed later) is prose.\n', 'missing'],
+    ] as const)('reads %j as %s', (text, expected) => {
+      // ARRANGE
+      // ACT
+      const state = intentStateOf(text);
+      // ASSERT
+      expect(state).toBe(expected);
+    });
+  });
+
+  describe('renderStatus mode and intent', () => {
+    it.each([
+      ['intent-first', 'unconfirmed', 'Mode: intent-first', 'Intent: unconfirmed'],
+      ['grill-first', 'confirmed', 'Mode: grill-first', 'Intent: confirmed'],
+      [null, 'missing', 'Mode: missing', 'Intent: missing'],
+    ] as const)('prints mode %s and intent %s', (mode, intent, ...lines) => {
+      // ARRANGE
+      const facts: Facts = { ...base, mode, intent };
+      // ACT
+      const text = renderStatus(facts);
+      // ASSERT
+      for (const line of lines) expect(text).toContain(line);
+    });
+  });
+
+  describe('derivePhase intent stop', () => {
+    it.each([
+      ['intent-first', 'unconfirmed', 'confirm the intent', 'before any grill'],
+      ['intent-first', 'missing', 'confirm the intent', 'before any grill'],
+      ['grill-first', 'unconfirmed', 'confirm the intent', 'before Reason'],
+      ['grill-first', 'missing', 'confirm the intent', 'before Reason'],
+      [null, 'missing', 'mode missing', 'Mode: intent-first|grill-first'],
+      [null, 'confirmed', 'mode missing', 'Mode: intent-first|grill-first'],
+    ] as const)('in Define with mode %s and intent %s names %s and %s', (mode, intent, ...named) => {
+      // ARRANGE
+      const facts: Facts = { ...base, mode, intent };
+      // ACT
+      const standing = derivePhase(facts);
+      // ASSERT
+      expect(standing.phase).toBe('Define');
+      for (const phrase of named) expect(standing.next).toContain(phrase);
+    });
+
+    it.each([
+      ['intent-first', 'confirmed'],
+      ['grill-first', 'confirmed'],
+    ] as const)('does not ask to confirm a confirmed intent (%s)', (mode, intent) => {
+      // ARRANGE
+      const facts: Facts = { ...base, mode, intent };
+      // ACT
+      const standing = derivePhase(facts);
+      // ASSERT
+      expect(standing.next).not.toContain('confirm the intent');
     });
   });
 
