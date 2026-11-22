@@ -23,7 +23,7 @@ describe('success cases', () => {
 
   it('reports nothing for one Intent section first with labelled bullets, or for none', () => {
     // ARRANGE
-    const first = [{ position: 0, bullets: [TURNS, '**Drift:** none'] }];
+    const first = [{ position: 0, bullets: [TURNS, '**Drift:** none', '**Bets:** a cut, a widening'] }];
     // ACT
     const problems = [intentProblems(RECORD_PATH, first), intentProblems(RECORD_PATH, [])];
     // ASSERT
@@ -42,7 +42,7 @@ describe('failure cases', () => {
     const expected = [
       `${where} appears twice; keep one Intent section per record`,
       `${where} comes after a failure mode; place it first, right after the title`,
-      `${where} has a bullet that opens with none of **Turns:**, **Moved:**, **Outcome:**, **Drift:**`,
+      `${where} has a bullet that opens with none of **Turns:**, **Moved:**, **Outcome:**, **Drift:**, **Bets:**`,
     ];
     // ACT
     const problems = intentProblems(RECORD_PATH, intents);

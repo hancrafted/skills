@@ -4,14 +4,14 @@ The round format drive uses when `grill.format` is unset or its file is missing.
 
 ## Each round
 
-1. A short reply to the last answers, or an introduction. The first round restates the approved Intent statement here; its purpose and end result replace any other opening lines.
+1. A short reply to the last answers, or an introduction. The first round restates the Intent here (the approved statement, or in grill first the unapproved working pitch); its purpose and end result replace any other opening lines.
 2. Numbered questions, each starting with a W word (what, which, why, where, who) or with How, and stated in full.
 3. Under each question, numbered options: at least 2-3, each with an example.
 4. A Recommendation at the end, with the reason. The Operator answers "yes" to accept every recommendation.
 
 ## Judge against the Intent
 
-Judge every later question and answer against the approved Intent statement. A question that would widen, cut or change the Intent's scope says so, and the Operator decides it as a bet placed against the Intent. This format governs the requirements grill only, not the Intent step.
+Judge every later question and answer against the Intent: the approved statement, or in grill first the working pitch until the statement is approved. A question that would widen, cut or change the Intent's scope says so, and the Operator decides it as a bet placed against the Intent. This format governs the requirements grill only, not the Intent step.
 
 ## Wording
 

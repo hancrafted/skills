@@ -10,7 +10,7 @@ The moment a report arrives, check it against its ticket:
 2. **Scope.** `git show --stat <merge commit>` stays inside the paths the brief gave the task; a changed interface is one the ticket or the spec asked for.
 3. **Trade-offs.** Each reported trade-off is an item to verify, not a fact to accept: check its claim yourself, and ask how it will look to the Operator (a red CI run, a slower command, a changed screen). One the Operator has not accepted is logged in `decisions.md` and listed in the PR body, where the Operator contests it; it is an interrupt only when it conflicts with the spec or a binding decision.
 4. **Terms.** Carry each proposed term into `decisions.md`; it reaches the glossary only through a Decision PR.
-5. **Intent.** Carry each drift or contradiction from the **Intent** line into `decisions.md`, to be gathered into the PR body's `## Intent drift` section ([below](#the-integration-branchs-pr)). Do not interrupt the Operator for it.
+5. **Intent.** Carry each drift or contradiction from the **Intent** line into `decisions.md`, to be gathered into the PR body's `## Intent drift` section ([below](#the-integration-branchs-pr)). [intent.md](intent.md) "After approval" says when the Operator hears of it.
 
 A task that fails a check is reverted at once in the Integration branch's worktree: `git revert -m 1 <merge commit>`, then re-dispatch it with the reason. Each task is one merge commit, so a revert touches nothing else.
 
@@ -28,7 +28,7 @@ Run the Verify phase's review skill where a ticket's **Review after** line says 
 
 Every review report records the commit it read, `Reviewed: <sha>` on one line (`git rev-parse HEAD` in the Integration worktree when the review starts), and ends with `## Contradictions`: one bullet per suspected pair of lines that contradict each other, in the form `- "<quote>" (<file>:<line>) vs "<quote>" (<file>:<line>)`, or `none`. The reviewer quotes files as they are at that commit, and looks in the changed skill and reference sections and against the repo. Save the report, then run `drive review quotes <report>` before triage. It reads each quoted file with `git show <sha>:<path>`, so a fix round that later changes those lines, or a different checkout, does not change the result. It fails, one line per bad entry, when `Reviewed:` is missing (unless the section is `none`) or names an unknown commit, a file is missing at that commit, a quote is not on its stated line, or an entry is malformed. Send a failing report back to the reviewer. `drive pr ready` runs the same check on `.scratch/<topic>/review.md` and refuses on failure.
 
-Every review report also ends with an `Intent:` line: where the changes drift from or contradict the approved Intent statement, or `none`. Read-only as the rest of a review; it records the drift and does not judge whether the scope change was good.
+Every review report also carries an `Intent:` line, placed before `## Contradictions` (that section runs to the end of the file): where the changes drift from or contradict the approved Intent statement, or `none`. Read-only as the rest of a review; it records the drift and does not judge whether the scope change was good.
 
 Triage every finding:
 

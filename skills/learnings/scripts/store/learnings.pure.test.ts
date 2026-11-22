@@ -256,7 +256,7 @@ describe('failure cases', () => {
     const expected = [
       'records/2026-11-19-twice.md: ## Intent appears twice; keep one Intent section per record',
       'records/2026-11-20-late.md: ## Intent comes after a failure mode; place it first, right after the title',
-      'records/2026-11-21-loose.md: ## Intent has a bullet that opens with none of **Turns:**, **Moved:**, **Outcome:**, **Drift:**',
+      'records/2026-11-21-loose.md: ## Intent has a bullet that opens with none of **Turns:**, **Moved:**, **Outcome:**, **Drift:**, **Bets:**',
     ];
     // ACT
     const problems = storeProblems({ modes: MODES, records, skill: 'drive', legacyFileExists: false });
