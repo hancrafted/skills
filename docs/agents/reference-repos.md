@@ -90,6 +90,9 @@ Topic, then the paths to open.
 - Grilling, interviewing:
   - `.references/mattpocock-skills/skills/productivity/grilling/SKILL.md`
   - `.references/mattpocock-skills/skills/engineering/grill-with-docs/SKILL.md`
+  - `.references/agent-skills/skills/interview-me/SKILL.md`
+  - `.references/cursor-plugins/pstack/skills/in-your-own-words/SKILL.md`
+  - `.references/cursor-plugins/pstack/skills/sharpen/SKILL.md`
 - Spec and ticket breakdown:
   - `.references/mattpocock-skills/skills/engineering/to-spec/SKILL.md`
   - `.references/mattpocock-skills/skills/engineering/to-tickets/SKILL.md`
